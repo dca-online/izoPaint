@@ -1,12 +1,9 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import ServiceCard from '@/components/ServiceCard';
-import GlassCard from '@/components/GlassCard';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
-import Link from 'next/link';
 import VideoHeader from '@/components/VideoHeader';
 import BackgroundVideo from '@/components/BackgroundVideo';
 

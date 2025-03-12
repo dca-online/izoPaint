@@ -9,6 +9,7 @@ import BackgroundVideo from '@/components/BackgroundVideo';
 import Link from 'next/link';
 
 // Mobile Navigation Pills
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const MobileNavPills = () => {
   const [isVisible, setIsVisible] = useState(false);
 

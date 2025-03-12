@@ -2,20 +2,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Space_Grotesk, Playfair_Display } from 'next/font/google';
+import { Space_Grotesk } from 'next/font/google';
 import Image from 'next/image';
 
 // This edgy, modern font gives us that architectural feel
 const spaceGrotesk = Space_Grotesk({ 
   subsets: ['latin'],
   weight: ['700'],
-  display: 'swap',
-});
-
-// This classic serif adds that touch of luxury and refinement
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['400', '500'],
   display: 'swap',
 });
 

@@ -6,7 +6,8 @@ import Footer from '@/components/Footer';
 import PageHeader from '@/components/PageHeader';
 import GlassCard from '@/components/GlassCard';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
-import Link from 'next/link'; // Used in the template
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import Link from 'next/link'; // Used in the template but not directly in this file
 
 // Contact information
 const contactInfo = {
