@@ -1,1 +1,66 @@
-@import "tailwindcss";@font-face{font-family:'Anti-Grotesk';src:url('https://fonts.cdnfonts.com/s/19795/DrukText-Medium.woff') format('woff');font-weight:normal;font-style:normal;font-display:swap}@font-face{font-family:'Hrangfsey';src:url('https://fonts.cdnfonts.com/s/38057/PPNeueMontreal-Medium.woff2') format('woff2');font-weight:normal;font-style:normal;font-display:swap}:root{--dark:#1A1A1A;--secondary-dark:#333333;--medium:#B99C4B;--light:#F0E4B2;--background:var(--dark);--foreground:var(--light);--font-heading:'Anti-Grotesk',system-ui,sans-serif;--font-body:'Hrangfsey',var(--font-geist-sans),system-ui,sans-serif}@theme inline{--color-background:var(--background);--color-foreground:var(--foreground);--font-sans:var(--font-body);--font-mono:var(--font-geist-mono)}@media (prefers-color-scheme:light){:root{--background:var(--light);--foreground:var(--dark)}}body{background:var(--background);color:var(--foreground);font-family:var(--font-body);overflow-x:hidden}h1,h2,h3,h4,h5,h6{font-family:var(--font-heading)}html.lenis{height:auto}.lenis.lenis-smooth{scroll-behavior:auto}.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}.lenis.lenis-stopped{overflow:hidden}.lenis.lenis-scrolling iframe{pointer-events:none}
+@import "tailwindcss";
+@font-face {
+    font-family: "Anti-Grotesk";
+    src: url("https://fonts.cdnfonts.com/s/19795/DrukText-Medium.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Hrangfsey";
+    src: url("https://fonts.cdnfonts.com/s/38057/PPNeueMontreal-Medium.woff2") format("woff2");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+:root {
+    --dark: #1a1a1a;
+    --secondary-dark: #333333;
+    --medium: #b99c4b;
+    --light: #f0e4b2;
+    --background: var(--dark);
+    --foreground: var(--light);
+    --font-heading: "Anti-Grotesk", system-ui, sans-serif;
+    --font-body: "Hrangfsey", var(--font-geist-sans), system-ui, sans-serif;
+    
+    /* Theme variables (moved from @theme) */
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --font-sans: var(--font-body);
+    --font-mono: var(--font-geist-mono);
+}
+@media (prefers-color-scheme: light) {
+    :root {
+        --background: var(--light);
+        --foreground: var(--dark);
+    }
+}
+body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+}
+html.lenis {
+    height: auto;
+}
+.lenis.lenis-smooth {
+    scroll-behavior: auto;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+    overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+    pointer-events: none;
+}

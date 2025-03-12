@@ -1,1 +1,85 @@
-'use client';import React,{useEffect,useRef}from 'react';import{motion}from 'framer-motion';interface PageHeaderProps{title:string;subtitle?:string;videoSrc:string;align?:'left'|'center'|'right';}const PageHeader=({title,subtitle,videoSrc,align='center'}:PageHeaderProps)=>{const videoRef=useRef<HTMLVideoElement>(null);const alignmentClasses={left:'text-left items-start',center:'text-center items-center',right:'text-right items-end',};return(<section className="relative h-[70vh]md:h-[80vh]w-full overflow-hidden">{ }<div className="absolute inset-0 w-full h-full"> <video ref={videoRef}autoPlay muted loop playsInline className="absolute h-full w-full object-cover" src={videoSrc}/>{ }<div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A]/90 via-[#1A1A1A]/70 to-[#1A1A1A]"/> </div>{ }<div className={`relative z-10 container mx-auto px-4 h-full flex flex-col justify-center ${alignmentClasses[align]}`}> <motion.h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6" initial={{opacity:0,y:30}}animate={{opacity:1,y:0}}transition={{duration:0.8,delay:0.2}}>{title}</motion.h1>{subtitle&&(<motion.p className="text-xl md:text-2xl text-[#F0E4B2]max-w-2xl" initial={{opacity:0,y:30}}animate={{opacity:1,y:0}}transition={{duration:0.8,delay:0.4}}>{subtitle}</motion.p>)}{ }<motion.div className="w-20 h-1 bg-[#B99C4B]mt-8" initial={{opacity:0,width:0}}animate={{opacity:1,width:80}}transition={{duration:0.8,delay:0.6}}/> </div>{ }<motion.div className="absolute bottom-10 left-1/2 transform-translate-x-1/2" initial={{opacity:0,y:-20}}animate={{opacity:1,y:0}}transition={{duration:0.8,delay:1,repeat:Infinity,repeatType:'reverse'}}> <div className="w-6 h-10 border border-white/30 rounded-full flex justify-center"> <div className="w-1.5 h-1.5 bg-[#B99C4B]rounded-full animate-bounce mt-2"/> </div> </motion.div> </section>);};export default PageHeader;
+'use client';
+import React, { useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+
+interface PageHeaderProps {
+  title: string;
+  subtitle?: string;
+  videoSrc: string;
+  align?: 'left' | 'center' | 'right';
+}
+
+const PageHeader = ({ title, subtitle, videoSrc, align = 'center' }: PageHeaderProps) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  
+  // Text alignment classes
+  const alignmentClasses = {
+    left: 'text-left items-start',
+    center: 'text-center items-center',
+    right: 'text-right items-end',
+  };
+  
+  return (
+    <section className="relative h-[70vh] md:h-[80vh] w-full overflow-hidden">
+      {/* Video Background */}
+      <div className="absolute inset-0 w-full h-full">
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute h-full w-full object-cover"
+          src={videoSrc}
+        />
+        {/* Overlay with gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A]/90 via-[#1A1A1A]/70 to-[#1A1A1A]" />
+      </div>
+      
+      {/* Content */}
+      <div className={`relative z-10 container mx-auto px-4 h-full flex flex-col justify-center ${alignmentClasses[align]}`}>
+        <motion.h1 
+          className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          {title}
+        </motion.h1>
+        
+        {subtitle && (
+          <motion.p 
+            className="text-xl md:text-2xl text-[#F0E4B2] max-w-2xl"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            {subtitle}
+          </motion.p>
+        )}
+        
+        {/* Decorative elements */}
+        <motion.div 
+          className="w-20 h-1 bg-[#B99C4B] mt-8"
+          initial={{ opacity: 0, width: 0 }}
+          animate={{ opacity: 1, width: 80 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        />
+      </div>
+      
+      {/* Scroll indicator */}
+      <motion.div 
+        className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 1, repeat: Infinity, repeatType: 'reverse' }}
+      >
+        <div className="w-6 h-10 border border-white/30 rounded-full flex justify-center">
+          <div className="w-1.5 h-1.5 bg-[#B99C4B] rounded-full animate-bounce mt-2" />
+        </div>
+      </motion.div>
+    </section>
+  );
+};
+
+export default PageHeader; 

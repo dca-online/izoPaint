@@ -1,1 +1,348 @@
-'use client';import React from 'react';import{motion}from 'framer-motion';import Navbar from '@/components/Navbar';import Footer from '@/components/Footer';import PageHeader from '@/components/PageHeader';import GlassCard from '@/components/GlassCard';import SmoothScrollProvider from '@/components/SmoothScrollProvider';import Image from 'next/image';const paintServices=[{title:'Vopsele decorative',description:'Transformă-ți interiorul cu vopsele decorative moderne ce oferă texturi și finisaje unice pentru orice spațiu.',icon:'/icons/paint.svg',features:['Vopsele cu efect mătase','Vopsele cu efect metalic','Vopsele cu efect rustic','Tencuieli decorative','Finisaje personalizate',],image:'/images/paint-service-1.jpg',},{title:'Vopsele ecologice',description:'Soluții de vopsire prietenoase cu mediul,fără compuși organici volatili,ideale pentru dormitoare și camere de copii.',icon:'/icons/eco.svg',features:['Vopsele pe bază de apă','Fără mirosuri puternice','Hipoalergenice','Lavabile și durabile','Gamă variată de culori',],image:'/images/paint-service-2.jpg',},{title:'Finisaje speciale',description:'Finisaje decorative premium pentru un ambient elegant,de la efecte vintage la ultramoderne.',icon:'/icons/quality.svg',features:['Finisaje microciment','Efect beton aparent','Stucco veneziano','Glazuri decorative','Tencuieli texturate',],image:'/images/paint-service-3.jpg',},];const insulationServices=[{title:'Izolație termică',description:'Sisteme profesionale de izolație termică pentru reducerea costurilor energetice și un confort superior.',icon:'/icons/thermal.svg',features:['Termoizolație fațade','Izolație interioară','Izolație spumă poliuretanică','Sisteme ETICS complete','Consultanță eficiență energetică',],image:'/images/insulation-service-1.jpg',},{title:'Izolație fonică',description:'Soluții de izolare acustică pentru reducerea zgomotului și îmbunătățirea confortului în orice spațiu.',icon:'/icons/eco.svg',features:['Panouri fonoabsorbante','Bariere acustice','Membrane antivibrații','Izolație pentru pereți și tavane','Soluții pentru spații comerciale',],image:'/images/insulation-service-2.jpg',},{title:'Hidroizolații',description:'Protecție eficientă împotriva infiltrațiilor de apă pentru acoperișuri,băi,subsoluri și fundații.',icon:'/icons/warranty.svg',features:['Membrane bituminoase','Hidroizolații lichide','Impermeabilizare băi','Protecție terase și balcoane','Tratamente anti-umiditate',],image:'/images/insulation-service-3.jpg',},];const ServicesPage=()=>{return(<SmoothScrollProvider> <main className="min-h-screen bg-[#1A1A1A]overflow-hidden"> <Navbar/> <PageHeader title="Serviciile noastre" subtitle="Soluții complete de vopsele și izolații pentru casa ta" videoSrc="/videos/paintApply.mp4"/>{ }<section className="py-16 md:py-24 px-4 relative"> <div className="absolute inset-0 z-0"> <div className="absolute top-1/4 right-1/4 w-80 h-80 rounded-full bg-[#B99C4B]opacity-10 blur-3xl"> </div> <div className="absolute bottom-1/4 left-1/3 w-80 h-80 rounded-full bg-[#F0E4B2]opacity-10 blur-3xl"> </div> </div> <div className="container mx-auto relative z-10"> <GlassCard accent="gold" className="max-w-3xl mx-auto"> <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">Soluții profesionale pentru spații impecabile</h2> <p className="text-white/80 mb-6">Cu o experiență de peste 10 ani în domeniu,echipa noastră oferă servicii complete de finisaje decorative și sisteme de izolație de calitate superioară. Folosim doar materiale premium și tehnici moderne pentru a asigura rezultate durabile și estetice.</p> <p className="text-white/80">Fie că aveți nevoie de renovarea unui apartament sau de izolarea unei clădiri întregi,suntem pregătiți să vă oferim soluții personalizate,adaptate nevoilor și bugetului dumneavoastră.</p> </GlassCard> </div> </section>{ }<section className="py-16 md:py-24 relative overflow-hidden">{ }<div className="absolute inset-0 opacity-30"> <video className="w-full h-full object-cover" autoPlay muted loop playsInline src="/videos/paint.mp4"/> <div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A]via-transparent to-[#1A1A1A]"> </div> </div> <div className="container mx-auto px-4 relative z-10"> <motion.div className="text-center mb-16" initial={{opacity:0,y:30}}whileInView={{opacity:1,y:0}}viewport={{once:true}}transition={{duration:0.8}}> <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#B99C4B]mb-4">Vopsele&finisaje</h2> <p className="text-lg text-white/70 max-w-2xl mx-auto">Descoperă gama noastră de soluții decorative și finisaje ce îmbină estetica cu funcționalitatea.</p> </motion.div> <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">{paintServices.map((service,index)=>(<GlassCard key={service.title}accent="light" delay={index*0.1}className="h-full"> <div className="flex flex-col h-full"> <div className="flex items-center mb-4"> <img src={service.icon}alt={service.title}className="w-10 h-10 mr-3"/> <h3 className="text-2xl font-bold text-[#F0E4B2]">{service.title}</h3> </div> <p className="text-white/70 mb-6">{service.description}</p> <div className="mt-auto"> <h4 className="text-lg font-semibold text-white mb-3">Ce oferim:</h4> <ul className="space-y-2">{service.features.map((feature)=>(<li key={feature}className="flex items-start"> <span className="text-[#B99C4B]mr-2">✓</span> <span className="text-white/80">{feature}</span> </li>))}</ul> </div> </div> </GlassCard>))}</div> </div> </section>{ }<section className="py-16 md:py-24 relative overflow-hidden">{ }<div className="absolute inset-0 bg-[#333333]opacity-50"> </div> <div className="absolute inset-0 bg-gradient-to-tr from-[#1A1A1A]via-transparent to-transparent"> </div> <div className="container mx-auto px-4 relative z-10"> <motion.div className="text-center mb-16" initial={{opacity:0,y:30}}whileInView={{opacity:1,y:0}}viewport={{once:true}}transition={{duration:0.8}}> <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#F0E4B2]mb-4">Izolații moderne</h2> <p className="text-lg text-white/70 max-w-2xl mx-auto">Sisteme complete de izolație pentru un confort termic superior și economie de energie.</p> </motion.div> <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">{insulationServices.map((service,index)=>(<GlassCard key={service.title}accent="gold" delay={index*0.1}className="h-full"> <div className="flex flex-col h-full"> <div className="flex items-center mb-4"> <img src={service.icon}alt={service.title}className="w-10 h-10 mr-3"/> <h3 className="text-2xl font-bold text-[#B99C4B]">{service.title}</h3> </div> <p className="text-white/70 mb-6">{service.description}</p> <div className="mt-auto"> <h4 className="text-lg font-semibold text-white mb-3">Ce oferim:</h4> <ul className="space-y-2">{service.features.map((feature)=>(<li key={feature}className="flex items-start"> <span className="text-[#F0E4B2]mr-2">✓</span> <span className="text-white/80">{feature}</span> </li>))}</ul> </div> </div> </GlassCard>))}</div> </div> </section>{ }<section className="py-16 md:py-24 px-4 bg-[#1A1A1A]relative overflow-hidden"> <div className="absolute inset-0 z-0"> <div className="absolute top-1/3 right-1/5 w-96 h-96 rounded-full bg-[#B99C4B]opacity-5 blur-3xl"> </div> <div className="absolute bottom-1/4 left-1/4 w-80 h-80 rounded-full bg-[#F0E4B2]opacity-5 blur-3xl"> </div> </div> <div className="container mx-auto relative z-10"> <motion.div className="text-center mb-16" initial={{opacity:0,y:30}}whileInView={{opacity:1,y:0}}viewport={{once:true}}transition={{duration:0.8}}> <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">Cum lucrăm</h2> <p className="text-lg text-white/70 max-w-2xl mx-auto">Procesul nostru structurat asigură rezultate de calitate și o experiență fără stres.</p> </motion.div> <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">{[{number:'01',title:'Consultare',description:'Discutăm nevoile și preferințele dumneavoastră pentru a înțelege exact ce doriți.'},{number:'02',title:'Evaluare',description:'Specialiștii noștri evaluează spațiul și propun cele mai adecvate soluții tehnice.'},{number:'03',title:'Implementare',description:'Echipa noastră execută lucrarea cu maximă atenție la detalii și respectarea termenelor.'},{number:'04',title:'Verificare',description:'Verificăm împreună calitatea finală a lucrării pentru a ne asigura că sunteți mulțumiți.'}].map((step,index)=>(<GlassCard key={step.number}delay={index*0.1}> <div className="flex flex-col items-center text-center"> <span className="text-6xl font-bold text-[#B99C4B]/20 mb-4">{step.number}</span> <h3 className="text-xl font-bold text-white mb-3">{step.title}</h3> <p className="text-white/70">{step.description}</p> </div> </GlassCard>))}</div> </div> </section>{ }<section className="py-16 md:py-24 relative overflow-hidden">{ }<div className="absolute inset-0 opacity-20"> <video className="w-full h-full object-cover" autoPlay muted loop playsInline src="/videos/cherryTake.mp4"/> <div className="absolute inset-0 bg-[#1A1A1A]/70"> </div> </div> <div className="container mx-auto px-4 relative z-10"> <div className="max-w-3xl mx-auto text-center"> <motion.h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6" initial={{opacity:0,y:30}}whileInView={{opacity:1,y:0}}viewport={{once:true}}transition={{duration:0.8}}>Pregătit să transformi spațiul tău?</motion.h2> <motion.p className="text-lg text-white/80 mb-10" initial={{opacity:0,y:30}}whileInView={{opacity:1,y:0}}viewport={{once:true}}transition={{duration:0.8,delay:0.2}}>Contactează-ne pentru o consultare gratuită și află cum te putem ajuta să-ți transformi casa sau spațiul comercial.</motion.p> <motion.div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4" initial={{opacity:0,y:30}}whileInView={{opacity:1,y:0}}viewport={{once:true}}transition={{duration:0.8,delay:0.4}}> <button className="px-8 py-4 bg-[#B99C4B]text-white rounded-full text-lg font-medium hover:bg-[#B99C4B]/80 transition-colors">Solicită o ofertă gratuită</button> <button className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-full text-lg font-medium hover:bg-white/10 transition-colors">Contactează-ne</button> </motion.div> </div> </div> </section> <Footer/> </main> </SmoothScrollProvider>);};export default ServicesPage;
+'use client';
+import React from 'react';
+import { motion } from 'framer-motion';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import PageHeader from '@/components/PageHeader';
+import GlassCard from '@/components/GlassCard';
+import SmoothScrollProvider from '@/components/SmoothScrollProvider';
+import Image from 'next/image';
+
+// Service data
+const paintServices = [
+  {
+    title: 'Vopsele decorative',
+    description: 'Transformă-ți interiorul cu vopsele decorative moderne ce oferă texturi și finisaje unice pentru orice spațiu.',
+    icon: '/icons/paint.svg',
+    features: [
+      'Vopsele cu efect mătase',
+      'Vopsele cu efect metalic',
+      'Vopsele cu efect rustic',
+      'Tencuieli decorative',
+      'Finisaje personalizate',
+    ],
+    image: '/images/paint-service-1.jpg',
+  },
+  {
+    title: 'Vopsele ecologice',
+    description: 'Soluții de vopsire prietenoase cu mediul, fără compuși organici volatili, ideale pentru dormitoare și camere de copii.',
+    icon: '/icons/eco.svg',
+    features: [
+      'Vopsele pe bază de apă',
+      'Fără mirosuri puternice',
+      'Hipoalergenice',
+      'Lavabile și durabile',
+      'Gamă variată de culori',
+    ],
+    image: '/images/paint-service-2.jpg',
+  },
+  {
+    title: 'Finisaje speciale',
+    description: 'Finisaje decorative premium pentru un ambient elegant, de la efecte vintage la ultramoderne.',
+    icon: '/icons/quality.svg',
+    features: [
+      'Finisaje microciment',
+      'Efect beton aparent',
+      'Stucco veneziano',
+      'Glazuri decorative',
+      'Tencuieli texturate',
+    ],
+    image: '/images/paint-service-3.jpg',
+  },
+];
+
+const insulationServices = [
+  {
+    title: 'Izolație termică',
+    description: 'Sisteme profesionale de izolație termică pentru reducerea costurilor energetice și un confort superior.',
+    icon: '/icons/thermal.svg',
+    features: [
+      'Termoizolație fațade',
+      'Izolație interioară',
+      'Izolație spumă poliuretanică',
+      'Sisteme ETICS complete',
+      'Consultanță eficiență energetică',
+    ],
+    image: '/images/insulation-service-1.jpg',
+  },
+  {
+    title: 'Izolație fonică',
+    description: 'Soluții de izolare acustică pentru reducerea zgomotului și îmbunătățirea confortului în orice spațiu.',
+    icon: '/icons/eco.svg',
+    features: [
+      'Panouri fonoabsorbante',
+      'Bariere acustice',
+      'Membrane antivibrații',
+      'Izolație pentru pereți și tavane',
+      'Soluții pentru spații comerciale',
+    ],
+    image: '/images/insulation-service-2.jpg',
+  },
+  {
+    title: 'Hidroizolații',
+    description: 'Protecție eficientă împotriva infiltrațiilor de apă pentru acoperișuri, băi, subsoluri și fundații.',
+    icon: '/icons/warranty.svg',
+    features: [
+      'Membrane bituminoase',
+      'Hidroizolații lichide',
+      'Impermeabilizare băi',
+      'Protecție terase și balcoane',
+      'Tratamente anti-umiditate',
+    ],
+    image: '/images/insulation-service-3.jpg',
+  },
+];
+
+const ServicesPage = () => {
+  return (
+    <SmoothScrollProvider>
+      <main className="min-h-screen bg-[#1A1A1A] overflow-hidden">
+        <Navbar />
+        
+        <PageHeader 
+          title="Serviciile Noastre"
+          subtitle="Soluții Complete de Vopsele și Izolații pentru Casa Ta"
+          videoSrc="/videos/paintApply.mp4"
+        />
+        
+        {/* Introduction Section */}
+        <section className="py-16 md:py-24 px-4 relative">
+          <div className="absolute inset-0 z-0">
+            <div className="absolute top-1/4 right-1/4 w-80 h-80 rounded-full bg-[#B99C4B] opacity-10 blur-3xl"></div>
+            <div className="absolute bottom-1/4 left-1/3 w-80 h-80 rounded-full bg-[#F0E4B2] opacity-10 blur-3xl"></div>
+          </div>
+          
+          <div className="container mx-auto relative z-10">
+            <GlassCard accent="gold" className="max-w-3xl mx-auto">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">Soluții profesionale pentru spații impecabile</h2>
+              <p className="text-white/80 mb-6">
+                Cu o experiență de peste 10 ani în domeniu, echipa noastră oferă servicii complete de finisaje decorative și sisteme de izolație de calitate superioară. Folosim doar materiale premium și tehnici moderne pentru a asigura rezultate durabile și estetice.
+              </p>
+              <p className="text-white/80">
+                Fie că aveți nevoie de renovarea unui apartament sau de izolarea unei clădiri întregi, suntem pregătiți să vă oferim soluții personalizate, adaptate nevoilor și bugetului dumneavoastră.
+              </p>
+            </GlassCard>
+          </div>
+        </section>
+        
+        {/* Paint Services Section */}
+        <section className="py-16 md:py-24 relative overflow-hidden">
+          {/* Background Video */}
+          <div className="absolute inset-0 opacity-30">
+            <video 
+              className="w-full h-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+              src="/videos/paint.mp4"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A] via-transparent to-[#1A1A1A]"></div>
+          </div>
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <motion.div 
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#B99C4B] mb-4">Vopsele & Finisaje</h2>
+              <p className="text-lg text-white/70 max-w-2xl mx-auto">
+                Descoperă gama noastră de soluții decorative și finisaje ce îmbină estetica cu funcționalitatea.
+              </p>
+            </motion.div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
+              {paintServices.map((service, index) => (
+                <GlassCard key={service.title} accent="light" delay={index * 0.1} className="h-full">
+                  <div className="flex flex-col h-full">
+                    <div className="flex items-center mb-4">
+                      <img src={service.icon} alt={service.title} className="w-10 h-10 mr-3" />
+                      <h3 className="text-2xl font-bold text-[#F0E4B2]">{service.title}</h3>
+                    </div>
+                    <p className="text-white/70 mb-6">{service.description}</p>
+                    
+                    <div className="mt-auto">
+                      <h4 className="text-lg font-semibold text-white mb-3">Ce oferim:</h4>
+                      <ul className="space-y-2">
+                        {service.features.map((feature) => (
+                          <li key={feature} className="flex items-start">
+                            <span className="text-[#B99C4B] mr-2">✓</span>
+                            <span className="text-white/80">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </GlassCard>
+              ))}
+            </div>
+          </div>
+        </section>
+        
+        {/* Insulation Services Section */}
+        <section className="py-16 md:py-24 relative overflow-hidden">
+          {/* Background gradient */}
+          <div className="absolute inset-0 bg-[#333333] opacity-50"></div>
+          <div className="absolute inset-0 bg-gradient-to-tr from-[#1A1A1A] via-transparent to-transparent"></div>
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <motion.div 
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#F0E4B2] mb-4">Izolații Moderne</h2>
+              <p className="text-lg text-white/70 max-w-2xl mx-auto">
+                Sisteme complete de izolație pentru un confort termic superior și economie de energie.
+              </p>
+            </motion.div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
+              {insulationServices.map((service, index) => (
+                <GlassCard key={service.title} accent="gold" delay={index * 0.1} className="h-full">
+                  <div className="flex flex-col h-full">
+                    <div className="flex items-center mb-4">
+                      <img src={service.icon} alt={service.title} className="w-10 h-10 mr-3" />
+                      <h3 className="text-2xl font-bold text-[#B99C4B]">{service.title}</h3>
+                    </div>
+                    <p className="text-white/70 mb-6">{service.description}</p>
+                    
+                    <div className="mt-auto">
+                      <h4 className="text-lg font-semibold text-white mb-3">Ce oferim:</h4>
+                      <ul className="space-y-2">
+                        {service.features.map((feature) => (
+                          <li key={feature} className="flex items-start">
+                            <span className="text-[#F0E4B2] mr-2">✓</span>
+                            <span className="text-white/80">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </GlassCard>
+              ))}
+            </div>
+          </div>
+        </section>
+        
+        {/* Process Section */}
+        <section className="py-16 md:py-24 px-4 bg-[#1A1A1A] relative overflow-hidden">
+          <div className="absolute inset-0 z-0">
+            <div className="absolute top-1/3 right-1/5 w-96 h-96 rounded-full bg-[#B99C4B] opacity-5 blur-3xl"></div>
+            <div className="absolute bottom-1/4 left-1/4 w-80 h-80 rounded-full bg-[#F0E4B2] opacity-5 blur-3xl"></div>
+          </div>
+          
+          <div className="container mx-auto relative z-10">
+            <motion.div 
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">Cum Lucrăm</h2>
+              <p className="text-lg text-white/70 max-w-2xl mx-auto">
+                Procesul nostru structurat asigură rezultate de calitate și o experiență fără stres.
+              </p>
+            </motion.div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { 
+                  number: '01', 
+                  title: 'Consultare', 
+                  description: 'Discutăm nevoile și preferințele dumneavoastră pentru a înțelege exact ce doriți.' 
+                },
+                { 
+                  number: '02', 
+                  title: 'Evaluare', 
+                  description: 'Specialiștii noștri evaluează spațiul și propun cele mai adecvate soluții tehnice.' 
+                },
+                { 
+                  number: '03', 
+                  title: 'Implementare', 
+                  description: 'Echipa noastră execută lucrarea cu maximă atenție la detalii și respectarea termenelor.' 
+                },
+                { 
+                  number: '04', 
+                  title: 'Verificare', 
+                  description: 'Verificăm împreună calitatea finală a lucrării pentru a ne asigura că sunteți mulțumiți.' 
+                }
+              ].map((step, index) => (
+                <GlassCard key={step.number} delay={index * 0.1}>
+                  <div className="flex flex-col items-center text-center">
+                    <span className="text-6xl font-bold text-[#B99C4B]/20 mb-4">{step.number}</span>
+                    <h3 className="text-xl font-bold text-white mb-3">{step.title}</h3>
+                    <p className="text-white/70">{step.description}</p>
+                  </div>
+                </GlassCard>
+              ))}
+            </div>
+          </div>
+        </section>
+        
+        {/* Call to Action */}
+        <section className="py-16 md:py-24 relative overflow-hidden">
+          {/* Background Video */}
+          <div className="absolute inset-0 opacity-20">
+            <video 
+              className="w-full h-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+              src="/videos/cherryTake.mp4"
+            />
+            <div className="absolute inset-0 bg-[#1A1A1A]/70"></div>
+          </div>
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="max-w-3xl mx-auto text-center">
+              <motion.h2 
+                className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+              >
+                Pregătit să Transformi Spațiul Tău?
+              </motion.h2>
+              <motion.p 
+                className="text-lg text-white/80 mb-10"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                Contactează-ne pentru o consultare gratuită și află cum te putem ajuta să-ți transformi casa sau spațiul comercial.
+              </motion.p>
+              <motion.div 
+                className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
+                <button className="px-8 py-4 bg-[#B99C4B] text-white rounded-full text-lg font-medium hover:bg-[#B99C4B]/80 transition-colors">
+                  Solicită o Ofertă Gratuită
+                </button>
+                <button className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-full text-lg font-medium hover:bg-white/10 transition-colors">
+                  Contactează-ne
+                </button>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+        
+        <Footer />
+      </main>
+    </SmoothScrollProvider>
+  );
+};
+
+export default ServicesPage; 

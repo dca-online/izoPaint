@@ -1,1 +1,382 @@
-'use client';import React,{useEffect,useRef,useState}from 'react';import{gsap}from 'gsap';import{ScrollTrigger}from 'gsap/ScrollTrigger';import{Space_Grotesk,Playfair_Display}from 'next/font/google';const spaceGrotesk=Space_Grotesk({subsets:['latin'],weight:['700'],display:'swap',});const playfair=Playfair_Display({subsets:['latin'],weight:['400','500'],display:'swap',});gsap.registerPlugin(ScrollTrigger);const VideoHeader=()=>{const videoLeftRef=useRef<HTMLVideoElement>(null);const videoRightRef=useRef<HTMLVideoElement>(null);const headerRef=useRef<HTMLDivElement>(null);const headingRef=useRef<HTMLHeadingElement>(null);const subtitleRef=useRef<HTMLParagraphElement>(null);const taglineRef=useRef<HTMLDivElement>(null);const leftDoorRef=useRef<HTMLDivElement>(null);const rightDoorRef=useRef<HTMLDivElement>(null);const ctaRef=useRef<HTMLDivElement>(null);const[animationCompleted,setAnimationCompleted]=useState(false);useEffect(()=>{const header=headerRef.current;const heading=headingRef.current;const subtitle=subtitleRef.current;const cta=ctaRef.current;const tagline=taglineRef.current;const leftDoor=leftDoorRef.current;const rightDoor=rightDoorRef.current;if(!header||!heading||!subtitle||!cta||!tagline||!leftDoor||!rightDoor)return;gsap.fromTo([heading,subtitle,tagline,cta],{opacity:0,y:30},{opacity:1,y:0,stagger:0.1,duration:1,delay:0.5});const isMobileDevice=window.innerWidth<768;const doorTl=gsap.timeline({scrollTrigger:{trigger:'body',start:'top top',end:'30%top',scrub:isMobileDevice?1:2,onUpdate:(self)=>{if(self.progress>0.8){setAnimationCompleted(true);}else{setAnimationCompleted(false);}},onLeave:()=>{if(!isMobileDevice){window.scrollTo({top:window.innerHeight,behavior:'auto'});}}}});const easingType=isMobileDevice?'power1.out':'power1.out';const doorDelay=isMobileDevice?0.1:0.05;const doorDuration=isMobileDevice?1.2:1.5;const headerTiming=isMobileDevice?0:0;const headerDelay=isMobileDevice?0:0.2;doorTl .to(leftDoor,{x:'-100%',ease:easingType,duration:doorDuration,opacity:1},doorDelay).to(rightDoor,{x:'100%',ease:easingType,duration:doorDuration,opacity:1},doorDelay).to(header,{opacity:0,y:'-50%',duration:isMobileDevice?0.8:1,ease:'power2.inOut',delay:headerDelay},headerTiming);return()=>{ScrollTrigger.getAll().forEach((trigger)=>trigger.kill());};},[]);return(<>{ }<div ref={headerRef}className={`fixed top-0 left-0 w-full h-screen z-20 ${animationCompleted?'pointer-events-none':''}`}> <div className="absolute top-0 left-0 w-full h-full flex items-stretch">{ }<div ref={leftDoorRef}className="w-1/2 h-full relative overflow-hidden" style={{transformOrigin:'left center'}}>{ }<div className="absolute inset-0 overflow-hidden"> <video ref={videoLeftRef}autoPlay muted loop playsInline className="absolute h-full w-[200%]object-cover" style={{objectPosition:'left center'}}src="/videos/stone.mp4"/> </div>{ }<div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A]/80 via-[#1A1A1A]/60 to-[#1A1A1A]/70"/> <div className="absolute inset-0 bg-[#1A1A1A]/20"/> </div>{ }<div ref={rightDoorRef}className="w-1/2 h-full relative overflow-hidden" style={{transformOrigin:'right center'}}>{ }<div className="absolute inset-0 overflow-hidden"> <video ref={videoRightRef}autoPlay muted loop playsInline className="absolute h-full w-[200%]object-cover" style={{objectPosition:'left center',transform:'scaleX(-1)'}}src="/videos/stone.mp4"/> </div>{ }<div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A]/80 via-[#1A1A1A]/60 to-[#1A1A1A]/70"/> <div className="absolute inset-0 bg-[#1A1A1A]/20"/> </div> </div>{ }<div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 z-20 pointer-events-none">{ }<h1 ref={headingRef}className={`hidden sm:block text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 tracking-tighter whitespace-nowrap pointer-events-auto ${spaceGrotesk.className}`}style={{letterSpacing:'-0.02em',fontWeight:'700',textShadow:'0 2px 15px rgba(0,0,0,0.5)',background:'linear-gradient(to bottom,#ffffff,#d1d1d1)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',lineHeight:'1.2',textTransform:'uppercase',paddingBottom:'0.1em',}}> <span style={{display:'inline-block',paddingBottom:'0.2em'}}>Esența formelor de fond</span> </h1>{ }<div className={`sm:hidden flex flex-col items-center justify-center pointer-events-auto ${spaceGrotesk.className}mb-5 w-full`}style={{paddingTop:'20px'}}>{ }<div className="relative flex flex-col items-center" style={{maxWidth:'340px'}}>{ }<div className="relative w-full flex flex-col items-center"> <div className="absolute top-0 left-0 w-full h-full border-2 border-[#B99C4B]/20 rounded-xl" style={{transform:'translate(4px,4px)'}}> </div> <div className="relative z-10 px-5 py-3 w-full rounded-xl border border-white/10" style={{backgroundColor:'rgba(26,26,26,0.35)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',boxShadow:'0 8px 32px rgba(0,0,0,0.12)',borderTop:'1px solid rgba(255,255,255,0.1)',borderLeft:'1px solid rgba(255,255,255,0.08)'}}> <div style={{color:'#B99C4B',fontSize:'52px',fontWeight:'700',textTransform:'uppercase',textShadow:'0 2px 15px rgba(0,0,0,0.5)',letterSpacing:'0.05em',lineHeight:'1',textAlign:'left'}}>ESENȚA</div>{ }<div className="flex items-center justify-center my-2"> <div className="h-px w-12 bg-[#B99C4B]/40"> </div> <div style={{color:'#FFFFFF',fontSize:'22px',fontWeight:'700',textTransform:'uppercase',textShadow:'0 2px 15px rgba(0,0,0,0.5)',letterSpacing:'0.1em',lineHeight:'1',marginLeft:'12px',marginRight:'12px',}}>FORMELOR DE</div> <div className="h-px w-12 bg-[#B99C4B]/40"> </div> </div>{ }<div style={{color:'#F0E4B2',fontSize:'52px',fontWeight:'700',textTransform:'uppercase',textShadow:'0 2px 15px rgba(0,0,0,0.5)',letterSpacing:'0.05em',lineHeight:'1',textAlign:'right'}}>FOND</div> </div> </div> </div>{ }<div className="mt-4 flex items-center justify-center"> <div className="h-[2px]w-[2px]rounded-full bg-[#B99C4B]mx-1"> </div> <div className="h-[2px]w-[30px]bg-[#B99C4B]"> </div> <div className="h-[2px]w-[2px]rounded-full bg-[#B99C4B]mx-1"> </div> </div> </div>{ }<div className="hidden sm:flex items-center justify-center mb-6 sm:mb-8"> <div className="decorative-line h-[2px]bg-[#B99C4B]mx-2"> </div> </div> <div ref={taglineRef}className="header-tagline mb-3 sm:mb-5 text-lg sm:text-xl md:text-2xl tracking-wider font-light pointer-events-auto relative w-full">{ }<div className="grid grid-cols-2 relative w-full">{ }<div className="flex justify-end pr-2"> <span className={`${playfair.className}text-[#B99C4B]not-italic font-medium`}>Vopsele moderne</span> </div>{ }<div className="flex justify-start pl-2"> <span className={`${playfair.className}text-[#F0E4B2]not-italic font-medium`}>izolații eco-friendly</span> </div>{ }<div className="absolute top-0 bottom-0 left-1/2-translate-x-1/2 w-[1px]h-full"> <div className="absolute inset-0 bg-gradient-to-b from-[#B99C4B]via-white/70 to-[#F0E4B2]" style={{height:'130%',top:'-15%'}}> </div> </div> </div> </div> <p ref={subtitleRef}className="text-sm sm:text-base md:text-lg text-white/80 mb-6 sm:mb-10 max-w-2xl font-light pointer-events-auto" style={{letterSpacing:'0.05em'}}>Transformă-ți spațiul cu soluții complete pentru o casă frumoasă,confortabilă și eficientă energetic</p> <div ref={ctaRef}className="flex flex-col items-center justify-center w-full pointer-events-auto relative">{ }<div className="hidden sm:grid grid-cols-2 gap-x-4 w-full max-w-xl"> <div className="flex justify-end"> <button className="px-6 sm:px-8 py-2 sm:py-3 bg-transparent border border-[#B99C4B]text-white rounded-full text-base sm:text-lg font-medium hover:bg-[#B99C4B]/10 transition-all duration-300 relative group overflow-hidden"> <span className="relative z-10">Solicită ofertă</span> <span className="absolute inset-0 w-0 bg-[#B99C4B]/20 transition-all duration-300 group-hover:w-full"> </span> </button> </div> <div className="flex justify-start"> <button className="px-6 sm:px-8 py-2 sm:py-3 bg-transparent border border-white/50 text-white rounded-full text-base sm:text-lg font-medium hover:bg-white/10 transition-all duration-300">Descoperă proiecte</button> </div> </div>{ }<div className="flex flex-col space-y-3 sm:hidden w-full items-center"> <button className="px-6 sm:px-8 py-2 sm:py-3 bg-transparent border border-[#B99C4B]text-white rounded-full text-base sm:text-lg font-medium hover:bg-[#B99C4B]/10 transition-all duration-300 relative group overflow-hidden"> <span className="relative z-10">Solicită ofertă</span> <span className="absolute inset-0 w-0 bg-[#B99C4B]/20 transition-all duration-300 group-hover:w-full"> </span> </button> <button className="px-6 sm:px-8 py-2 sm:py-3 bg-transparent border border-white/50 text-white rounded-full text-base sm:text-lg font-medium hover:bg-white/10 transition-all duration-300">Descoperă Proiecte</button> </div>{ }<div className="absolute bottom-0 left-1/2-translate-x-1/2 h-4 w-[1px]bg-[#B99C4B]/20 hidden sm:block"> </div> </div> </div>{ }{!animationCompleted&&(<div className="absolute bottom-10 left-1/2 transform-translate-x-1/2 flex flex-col items-center z-20"> <div className="text-[#B99C4B]text-xs tracking-widest uppercase mb-2 opacity-80">Explorează</div> <div className="w-6 h-10 border border-white/50 rounded-full flex justify-center"> <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce mt-2"/> </div> </div>)}{ }<div className="absolute top-24 right-[10%]w-20 h-20 border border-[#B99C4B]/20 rounded-full opacity-50 z-20"> </div> <div className="absolute bottom-24 left-[10%]w-16 h-16 border border-[#F0E4B2]/20 rounded-full opacity-50 z-20"> </div> </div>{ }<div className="h-screen w-full"> </div> </>);};export default VideoHeader;
+'use client';
+import React, { useEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Space_Grotesk, Playfair_Display } from 'next/font/google';
+
+// Import a more industrial, angular font
+const spaceGrotesk = Space_Grotesk({ 
+  subsets: ['latin'],
+  weight: ['700'],
+  display: 'swap',
+});
+
+// Import an elegant interior design oriented font
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  display: 'swap',
+});
+
+gsap.registerPlugin(ScrollTrigger);
+
+const VideoHeader = () => {
+  const videoLeftRef = useRef<HTMLVideoElement>(null);
+  const videoRightRef = useRef<HTMLVideoElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const taglineRef = useRef<HTMLDivElement>(null);
+  const leftDoorRef = useRef<HTMLDivElement>(null);
+  const rightDoorRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const [animationCompleted, setAnimationCompleted] = useState(false);
+  
+  useEffect(() => {
+    // Initialize GSAP animations
+    const header = headerRef.current;
+    const heading = headingRef.current;
+    const subtitle = subtitleRef.current;
+    const cta = ctaRef.current;
+    const tagline = taglineRef.current;
+    const leftDoor = leftDoorRef.current;
+    const rightDoor = rightDoorRef.current;
+    
+    if (!header || !heading || !subtitle || !cta || !tagline || !leftDoor || !rightDoor) return;
+
+    // Initial animation for text elements
+    gsap.fromTo(
+      [heading, subtitle, tagline, cta],
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, stagger: 0.1, duration: 1, delay: 0.5 }
+    );
+
+    // Create a timeline for the door split effect
+    const isMobileDevice = window.innerWidth < 768;
+    
+    const doorTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: 'body',
+        start: 'top top',
+        end: '30% top',
+        scrub: isMobileDevice ? 1 : 2, // Less resistance on mobile
+        onUpdate: (self) => {
+          // When animation completes, set state to disable pointer events
+          if (self.progress > 0.8) {
+            setAnimationCompleted(true);
+          } else {
+            setAnimationCompleted(false);
+          }
+        },
+        onLeave: () => {
+          // Only apply forced scroll on desktop
+          if (!isMobileDevice) {
+            // Force snap to the next section only on desktop
+            window.scrollTo({
+              top: window.innerHeight,
+              behavior: 'auto' // Use 'auto' for instant snap on desktop
+            });
+          }
+          // On mobile, let natural scrolling take over for smoother experience
+        }
+      }
+    });
+
+    // Create the door animation with improved easing for mobile
+    const easingType = isMobileDevice ? 'power1.out' : 'power1.out';
+    const doorDelay = isMobileDevice ? 0.1 : 0.05;
+    const doorDuration = isMobileDevice ? 1.2 : 1.5; // Slightly shorter duration for mobile
+    
+    // For mobile, we need content to fade earlier than the doors split
+    // For desktop, we keep the existing behavior
+    const headerTiming = isMobileDevice ? 0 : 0;  // Start immediately on mobile
+    const headerDelay = isMobileDevice ? 0 : 0.2; // No delay on mobile
+
+    doorTl
+      .to(leftDoor, { 
+        x: '-100%', 
+        ease: easingType,
+        duration: doorDuration,
+        opacity: 1 // Keep opacity at 1 to prevent fading
+      }, doorDelay)
+      .to(rightDoor, { 
+        x: '100%', 
+        ease: easingType,
+        duration: doorDuration,
+        opacity: 1 // Keep opacity at 1 to prevent fading
+      }, doorDelay)
+      .to(header, { 
+        opacity: 0,
+        y: '-50%',
+        duration: isMobileDevice ? 0.8 : 1, // Slightly faster fade on mobile
+        ease: 'power2.inOut',
+        delay: headerDelay
+      }, headerTiming);
+
+    // Clean up ScrollTrigger on component unmount
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, []);
+
+  return (
+    <>
+      {/* Fixed Hero Overlay */}
+      <div 
+        ref={headerRef}
+        className={`fixed top-0 left-0 w-full h-screen z-20 ${animationCompleted ? 'pointer-events-none' : ''}`}
+      >
+        <div className="absolute top-0 left-0 w-full h-full flex items-stretch">
+          {/* Left Door */}
+          <div 
+            ref={leftDoorRef}
+            className="w-1/2 h-full relative overflow-hidden"
+            style={{ transformOrigin: 'left center' }}
+          >
+            {/* Video Background - Left Side */}
+            <div className="absolute inset-0 overflow-hidden">
+              <video
+                ref={videoLeftRef}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute h-full w-[200%] object-cover"
+                style={{ objectPosition: 'left center' }}
+                src="/videos/stone.mp4"
+              />
+            </div>
+            {/* Overlay - Left Side */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A]/80 via-[#1A1A1A]/60 to-[#1A1A1A]/70" />
+            <div className="absolute inset-0 bg-[#1A1A1A]/20" />
+          </div>
+          
+          {/* Right Door */}
+          <div 
+            ref={rightDoorRef}
+            className="w-1/2 h-full relative overflow-hidden"
+            style={{ transformOrigin: 'right center' }}
+          >
+            {/* Video Background - Right Side */}
+            <div className="absolute inset-0 overflow-hidden">
+              <video
+                ref={videoRightRef}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute h-full w-[200%] object-cover"
+                style={{ 
+                  objectPosition: 'left center',
+                  transform: 'scaleX(-1)' /* Mirror the video horizontally */
+                }}
+                src="/videos/stone.mp4"
+              />
+            </div>
+            {/* Overlay - Right Side */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A]/80 via-[#1A1A1A]/60 to-[#1A1A1A]/70" />
+            <div className="absolute inset-0 bg-[#1A1A1A]/20" />
+          </div>
+        </div>
+        
+        {/* Header Content - Centered over both doors */}
+        <div 
+          className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 z-20 pointer-events-none"
+        >
+          {/* Desktop heading (hidden on mobile) */}
+          <h1 
+            ref={headingRef}
+            className={`hidden sm:block text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 tracking-tighter whitespace-nowrap pointer-events-auto ${spaceGrotesk.className}`}
+            style={{ 
+              letterSpacing: '-0.02em', 
+              fontWeight: '700',
+              textShadow: '0 2px 15px rgba(0,0,0,0.5)',
+              background: 'linear-gradient(to bottom, #ffffff, #d1d1d1)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              lineHeight: '1.2',
+              textTransform: 'uppercase',
+              paddingBottom: '0.1em',
+            }}
+          >
+            <span style={{ display: 'inline-block', paddingBottom: '0.2em' }}>Esența formelor de fond</span>
+          </h1>
+          
+          {/* Mobile heading with modern minimalist design */}
+          <div className={`sm:hidden flex flex-col items-center justify-center pointer-events-auto ${spaceGrotesk.className} mb-5 w-full`} style={{ paddingTop: '20px' }}>
+            {/* Minimalist text block with balanced design */}
+            <div className="relative flex flex-col items-center" style={{ maxWidth: '340px' }}>
+              {/* "ESENȚA" as an overlay with border frame */}
+              <div className="relative w-full flex flex-col items-center">
+                <div className="absolute top-0 left-0 w-full h-full border-2 border-[#B99C4B]/20 rounded-xl" style={{ transform: 'translate(4px, 4px)' }}></div>
+                
+                <div className="relative z-10 px-5 py-3 w-full rounded-xl border border-white/10" 
+                  style={{ 
+                    backgroundColor: 'rgba(26, 26, 26, 0.35)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderLeft: '1px solid rgba(255, 255, 255, 0.08)'
+                  }}>
+                  <div
+                    style={{
+                      color: '#B99C4B',
+                      fontSize: '52px',
+                      fontWeight: '700',
+                      textTransform: 'uppercase',
+                      textShadow: '0 2px 15px rgba(0,0,0,0.5)',
+                      letterSpacing: '0.05em',
+                      lineHeight: '1',
+                      textAlign: 'left'
+                    }}
+                  >
+                    ESENȚA
+                  </div>
+                  
+                  {/* Middle row with line separators */}
+                  <div className="flex items-center justify-center my-2">
+                    <div className="h-px w-12 bg-[#B99C4B]/40"></div>
+                    <div
+                      style={{
+                        color: '#FFFFFF',
+                        fontSize: '22px',
+                        fontWeight: '700',
+                        textTransform: 'uppercase',
+                        textShadow: '0 2px 15px rgba(0,0,0,0.5)',
+                        letterSpacing: '0.1em',
+                        lineHeight: '1',
+                        marginLeft: '12px',
+                        marginRight: '12px',
+                      }}
+                    >
+                      FORMELOR DE
+                    </div>
+                    <div className="h-px w-12 bg-[#B99C4B]/40"></div>
+                  </div>
+                  
+                  {/* Bottom: "FOND" */}
+                  <div
+                    style={{
+                      color: '#F0E4B2',
+                      fontSize: '52px',
+                      fontWeight: '700',
+                      textTransform: 'uppercase',
+                      textShadow: '0 2px 15px rgba(0,0,0,0.5)',
+                      letterSpacing: '0.05em',
+                      lineHeight: '1',
+                      textAlign: 'right'
+                    }}
+                  >
+                    FOND
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Minimal decoration below */}
+            <div className="mt-4 flex items-center justify-center">
+              <div className="h-[2px] w-[2px] rounded-full bg-[#B99C4B] mx-1"></div>
+              <div className="h-[2px] w-[30px] bg-[#B99C4B]"></div>
+              <div className="h-[2px] w-[2px] rounded-full bg-[#B99C4B] mx-1"></div>
+            </div>
+          </div>
+          
+          {/* Only show decorative line for desktop */}
+          <div className="hidden sm:flex items-center justify-center mb-6 sm:mb-8">
+            <div className="decorative-line h-[2px] bg-[#B99C4B] mx-2"></div>
+          </div>
+          
+          <div 
+            ref={taglineRef}
+            className="header-tagline mb-3 sm:mb-5 text-lg sm:text-xl md:text-2xl tracking-wider font-light pointer-events-auto relative w-full"
+          >
+            {/* Grid layout with two equal columns and center separator */}
+            <div className="grid grid-cols-2 relative w-full">
+              {/* Left phrase - stays in left half */}
+              <div className="flex justify-end pr-2">
+                <span className={`${playfair.className} text-[#B99C4B] not-italic font-medium`}>
+                  Vopsele moderne
+                </span>
+              </div>
+              
+              {/* Right phrase - stays in right half */}
+              <div className="flex justify-start pl-2">
+                <span className={`${playfair.className} text-[#F0E4B2] not-italic font-medium`}>
+                  izolații eco-friendly
+                </span>
+              </div>
+              
+              {/* Center separator line exactly at the split point */}
+              <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[1px] h-full">
+                <div className="absolute inset-0 bg-gradient-to-b from-[#B99C4B] via-white/70 to-[#F0E4B2]" 
+                     style={{ height: '130%', top: '-15%' }}></div>
+              </div>
+            </div>
+          </div>
+          
+          <p 
+            ref={subtitleRef}
+            className="text-sm sm:text-base md:text-lg text-white/80 mb-6 sm:mb-10 max-w-2xl font-light pointer-events-auto"
+            style={{ letterSpacing: '0.05em' }}
+          >
+            Transformă-ți spațiul cu soluții complete pentru o casă frumoasă, confortabilă și eficientă energetic
+          </p>
+          
+          <div 
+            ref={ctaRef}
+            className="flex flex-col items-center justify-center w-full pointer-events-auto relative"
+          >
+            {/* Grid layout for desktop, stacked for mobile */}
+            <div className="hidden sm:grid grid-cols-2 gap-x-4 w-full max-w-xl">
+              <div className="flex justify-end">
+                <button className="px-6 sm:px-8 py-2 sm:py-3 bg-transparent border border-[#B99C4B] text-white rounded-full text-base sm:text-lg font-medium hover:bg-[#B99C4B]/10 transition-all duration-300 relative group overflow-hidden">
+                  <span className="relative z-10">Solicită Ofertă</span>
+                  <span className="absolute inset-0 w-0 bg-[#B99C4B]/20 transition-all duration-300 group-hover:w-full"></span>
+                </button>
+              </div>
+              <div className="flex justify-start">
+                <button className="px-6 sm:px-8 py-2 sm:py-3 bg-transparent border border-white/50 text-white rounded-full text-base sm:text-lg font-medium hover:bg-white/10 transition-all duration-300">
+                  Descoperă Proiecte
+                </button>
+              </div>
+            </div>
+            
+            {/* Mobile stacked buttons */}
+            <div className="flex flex-col space-y-3 sm:hidden w-full items-center">
+              <button className="px-6 sm:px-8 py-2 sm:py-3 bg-transparent border border-[#B99C4B] text-white rounded-full text-base sm:text-lg font-medium hover:bg-[#B99C4B]/10 transition-all duration-300 relative group overflow-hidden">
+                <span className="relative z-10">Solicită Ofertă</span>
+                <span className="absolute inset-0 w-0 bg-[#B99C4B]/20 transition-all duration-300 group-hover:w-full"></span>
+              </button>
+              <button className="px-6 sm:px-8 py-2 sm:py-3 bg-transparent border border-white/50 text-white rounded-full text-base sm:text-lg font-medium hover:bg-white/10 transition-all duration-300">
+                Descoperă Proiecte
+              </button>
+            </div>
+            
+            {/* Visual indicator of the split point */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-4 w-[1px] bg-[#B99C4B]/20 hidden sm:block"></div>
+          </div>
+        </div>
+
+        {/* Scroll Indicator - Only show if animation not completed */}
+        {!animationCompleted && (
+          <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-20">
+            <div className="text-[#B99C4B] text-xs tracking-widest uppercase mb-2 opacity-80">Explorează</div>
+            <div className="w-6 h-10 border border-white/50 rounded-full flex justify-center">
+              <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce mt-2" />
+            </div>
+          </div>
+        )}
+        
+        {/* Decorative Elements */}
+        <div className="absolute top-24 right-[10%] w-20 h-20 border border-[#B99C4B]/20 rounded-full opacity-50 z-20"></div>
+        <div className="absolute bottom-24 left-[10%] w-16 h-16 border border-[#F0E4B2]/20 rounded-full opacity-50 z-20"></div>
+      </div>
+
+      {/* Spacer for content below */}
+      <div className="h-screen w-full"></div>
+    </>
+  );
+};
+
+export default VideoHeader; 
