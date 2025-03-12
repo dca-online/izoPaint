@@ -3,7 +3,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import PageHeader from '@/components/PageHeader';
 import GlassCard from '@/components/GlassCard';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 import Image from 'next/image';

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Create SVG components for our icons
+// Our custom icons with a touch of brand personality
 const CartIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M9 22C9.55228 22 10 21.5523 10 21C10 20.4477 9.55228 20 9 20C8.44772 20 8 20.4477 8 21C8 21.5523 8.44772 22 9 22Z" stroke="#404040" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -43,7 +43,7 @@ const Navbar = () => {
   const navItemRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [cartCount] = useState(0);
 
-  // Check if mobile on client side
+  // The first time this loads, we need to figure out what device we're on
   useEffect(() => {
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -57,14 +57,14 @@ const Navbar = () => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
       setHasScrolled(scrollPosition > 100);
-      setIsPastHero(scrollPosition > window.innerHeight * 0.75); // Past 75% of viewport height
+      setIsPastHero(scrollPosition > window.innerHeight * 0.75); // We're about 3/4 down the hero section
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Prevent body scrolling when menu is open
+  // Let's make sure the menu doesn't make everything jumpy when it's open
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -91,7 +91,7 @@ const Navbar = () => {
       >
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
-            {/* Logo Pill Container */}
+            {/* Our brand logo with that nice pill shape */}
             <motion.div 
               className="relative"
               animate={{ 
@@ -190,7 +190,7 @@ const Navbar = () => {
             {/* Right-side actions container with Menu Button + Action Icons */}
             <div className="flex items-center">
               {/* Action Icons Container (Cart & Account) - now right next to menu button */}
-              <div className="flex items-center space-x-1 mr-1">
+              <div className="flex items-center space-x-2">
                 {/* Cart Icon Pill */}
                 <motion.div
                   className="relative z-[60]"
@@ -243,38 +243,40 @@ const Navbar = () => {
                     <AccountIcon />
                   </Link>
                 </motion.div>
-              </div>
 
-              {/* Menu Button Pill - visible when scrolled on desktop or past hero on mobile */}
-              <motion.button 
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="focus:outline-none relative z-[60] md:flex items-center"
-                aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-                animate={{ 
-                  opacity: hasScrolled || (isMobile && isPastHero) ? 1 : (isMobile ? 0 : hasScrolled ? 1 : 0),
-                  x: hasScrolled ? 0 : 50,
-                  background: hasScrolled ? 'rgba(248, 248, 246, 0.85)' : 'transparent',
-                  borderRadius: hasScrolled ? '9999px' : '0',
-                  padding: hasScrolled ? '0.5rem 1rem' : '0.5rem',
-                  boxShadow: hasScrolled ? '0 4px 20px rgba(0, 0, 0, 0.05)' : 'none',
-                  backdropFilter: hasScrolled ? 'blur(16px)' : 'none',
-                  WebkitBackdropFilter: hasScrolled ? 'blur(16px)' : 'none',
-                  border: hasScrolled ? '1px solid rgba(64, 64, 64, 0.08)' : 'none',
-                  borderTop: hasScrolled ? '1px solid rgba(255, 255, 255, 0.8)' : 'none',
-                  borderLeft: hasScrolled ? '1px solid rgba(255, 255, 255, 0.6)' : 'none',
-                  pointerEvents: hasScrolled || (isMobile && isPastHero) ? 'auto' : (isMobile ? 'none' : 'auto')
-                }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
-              >
-                {hasScrolled && (
-                  <span className="mr-3 text-[#696969] hidden md:block">Menu</span>
-                )}
-                <div className="w-6 flex flex-col items-center justify-center space-y-1">
-                  <span className={`block w-full h-0.5 rounded-full bg-[#404040] transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
-                  <span className={`block w-full h-0.5 rounded-full bg-[#404040] transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`}></span>
-                  <span className={`block w-full h-0.5 rounded-full bg-[#404040] transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
-                </div>
-              </motion.button>
+                {/* Menu Button Pill - now circular on mobile like other buttons */}
+                <motion.button 
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  className="focus:outline-none relative z-[60] md:flex items-center"
+                  aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+                  animate={{ 
+                    opacity: hasScrolled || (isMobile && isPastHero) ? 1 : (isMobile ? 0 : hasScrolled ? 1 : 0),
+                    x: hasScrolled ? 0 : 50,
+                    background: hasScrolled ? 'rgba(248, 248, 246, 0.85)' : 'transparent',
+                    borderRadius: '9999px',
+                    padding: isMobile ? 0 : (hasScrolled ? '0.5rem 1rem' : '0.5rem'),
+                    width: isMobile ? '40px' : 'auto',
+                    height: isMobile ? '40px' : 'auto',
+                    boxShadow: hasScrolled ? '0 4px 20px rgba(0, 0, 0, 0.05)' : 'none',
+                    backdropFilter: hasScrolled ? 'blur(16px)' : 'none',
+                    WebkitBackdropFilter: hasScrolled ? 'blur(16px)' : 'none',
+                    border: hasScrolled ? '1px solid rgba(64, 64, 64, 0.08)' : 'none',
+                    borderTop: hasScrolled ? '1px solid rgba(255, 255, 255, 0.8)' : 'none',
+                    borderLeft: hasScrolled ? '1px solid rgba(255, 255, 255, 0.6)' : 'none',
+                    pointerEvents: hasScrolled || (isMobile && isPastHero) ? 'auto' : (isMobile ? 'none' : 'auto')
+                  }}
+                  transition={{ duration: 0.4, ease: 'easeOut' }}
+                >
+                  {hasScrolled && !isMobile && (
+                    <span className="mr-3 text-[#696969] hidden md:block">Menu</span>
+                  )}
+                  <div className={`flex flex-col items-center justify-center space-y-1 ${isMobile ? 'h-full w-full' : 'w-6'}`}>
+                    <span className={`block ${isMobile ? 'w-5' : 'w-full'} h-0.5 rounded-full bg-[#404040] transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
+                    <span className={`block ${isMobile ? 'w-5' : 'w-full'} h-0.5 rounded-full bg-[#404040] transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`}></span>
+                    <span className={`block ${isMobile ? 'w-5' : 'w-full'} h-0.5 rounded-full bg-[#404040] transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
+                  </div>
+                </motion.button>
+              </div>
             </div>
           </div>
         </div>

@@ -10,7 +10,7 @@ interface GlassCardProps {
 }
 
 const GlassCard = ({ children, accent = 'none', className = '', delay = 0 }: GlassCardProps) => {
-  // Accent border and glow configurations
+  // The secret sauce for our beautiful glass cards with different moods
   const accentStyles = {
     gold: {
       border: 'border-[#8a7d65]/40',
@@ -39,11 +39,11 @@ const GlassCard = ({ children, accent = 'none', className = '', delay = 0 }: Gla
       viewport={{ once: true }}
       transition={{ duration: 0.8, delay }}
     >
-      {/* Inner border highlight effect */}
+      {/* Those subtle glowy edges that make it feel like glass catching light */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#696969]/10 to-transparent"></div>
       <div className="absolute top-0 left-0 h-full w-px bg-gradient-to-b from-[#696969]/10 via-transparent to-transparent"></div>
       
-      {/* Content */}
+      {/* Where the magic happens - all the actual content goes here */}
       <div className="relative z-10">
         {children}
       </div>

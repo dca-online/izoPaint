@@ -8,7 +8,6 @@ import GlassCard from '@/components/GlassCard';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 import Image from 'next/image';
 import Link from 'next/link';
-import BackgroundVideo from '@/components/BackgroundVideo';
 
 // Product types
 type ProductCategory = 'vopsele' | 'izolatie' | 'accesorii';

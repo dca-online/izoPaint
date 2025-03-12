@@ -5,14 +5,14 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Space_Grotesk, Playfair_Display } from 'next/font/google';
 import Image from 'next/image';
 
-// Import a more industrial, angular font
+// This edgy, modern font gives us that architectural feel
 const spaceGrotesk = Space_Grotesk({ 
   subsets: ['latin'],
   weight: ['700'],
   display: 'swap',
 });
 
-// Import an elegant interior design oriented font
+// This classic serif adds that touch of luxury and refinement
 const playfair = Playfair_Display({
   subsets: ['latin'],
   weight: ['400', '500'],
@@ -32,7 +32,7 @@ const VideoHeader = () => {
   const [animationCompleted, setAnimationCompleted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   
-  // Handle mobile detection after component mounts
+  // We need to know if we're on a phone to make adjustments
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
     
@@ -45,7 +45,7 @@ const VideoHeader = () => {
   }, []);
   
   useEffect(() => {
-    // Initialize GSAP animations
+    // Time for the magic - GSAP brings our header to life
     const header = headerRef.current;
     const heading = headingRef.current;
     const subtitle = subtitleRef.current;
@@ -56,14 +56,14 @@ const VideoHeader = () => {
     
     if (!header || !heading || !subtitle || !cta || !tagline || !leftDoor || !rightDoor) return;
 
-    // Initial animation for text elements
+    // Let's fade in all those beautiful text elements first
     gsap.fromTo(
       [heading, subtitle, tagline, cta],
       { opacity: 0, y: 30 },
       { opacity: 1, y: 0, stagger: 0.1, duration: 1, delay: 0.5 }
     );
 
-    // Create a timeline for the door split effect
+    // Here comes the cool part - the doors splitting apart as you scroll
     const isMobileDevice = window.innerWidth < 768;
     
     const doorTl = gsap.timeline({
@@ -71,9 +71,9 @@ const VideoHeader = () => {
         trigger: 'body',
         start: 'top top',
         end: '30% top',
-        scrub: isMobileDevice ? 1 : 2, // Less resistance on mobile
+        scrub: isMobileDevice ? 1 : 2, // Phones need less resistance for smoother scrolling
         onUpdate: (self) => {
-          // When animation completes, set state to disable pointer events
+          // Once we're mostly done with the animation, let's hide some elements
           if (self.progress > 0.8) {
             setAnimationCompleted(true);
           } else {
@@ -83,38 +83,38 @@ const VideoHeader = () => {
       }
     });
 
-    // Create the door animation with improved easing for mobile
+    // The doors need to move differently depending on your device
     const easingType = isMobileDevice ? 'power1.out' : 'power1.out';
     const doorDelay = isMobileDevice ? 0.1 : 0.05;
-    const doorDuration = isMobileDevice ? 1.2 : 1.5; // Slightly shorter duration for mobile
+    const doorDuration = isMobileDevice ? 1.2 : 1.5; // A bit quicker on phones feels better
     
-    // For mobile, we need content to fade earlier than the doors split
-    // For desktop, we keep the existing behavior
-    const headerTiming = isMobileDevice ? 0 : 0;  // Start immediately on mobile
-    const headerDelay = isMobileDevice ? 0 : 0.2; // No delay on mobile
+    // Mobile users scroll differently, so we adjust the timing
+    // Desktop gets a slightly different treatment
+    const headerTiming = isMobileDevice ? 0 : 0;  // Everything happens at once on mobile
+    const headerDelay = isMobileDevice ? 0 : 0.2; // Desktop gets that slight pause
 
     doorTl
       .to(leftDoor, { 
         x: '-100%', 
         ease: easingType,
         duration: doorDuration,
-        opacity: 1 // Keep opacity at 1 to prevent fading
+        opacity: 1 // We want to keep it visible while it moves
       }, doorDelay)
       .to(rightDoor, { 
         x: '100%', 
         ease: easingType,
         duration: doorDuration,
-        opacity: 1 // Keep opacity at 1 to prevent fading
+        opacity: 1 // Same for the right door - stay visible
       }, doorDelay)
       .to(header, { 
         opacity: 0,
         y: '-50%',
-        duration: isMobileDevice ? 0.8 : 1, // Slightly faster fade on mobile
+        duration: isMobileDevice ? 0.8 : 1, // Text fades a bit faster on mobile
         ease: 'power2.inOut',
         delay: headerDelay
       }, headerTiming);
 
-    // Clean up ScrollTrigger on component unmount
+    // When we're done with the page, we clean up our GSAP magic
     return () => {
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
@@ -122,19 +122,19 @@ const VideoHeader = () => {
 
   return (
     <>
-      {/* Fixed Hero Overlay */}
+      {/* The full-screen canvas for our header spectacle */}
       <div 
         ref={headerRef}
         className={`fixed top-0 left-0 w-full h-screen z-20 ${animationCompleted ? 'pointer-events-none' : ''}`}
       >
         <div className="absolute top-0 left-0 w-full h-full flex items-stretch">
-          {/* Left Door */}
+          {/* The left-side door that slides away */}
           <div 
             ref={leftDoorRef}
             className="w-1/2 h-full relative overflow-hidden"
             style={{ transformOrigin: 'left center' }}
           >
-            {/* Left half of the image */}
+            {/* This half gets the texture that matches perfectly with the right side */}
             <div className="absolute inset-0 overflow-hidden">
               <div className="relative h-full w-[200%]">
                 <Image 
@@ -148,19 +148,19 @@ const VideoHeader = () => {
                   }}
                   priority
                 />
-                {/* Add whitening overlay for better text visibility */}
+                {/* A soft veil of white to help our text pop */}
                 <div className="absolute inset-0 bg-white/40"></div>
               </div>
             </div>
           </div>
           
-          {/* Right Door */}
+          {/* The right-side door that slides away */}
           <div 
             ref={rightDoorRef}
             className="w-1/2 h-full relative overflow-hidden"
             style={{ transformOrigin: 'right center' }}
           >
-            {/* Right half of the image - no mirroring */}
+            {/* The right side texture that creates our seamless background */}
             <div className="absolute inset-0 overflow-hidden">
               <div className="relative h-full w-[200%] right-full">
                 <Image 
@@ -174,7 +174,7 @@ const VideoHeader = () => {
                   }}
                   priority
                 />
-                {/* Add whitening overlay for better text visibility */}
+                {/* That same dreamy white overlay for visual consistency */}
                 <div className="absolute inset-0 bg-white/40"></div>
               </div>
             </div>

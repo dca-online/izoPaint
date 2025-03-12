@@ -1,14 +1,16 @@
 'use client';
-import React from 'react';
-import Navbar from '@/components/Navbar';
-import VideoHeader from '@/components/VideoHeader';
-import ServiceCard from '@/components/ServiceCard';
-import SmoothScrollProvider from '@/components/SmoothScrollProvider';
-import BackgroundVideo from '@/components/BackgroundVideo';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import ServiceCard from '@/components/ServiceCard';
+import GlassCard from '@/components/GlassCard';
+import SmoothScrollProvider from '@/components/SmoothScrollProvider';
+import Link from 'next/link';
+import VideoHeader from '@/components/VideoHeader';
+import BackgroundVideo from '@/components/BackgroundVideo';
 
-// Sample service data
+// Our showcase of beautiful paint and insulation services
 const paintServices = [
   {
     title: 'Vopsele decorative premium',
@@ -62,14 +64,14 @@ export default function Home() {
     <SmoothScrollProvider>
       <BackgroundVideo 
         videoSrc="/videos/paint.mp4" 
-        verticalFlip={typeof window !== 'undefined' && window.innerWidth < 768} // Vertical flip only on mobile
+        verticalFlip={typeof window !== 'undefined' && window.innerWidth < 768} // Mobile screens get a cooler vertical flip effect
       />
       
       <main className="min-h-screen relative z-10 bg-transparent">
         <Navbar />
         <VideoHeader />
         
-        {/* Services Section */}
+        {/* Where we showcase our amazing services */}
         <section className="py-20 px-4 md:px-8 lg:px-16 bg-transparent">
           <div className="container mx-auto">
             <motion.div 
@@ -87,7 +89,7 @@ export default function Home() {
               </p>
             </motion.div>
             
-            {/* Paint Services */}
+            {/* Our premium paint options - where color meets creativity */}
             <div className="mb-16">
               <motion.h3 
                 className="text-2xl font-bold text-[#8a7d65] mb-8"
@@ -113,7 +115,7 @@ export default function Home() {
               </div>
             </div>
             
-            {/* Insulation Services */}
+            {/* Our eco-friendly insulation solutions - comfort meets sustainability */}
             <div>
               <motion.h3 
                 className="text-2xl font-bold text-[#696969] mb-8"
@@ -141,7 +143,7 @@ export default function Home() {
           </div>
         </section>
         
-        {/* Call to Action Section */}
+        {/* The gentle nudge that turns visitors into clients */}
         <section className="py-20 px-4 md:px-8 lg:px-16 bg-transparent relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full opacity-10">
             <div className="absolute top-20 right-20 w-80 h-80 rounded-full bg-[#8a7d65] blur-3xl" />
@@ -186,7 +188,7 @@ export default function Home() {
           </div>
         </section>
         
-        {/* Footer */}
+        {/* Our stylish footer area */}
         <footer className="py-12 px-4 md:px-8 lg:px-16 bg-transparent border-t border-[#e6e5e3]">
           <div className="container mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-center">

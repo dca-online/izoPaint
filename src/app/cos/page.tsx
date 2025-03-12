@@ -1,15 +1,15 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaTrash, FaArrowRight, FaShoppingBag, FaLock } from 'react-icons/fa';
+// Remove unused icon imports
 import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import PageHeader from '@/components/PageHeader';
+// Remove unused PageHeader import
 import GlassCard from '@/components/GlassCard';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
-import { fadeIn } from '@/utils/motion';
+// Remove unused fadeIn import
 import BackgroundVideo from '@/components/BackgroundVideo';
 
 // Mock cart items

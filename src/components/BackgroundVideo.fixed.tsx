@@ -11,7 +11,7 @@ const BackgroundVideo = ({ videoSrc, verticalFlip = false }: BackgroundVideoProp
   const [isPlayingForward, setIsPlayingForward] = useState(true);
   const animationRef = useRef<number | null>(null);
   
-  // A bit of DOM magic for the vertical flip effect on mobile
+  // Apply vertical flip via direct DOM manipulation after component mounts
   useEffect(() => {
     if (videoRef.current && verticalFlip) {
       videoRef.current.style.transform = 'scale(1, -1)';
@@ -23,7 +23,7 @@ const BackgroundVideo = ({ videoSrc, verticalFlip = false }: BackgroundVideoProp
     if (!video) return;
     
     const handleVideoEnded = () => {
-      // Time to play it backwards - creates that cool ping-pong effect
+      // When video ends normally, we'll start playing in reverse
       setIsPlayingForward(false);
       if (video.currentTime >= video.duration - 0.1) {
         video.pause();
@@ -32,7 +32,7 @@ const BackgroundVideo = ({ videoSrc, verticalFlip = false }: BackgroundVideoProp
     };
     
     const handleVideoTimeUpdate = () => {
-      // We've reached the beginning again while playing backwards - back to forward we go
+      // If reverse playing and reached near beginning, switch to forward
       if (!isPlayingForward && video.currentTime <= 0.1) {
         setIsPlayingForward(true);
         if (animationRef.current) {
@@ -44,25 +44,25 @@ const BackgroundVideo = ({ videoSrc, verticalFlip = false }: BackgroundVideoProp
       }
     };
     
-    // Our little animation loop for smooth backward playback
+    // Function to handle reverse playback using requestAnimationFrame
     const startReversePlayback = () => {
       if (!video) return;
       
       let lastTimestamp = 0;
-      const step = 0.05; // The smaller this is, the smoother (but slower) the rewind
+      const step = 0.05; // Time step for reverse playback (adjust for speed)
       
       const animate = (timestamp: number) => {
         if (!lastTimestamp) lastTimestamp = timestamp;
         
-        // Frame timing magic for smooth playback
+        // Calculate elapsed time and adjust for desired playback speed
         const elapsed = timestamp - lastTimestamp;
         
-        if (elapsed > 16) { // Roughly targeting 60fps feels nice and smooth
-          // Rewind the video frame by frame
+        if (elapsed > 16) { // ~60fps
+          // Move backward in time
           video.currentTime = Math.max(0, video.currentTime - step);
           lastTimestamp = timestamp;
           
-          // We're back at the start, let's go forward again
+          // If we've reached the beginning, switch to forward playback
           if (video.currentTime <= 0.1) {
             setIsPlayingForward(true);
             video.currentTime = 0;
@@ -77,15 +77,15 @@ const BackgroundVideo = ({ videoSrc, verticalFlip = false }: BackgroundVideoProp
       animationRef.current = requestAnimationFrame(animate);
     };
     
-    // Hooking up the video event listeners
+    // Set up event listeners
     video.addEventListener('ended', handleVideoEnded);
     video.addEventListener('timeupdate', handleVideoTimeUpdate);
     
-    // Kick things off
+    // Initial play
     video.play();
     
     return () => {
-      // Housekeeping when component unmounts
+      // Clean up
       if (video) {
         video.removeEventListener('ended', handleVideoEnded);
         video.removeEventListener('timeupdate', handleVideoTimeUpdate);
