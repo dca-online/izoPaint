@@ -7,6 +7,7 @@ import PageHeader from '@/components/PageHeader';
 import GlassCard from '@/components/GlassCard';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 import Image from 'next/image';
+import Link from 'next/link';
 
 // Team data
 const teamMembers = [
@@ -87,7 +88,7 @@ const milestones = [
 const AboutPage = () => {
   return (
     <SmoothScrollProvider>
-      <main className="min-h-screen bg-[#1A1A1A] overflow-hidden">
+      <main className="min-h-screen bg-[#f8f8f6] overflow-hidden">
         <Navbar />
         
         <PageHeader 
@@ -96,286 +97,307 @@ const AboutPage = () => {
           videoSrc="/videos/palettes.mp4"
         />
         
-        {/* Introduction Section */}
-        <section className="py-16 md:py-24 px-4 relative">
-          <div className="absolute inset-0 z-0">
-            <div className="absolute top-1/4 right-1/4 w-80 h-80 rounded-full bg-[#B99C4B] opacity-10 blur-3xl"></div>
-            <div className="absolute bottom-1/4 left-1/3 w-80 h-80 rounded-full bg-[#F0E4B2] opacity-10 blur-3xl"></div>
-          </div>
+        {/* Content Background Overlay */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-[#f8f8f6] opacity-90 z-0"></div>
           
-          <div className="container mx-auto relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
+          {/* Introduction Section */}
+          <section className="py-16 md:py-24 px-4 relative z-10">
+            <div className="absolute inset-0 z-0">
+              <div className="absolute top-1/4 right-1/4 w-80 h-80 rounded-full bg-[#8a7d65] opacity-10 blur-3xl"></div>
+              <div className="absolute bottom-1/4 left-1/3 w-80 h-80 rounded-full bg-[#c3beb4] opacity-10 blur-3xl"></div>
+            </div>
+            
+            <div className="container mx-auto relative z-10">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <motion.div
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8 }}
+                >
+                  <GlassCard accent="gold">
+                    <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-6">
+                      Povestea <span className="text-[#8a7d65]">Noastră</span>
+                    </h2>
+                    <p className="text-[#404040] mb-6">
+                      De peste un deceniu, ne-am dedicat transformării spațiilor prin finisaje decorative de calitate și soluții moderne de izolație. Ce a început ca o mică afacere de familie, s-a dezvoltat într-o companie de referință în zona Sucevei, cu o echipă de profesioniști pasionați și un portofoliu impresionant de proiecte.
+                    </p>
+                    <p className="text-[#404040]">
+                      Misiunea noastră este simplă: să oferim clienților noștri cele mai bune soluții pentru spații frumoase, confortabile și eficiente energetic. Ne mândrim cu atenția la detalii, folosirea materialelor premium și adaptarea constantă la noile tehnologii și tendințe din domeniu.
+                    </p>
+                  </GlassCard>
+                </motion.div>
+                
+                <motion.div
+                  className="relative aspect-square lg:aspect-auto"
+                  initial={{ opacity: 0, x: 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                >
+                  <div className="relative h-full w-full min-h-[400px]">
+                    <div className="absolute top-0 right-0 w-3/4 h-3/4 rounded-2xl overflow-hidden border-8 border-[#f8f8f6] shadow-2xl">
+                      <Image
+                        src="/images/about-main.jpg"
+                        alt="Our story"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="absolute bottom-0 left-0 w-2/3 h-2/3 rounded-2xl overflow-hidden border-8 border-[#f8f8f6] shadow-2xl">
+                      <Image
+                        src="/images/about-secondary.jpg"
+                        alt="Our workshop"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    {/* Decorative elements */}
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full border-2 border-[#8a7d65] opacity-50"></div>
+                    <div className="absolute bottom-1/4 right-1/4 w-12 h-12 rounded-full bg-[#8a7d65]/20 backdrop-blur-sm"></div>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </section>
+          
+          {/* Philosophy Section */}
+          <section className="py-16 md:py-24 px-4 relative z-10 bg-[#f5f5f3]">
+            <div className="container mx-auto relative z-10">
+              <motion.div 
+                className="text-center mb-16"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8 }}
               >
-                <GlassCard accent="gold">
-                  <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
-                    Povestea <span className="text-[#B99C4B]">Noastră</span>
-                  </h2>
-                  <p className="text-white/80 mb-6">
-                    De peste un deceniu, ne-am dedicat transformării spațiilor prin finisaje decorative de calitate și soluții moderne de izolație. Ce a început ca o mică afacere de familie, s-a dezvoltat într-o companie de referință în zona Sucevei, cu o echipă de profesioniști pasionați și un portofoliu impresionant de proiecte.
-                  </p>
-                  <p className="text-white/80">
-                    Misiunea noastră este simplă: să oferim clienților noștri cele mai bune soluții pentru spații frumoase, confortabile și eficiente energetic. Ne mândrim cu atenția la detalii, folosirea materialelor premium și adaptarea constantă la noile tehnologii și tendințe din domeniu.
-                  </p>
-                </GlassCard>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-4">Filozofia Noastră</h2>
+                <p className="text-lg text-[#404040] max-w-2xl mx-auto">
+                  Valorile care ne ghidează și ne diferențiază în tot ceea ce facem.
+                </p>
               </motion.div>
               
-              <motion.div
-                className="relative aspect-square lg:aspect-auto"
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                <div className="relative h-full w-full min-h-[400px]">
-                  <div className="absolute top-0 right-0 w-3/4 h-3/4 rounded-2xl overflow-hidden border-8 border-[#1A1A1A] shadow-2xl">
-                    <Image
-                      src="/images/about-main.jpg"
-                      alt="Our story"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="absolute bottom-0 left-0 w-2/3 h-2/3 rounded-2xl overflow-hidden border-8 border-[#1A1A1A] shadow-2xl">
-                    <Image
-                      src="/images/about-secondary.jpg"
-                      alt="Our workshop"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  {/* Decorative elements */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full border-2 border-[#B99C4B] opacity-50"></div>
-                  <div className="absolute bottom-1/4 right-1/4 w-12 h-12 rounded-full bg-[#B99C4B]/20 backdrop-blur-sm"></div>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </section>
-        
-        {/* Philosophy Section */}
-        <section className="py-16 md:py-24 px-4 relative bg-[#333333]">
-          <div className="absolute inset-0 opacity-30">
-            <div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A] via-transparent to-[#1A1A1A]"></div>
-          </div>
-          
-          <div className="container mx-auto relative z-10">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">Filozofia Noastră</h2>
-              <p className="text-lg text-white/70 max-w-2xl mx-auto">
-                Valorile care ne ghidează și ne diferențiază în tot ceea ce facem.
-              </p>
-            </motion.div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                {
-                  title: "Calitate premium",
-                  description: "Utilizăm doar materiale de cea mai înaltă calitate și tehnici avansate pentru rezultate durabile și estetice.",
-                  icon: "🏆"
-                },
-                {
-                  title: "Inovație Continuă",
-                  description: "Ne actualizăm constant cunoștințele și tehnicile pentru a oferi cele mai moderne soluții clienților noștri.",
-                  icon: "💡"
-                },
-                {
-                  title: "Sustenabilitate",
-                  description: "Suntem dedicați folosirii materialelor eco-friendly și metodelor sustenabile în toate proiectele noastre.",
-                  icon: "🌱"
-                }
-              ].map((value, index) => (
-                <GlassCard key={value.title} delay={index * 0.2} accent={index === 1 ? "light" : "gold"}>
-                  <div className="flex flex-col items-center text-center">
-                    <span className="text-4xl mb-4">{value.icon}</span>
-                    <h3 className="text-xl font-bold text-white mb-3">{value.title}</h3>
-                    <p className="text-white/70">{value.description}</p>
-                  </div>
-                </GlassCard>
-              ))}
-            </div>
-          </div>
-        </section>
-        
-        {/* History Timeline */}
-        <section className="py-16 md:py-24 px-4 relative">
-          <div className="container mx-auto relative z-10">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">Istoricul Nostru</h2>
-              <p className="text-lg text-white/70 max-w-2xl mx-auto">
-                O privire asupra evoluției noastre și momentelor cheie din istoria companiei.
-              </p>
-            </motion.div>
-            
-            <div className="relative">
-              {/* Timeline stem */}
-              <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[#B99C4B]/30 transform -translate-x-1/2 hidden md:block"></div>
-              
-              <div className="space-y-16 relative">
-                {milestones.map((milestone, index) => (
-                  <div key={milestone.year} className="relative">
-                    <motion.div 
-                      className={`flex flex-col md:flex-row ${index % 2 === 0 ? 'md:flex-row-reverse' : ''} items-center gap-6 md:gap-12`}
-                      initial={{ opacity: 0, y: 30 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.8, delay: index * 0.1 }}
-                    >
-                      {/* Year bubble - always aligned with center stem on mobile, alternating sides on desktop */}
-                      <div className="md:w-1/2 flex justify-center md:justify-start items-center">
-                        <div className="w-16 h-16 flex items-center justify-center rounded-full bg-[#B99C4B] text-white text-xl font-bold relative z-20">
-                          {milestone.year}
-                        </div>
-                      </div>
-                      
-                      {/* Content - forms 50% of the row */}
-                      <div className="md:w-1/2">
-                        <GlassCard 
-                          accent={index % 2 === 0 ? "gold" : "light"}
-                          className="md:max-w-md"
-                        >
-                          <h3 className="text-xl font-bold text-white mb-2">{milestone.title}</h3>
-                          <p className="text-white/70">{milestone.description}</p>
-                        </GlassCard>
-                      </div>
-                    </motion.div>
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[
+                  {
+                    title: "Calitate premium",
+                    description: "Utilizăm doar materiale de cea mai înaltă calitate și tehnici avansate pentru rezultate durabile și estetice.",
+                    icon: "🏆"
+                  },
+                  {
+                    title: "Inovație Continuă",
+                    description: "Ne actualizăm constant cunoștințele și tehnicile pentru a oferi cele mai moderne soluții clienților noștri.",
+                    icon: "💡"
+                  },
+                  {
+                    title: "Sustenabilitate",
+                    description: "Suntem dedicați folosirii materialelor eco-friendly și metodelor sustenabile în toate proiectele noastre.",
+                    icon: "🌱"
+                  }
+                ].map((value, index) => (
+                  <GlassCard key={value.title} delay={index * 0.2} accent={index === 1 ? "light" : "gold"}>
+                    <div className="flex flex-col items-center text-center">
+                      <span className="text-4xl mb-4">{value.icon}</span>
+                      <h3 className="text-xl font-bold text-[#1A1A1A] mb-3">{value.title}</h3>
+                      <p className="text-[#404040]">{value.description}</p>
+                    </div>
+                  </GlassCard>
                 ))}
               </div>
             </div>
-          </div>
-        </section>
-        
-        {/* Team Section */}
-        <section className="py-16 md:py-24 px-4 relative overflow-hidden">
-          {/* Background Video */}
-          <div className="absolute inset-0 opacity-10">
-            <video 
-              className="w-full h-full object-cover"
-              autoPlay
-              muted
-              loop
-              playsInline
-              src="/videos/paintbrush.mp4"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A] via-[#1A1A1A]/50 to-[#1A1A1A]"></div>
-          </div>
+          </section>
           
-          <div className="container mx-auto relative z-10">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">Echipa Noastră</h2>
-              <p className="text-lg text-white/70 max-w-2xl mx-auto">
-                Profesioniști pasionați care aduc expertiza și creativitate în fiecare proiect.
-              </p>
-            </motion.div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {teamMembers.map((member, index) => (
-                <motion.div
-                  key={member.name}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: index * 0.1 }}
-                  className="group"
-                >
-                  <div className="relative aspect-square rounded-xl overflow-hidden mb-4">
-                    <Image
-                      src={member.image}
-                      alt={member.name}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A] via-transparent to-transparent opacity-60"></div>
-                  </div>
-                  
-                  <h3 className="text-xl font-bold text-white mb-1">{member.name}</h3>
-                  <p className="text-[#B99C4B] mb-2">{member.position}</p>
-                  <p className="text-white/70 text-sm">{member.description}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-        
-        {/* Testimonials Section */}
-        <section className="py-16 md:py-24 px-4 relative bg-[#333333]">
-          <div className="absolute inset-0 z-0">
-            <div className="absolute top-1/3 right-1/5 w-96 h-96 rounded-full bg-[#B99C4B] opacity-5 blur-3xl"></div>
-            <div className="absolute bottom-1/4 left-1/4 w-80 h-80 rounded-full bg-[#F0E4B2] opacity-5 blur-3xl"></div>
-          </div>
-          
-          <div className="container mx-auto relative z-10">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">Ce Spun Clienții</h2>
-              <p className="text-lg text-white/70 max-w-2xl mx-auto">
-                Experiențele clienților care au ales serviciile noastre.
-              </p>
-            </motion.div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {testimonials.map((testimonial, index) => (
-                <GlassCard key={index} accent="light" delay={index * 0.2}>
-                  <div className="flex flex-col h-full">
-                    <div className="text-4xl text-[#B99C4B] mb-4">&ldquo;</div>
-                    <p className="text-white/90 italic mb-6 flex-grow">{testimonial.quote}</p>
-                    <div>
-                      <p className="font-bold text-white">{testimonial.author}</p>
-                      <p className="text-[#F0E4B2] text-sm">{testimonial.project}</p>
+          {/* History Timeline */}
+          <section className="py-16 md:py-24 px-4 relative z-10">
+            <div className="container mx-auto relative z-10">
+              <motion.div 
+                className="text-center mb-16"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+              >
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-4">Istoricul Nostru</h2>
+                <p className="text-lg text-[#404040] max-w-2xl mx-auto">
+                  O privire asupra evoluției noastre și momentelor cheie din istoria companiei.
+                </p>
+              </motion.div>
+              
+              <div className="relative">
+                {/* Timeline stem */}
+                <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[#8a7d65]/30 transform -translate-x-1/2 hidden md:block"></div>
+                
+                <div className="space-y-16 relative">
+                  {milestones.map((milestone, index) => (
+                    <div key={milestone.year} className="relative">
+                      <motion.div 
+                        className={`flex flex-col md:flex-row ${index % 2 === 0 ? 'md:flex-row-reverse' : ''} items-center gap-6 md:gap-12`}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: index * 0.1 }}
+                      >
+                        {/* Year bubble - always aligned with center stem on mobile, alternating sides on desktop */}
+                        <div className="md:w-1/2 flex justify-center md:justify-start items-center">
+                          <div className="w-16 h-16 flex items-center justify-center rounded-full bg-[#8a7d65] text-white text-xl font-bold relative z-20">
+                            {milestone.year}
+                          </div>
+                        </div>
+                        
+                        {/* Content - forms 50% of the row */}
+                        <div className="md:w-1/2">
+                          <GlassCard 
+                            accent={index % 2 === 0 ? "gold" : "light"}
+                            className="md:max-w-md"
+                          >
+                            <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">{milestone.title}</h3>
+                            <p className="text-[#404040]">{milestone.description}</p>
+                          </GlassCard>
+                        </div>
+                      </motion.div>
                     </div>
-                  </div>
-                </GlassCard>
-              ))}
-            </div>
-          </div>
-        </section>
-        
-        {/* Call to Action */}
-        <section className="py-16 md:py-24 px-4 relative overflow-hidden">
-          <div className="container mx-auto relative z-10">
-            <GlassCard accent="gold" className="max-w-3xl mx-auto text-center">
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">Devino Parte din Povestea Noastră</h2>
-              <p className="text-white/80 mb-8">
-                Suntem pregătiți să ne punem experiența, pasiunea și expertiza în slujba proiectului tău. Contactează-ne pentru a discuta despre viziunea ta.
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <button className="px-8 py-3 bg-[#B99C4B] text-white rounded-full text-lg font-medium hover:bg-[#B99C4B]/80 transition-colors">
-                  Contactează-ne
-                </button>
+                  ))}
+                </div>
               </div>
-            </GlassCard>
-          </div>
-        </section>
-        
-        <Footer />
+            </div>
+          </section>
+          
+          {/* Team Section */}
+          <section className="py-16 md:py-24 px-4 relative z-10">
+            <div className="container mx-auto relative z-10">
+              <motion.div 
+                className="text-center mb-16"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+              >
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-4">Echipa Noastră</h2>
+                <p className="text-lg text-[#404040] max-w-2xl mx-auto">
+                  Profesioniști pasionați care aduc expertiza și creativitate în fiecare proiect.
+                </p>
+              </motion.div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {teamMembers.map((member, index) => (
+                  <motion.div
+                    key={member.name}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: index * 0.1 }}
+                    className="group"
+                  >
+                    <div className="relative aspect-square rounded-xl overflow-hidden mb-4">
+                      <Image
+                        src={member.image}
+                        alt={member.name}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        onError={(e) => {
+                          // Replace with "Not Found" text
+                          const parent = e.currentTarget.parentElement;
+                          if (parent) {
+                            // Hide the image
+                            e.currentTarget.style.display = 'none';
+                            
+                            // Create a placeholder with person icon
+                            const placeholder = document.createElement('div');
+                            placeholder.className = 'absolute inset-0 flex items-center justify-center bg-[#f5f5f5] text-[#8a7d65]';
+                            placeholder.innerHTML = `
+                              <div class="text-center p-4">
+                                <svg class="w-20 h-20 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                              </div>
+                            `;
+                            parent.appendChild(placeholder);
+                            
+                            // Remove the gradient overlay if it exists
+                            const overlay = parent.querySelector('div.absolute.inset-0.bg-gradient-to-t');
+                            if (overlay) {
+                              (overlay as HTMLElement).style.display = 'none';
+                            }
+                          }
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A] via-transparent to-transparent opacity-60"></div>
+                    </div>
+                    
+                    <h3 className="text-xl font-bold text-[#1A1A1A] mb-1">{member.name}</h3>
+                    <p className="text-[#8a7d65] mb-2">{member.position}</p>
+                    <p className="text-[#404040] text-sm">{member.description}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
+          
+          {/* Testimonials Section */}
+          <section className="py-16 md:py-24 px-4 relative z-10 bg-[#f5f5f3]">
+            <div className="container mx-auto relative z-10">
+              <motion.div 
+                className="text-center mb-16"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+              >
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1A1A1A] mb-4">Ce Spun Clienții</h2>
+                <p className="text-lg text-[#404040] max-w-2xl mx-auto">
+                  Experiențele clienților care au ales serviciile noastre.
+                </p>
+              </motion.div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {testimonials.map((testimonial, index) => (
+                  <GlassCard key={index} accent="light" delay={index * 0.2}>
+                    <div className="flex flex-col h-full">
+                      <div className="text-4xl text-[#8a7d65] mb-4">&ldquo;</div>
+                      <p className="text-[#404040] italic mb-6 flex-grow">{testimonial.quote}</p>
+                      <div>
+                        <p className="font-bold text-[#1A1A1A]">{testimonial.author}</p>
+                        <p className="text-[#8a7d65] text-sm">{testimonial.project}</p>
+                      </div>
+                    </div>
+                  </GlassCard>
+                ))}
+              </div>
+            </div>
+          </section>
+          
+          {/* Call to Action */}
+          <section className="py-16 md:py-24 px-4 relative z-10">
+            <div className="container mx-auto max-w-5xl">
+              <GlassCard accent="gold" className="p-8 md:p-12">
+                <div className="text-center">
+                  <h2 className="text-3xl md:text-4xl font-bold text-[#404040] mb-6">
+                    Pregătiți să lucrați cu noi?
+                  </h2>
+                  <p className="text-lg text-[#696969] mb-8 max-w-2xl mx-auto">
+                    Contactați-ne astăzi pentru a discuta despre proiectul dumneavoastră și pentru a primi o ofertă personalizată.
+                  </p>
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8 }}
+                  >
+                    <Link 
+                      href="/contact"
+                      className="inline-block px-8 py-4 bg-[#8a7d65] text-white rounded-full text-lg font-medium hover:bg-[#8a7d65]/80 transition-colors"
+                    >
+                      Contactați-ne
+                    </Link>
+                  </motion.div>
+                </div>
+              </GlassCard>
+            </div>
+          </section>
+          
+          <Footer />
+        </div>
       </main>
     </SmoothScrollProvider>
   );

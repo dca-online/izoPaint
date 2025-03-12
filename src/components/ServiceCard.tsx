@@ -30,14 +30,15 @@ const ServiceCard = ({
   
   const [imageError, setImageError] = useState(false);
   
-  const bgColor = type === 'vopsele' ? '#B99C4B' : '#1A1A1A';
-  const textColor = type === 'vopsele' ? '#1A1A1A' : '#F0E4B2';
-  const borderColor = type === 'vopsele' ? '#F0E4B2' : '#B99C4B';
+  const bgColor = type === 'vopsele' ? 'rgba(138, 125, 101, 0.2)' : 'rgba(105, 105, 105, 0.2)';
+  const textColor = type === 'vopsele' ? '#f8f8f6' : '#f8f8f6';
+  const borderColor = type === 'vopsele' ? 'rgba(195, 190, 180, 0.15)' : 'rgba(163, 163, 163, 0.15)';
+  const accentColor = type === 'vopsele' ? '#8a7d65' : '#696969';
   
   return (
     <motion.div 
       ref={cardRef}
-      className="relative rounded-2xl overflow-hidden aspect-square"
+      className="relative rounded-2xl overflow-hidden aspect-square shadow-sm"
       initial={{ opacity: 0, y: 50 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
       transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -46,7 +47,7 @@ const ServiceCard = ({
         {imageError ? (
           <div 
             className="w-full h-full flex items-center justify-center text-center p-4"
-            style={{ backgroundColor: bgColor, color: textColor }}
+            style={{ backgroundColor: accentColor, color: textColor }}
           >
             <div>
               <div className="text-xl font-bold mb-2">{title}</div>
@@ -64,18 +65,31 @@ const ServiceCard = ({
               onError={() => setImageError(true)}
             />
             <div 
-              className="absolute inset-0 opacity-70 transition-opacity duration-300 hover:opacity-80"
-              style={{ backgroundColor: bgColor }}
+              className="absolute inset-0 transition-opacity duration-300 hover:opacity-60"
+              style={{ 
+                backgroundColor: bgColor,
+                backdropFilter: 'blur(25px)',
+                WebkitBackdropFilter: 'blur(25px)',
+                borderTop: `1px solid ${borderColor}`,
+                borderLeft: `1px solid ${borderColor}`,
+                borderRight: `1px solid rgba(0, 0, 0, 0.05)`,
+                borderBottom: `1px solid rgba(0, 0, 0, 0.05)`,
+                boxShadow: `
+                  inset 0 1px 1px rgba(255, 255, 255, 0.1),
+                  0 10px 20px rgba(0, 0, 0, 0.1),
+                  0 6px 6px rgba(0, 0, 0, 0.1)
+                `
+              }}
             />
           </>
         )}
       </div>
       
-      <div className="relative z-10 h-full w-full p-6 flex flex-col justify-between">
+      <div className="absolute inset-0 p-6 flex flex-col justify-end z-10">
         <div>
           <span 
             className="text-xs font-mono mb-2 block"
-            style={{ color: borderColor }}
+            style={{ color: '#ffffff' }}
           >
             {type === 'vopsele' ? 'VOPSELE MODERNE' : 'IZOLAȚII ECO-FRIENDLY'}
           </span>
@@ -100,8 +114,11 @@ const ServiceCard = ({
         >
           <span className="mr-2">Află mai multe</span>
           <span 
-            className="w-6 h-6 rounded-full flex items-center justify-center transition-colors duration-300 group-hover:bg-white/20"
-            style={{ border: `1px solid ${borderColor}` }}
+            className="w-6 h-6 rounded-full flex items-center justify-center transition-colors duration-300 group-hover:bg-white/30"
+            style={{ 
+              border: `1px solid ${borderColor}`,
+              backdropFilter: 'blur(4px)'
+            }}
           >
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path 

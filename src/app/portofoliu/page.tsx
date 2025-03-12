@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -7,6 +7,8 @@ import PageHeader from '@/components/PageHeader';
 import GlassCard from '@/components/GlassCard';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 import Image from 'next/image';
+import Link from 'next/link';
+import BackgroundVideo from '@/components/BackgroundVideo';
 
 // Project data with categories
 const projects = [
@@ -84,6 +86,44 @@ const categories = [
   { id: 'comercial', label: 'Comercial' },
 ];
 
+// Custom PageHeader wrapper with background video
+const PortfolioPageHeader = () => {
+  return (
+    <div className="relative h-[70vh] md:h-[80vh] w-full overflow-hidden">
+      {/* Video Background */}
+      <div className="absolute inset-0 w-full h-full">
+        <BackgroundVideo 
+          videoSrc="/videos/paint.mp4" 
+          verticalFlip={typeof window !== 'undefined' && window.innerWidth < 768}
+        />
+        {/* Adding bottom washout effect */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#f8f8f6]/30 to-[#f8f8f6]" />
+      </div>
+      
+      {/* Content */}
+      <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-center items-center">
+        <motion.h1 
+          className="text-4xl md:text-6xl lg:text-7xl font-bold text-[#404040] mb-6 text-center"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          Portofoliu
+        </motion.h1>
+        
+        <motion.p 
+          className="text-xl md:text-2xl text-[#8a7d65] max-w-2xl text-center"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          Proiecte care inspiră și transformă spații
+        </motion.p>
+      </div>
+    </div>
+  );
+};
+
 const PortfolioPage = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
@@ -95,106 +135,159 @@ const PortfolioPage = () => {
   
   return (
     <SmoothScrollProvider>
-      <main className="min-h-screen bg-[#1A1A1A] overflow-hidden">
+      <main className="min-h-screen bg-[#f8f8f6] overflow-hidden">
         <Navbar />
+        <PortfolioPageHeader />
         
-        <PageHeader 
-          title="Portofoliul Nostru"
-          subtitle="Proiecte de Excepție Realizate cu Pasiune"
-          videoSrc="/videos/cherryPut.mp4"
-        />
-        
-        {/* Portfolio Filter */}
-        <section className="py-16 px-4 relative">
-          <div className="container mx-auto">
-            <div className="flex flex-wrap justify-center mb-12 gap-2">
-              {categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setActiveCategory(category.id)}
-                  className={`px-6 py-2 rounded-full text-sm md:text-base transition-all duration-300 ${
-                    activeCategory === category.id
-                      ? 'bg-[#B99C4B] text-white'
-                      : 'bg-white/5 text-white/70 hover:bg-white/10'
-                  }`}
-                >
-                  {category.label}
-                </button>
-              ))}
-            </div>
-            
-            {/* Projects Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              <AnimatePresence mode="wait">
-                {filteredProjects.map((project, index) => (
-                  <motion.div
-                    key={project.id}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.5, delay: index * 0.05 }}
-                    layout
-                    className="group"
+        {/* Content Background Overlay */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-[#f8f8f6] opacity-90 z-0"></div>
+          
+          {/* Portfolio Filter */}
+          <section className="py-16 px-4 relative z-10">
+            <div className="container mx-auto">
+              <div className="flex flex-wrap justify-center mb-12 gap-2">
+                {categories.map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => setActiveCategory(category.id)}
+                    className={`px-6 py-2 rounded-full text-sm md:text-base transition-all duration-300 ${
+                      activeCategory === category.id
+                        ? 'bg-[#8a7d65] text-white'
+                        : 'bg-[#f0efed] text-[#404040] hover:bg-[#e6e5e3]'
+                    }`}
                   >
-                    <div 
-                      className="aspect-[4/3] relative overflow-hidden rounded-xl cursor-pointer"
-                      onClick={() => setSelectedProject(project.id)}
-                    >
-                      {/* Project Image or Fallback */}
-                      <div className="absolute inset-0 w-full h-full bg-[#333]">
-                        <Image 
-                          src={project.image}
-                          alt={project.title}
-                          fill
-                          className="object-cover transition-transform duration-700 group-hover:scale-105"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          onError={(e) => {
-                            // Fallback for image errors
-                            e.currentTarget.style.opacity = '0';
-                          }}
-                        />
-                        {/* Gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A] via-transparent to-transparent opacity-80 group-hover:opacity-70 transition-opacity duration-300" />
-                      </div>
-                      
-                      {/* Project Info */}
-                      <div className="absolute bottom-0 left-0 right-0 p-6 transform transition-transform duration-300 group-hover:translate-y-0 translate-y-2">
-                        <h3 className="text-xl font-bold text-white mb-2">{project.title}</h3>
-                        <p className="text-white/80 text-sm mb-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">{project.description}</p>
-                        <div className="flex flex-wrap gap-2">
-                          {project.tags.map((tag) => (
-                            <span 
-                              key={tag} 
-                              className="text-xs py-1 px-3 rounded-full bg-[#B99C4B]/30 text-[#F0E4B2] backdrop-blur-md"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
+                    {category.label}
+                  </button>
                 ))}
-              </AnimatePresence>
-            </div>
-            
-            {/* Empty state when no projects match filter */}
-            {filteredProjects.length === 0 && (
-              <div className="text-center py-16">
-                <p className="text-white/60 text-lg">Niciun proiect în această categorie momentan.</p>
               </div>
-            )}
-          </div>
-        </section>
+              
+              {/* Projects Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <AnimatePresence mode="wait">
+                  {filteredProjects.map((project, index) => (
+                    <motion.div
+                      key={project.id}
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.5, delay: index * 0.05 }}
+                      layout
+                    >
+                      <GlassCard 
+                        className="h-full flex flex-col" 
+                        accent={index % 2 === 0 ? 'gold' : 'light'}
+                      >
+                        {/* Project Image */}
+                        <div 
+                          className="aspect-[16/9] w-full relative overflow-hidden rounded-lg mb-4 cursor-pointer"
+                          onClick={() => setSelectedProject(project.id)}
+                        >
+                          <div className="absolute inset-0 w-full h-full bg-[#f5f5f5]">
+                            <Image 
+                              src={project.image}
+                              alt={project.title}
+                              fill
+                              className="object-cover transition-transform duration-700 hover:scale-105"
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                          </div>
+                          
+                          {/* Category Tag */}
+                          <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium capitalize" 
+                            style={{
+                              backgroundColor: project.category === 'interior' 
+                                ? 'rgba(138, 125, 101, 0.8)' 
+                                : project.category === 'exterior'
+                                  ? 'rgba(105, 105, 105, 0.8)'
+                                  : 'rgba(90, 90, 90, 0.8)',
+                              color: 'white',
+                              backdropFilter: 'blur(4px)'
+                            }}
+                          >
+                            {project.category}
+                          </div>
+                        </div>
+                        
+                        {/* Project info */}
+                        <div className="flex flex-col flex-grow">
+                          <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">{project.title}</h3>
+                          <p className="text-[#696969] mb-4 flex-grow">{project.description}</p>
+                          
+                          {/* Tags */}
+                          <div className="flex flex-wrap gap-2 mt-auto">
+                            {project.tags.map((tag) => (
+                              <span 
+                                key={tag} 
+                                className="inline-block px-3 py-1 bg-[#f0efed] text-[#696969] rounded-full text-xs"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                          
+                          {/* View Button */}
+                          <button 
+                            onClick={() => setSelectedProject(project.id)}
+                            className="mt-4 inline-flex items-center text-[#8a7d65] hover:text-[#8a7d65]/80 transition-colors group"
+                          >
+                            <span className="mr-2">Vezi detalii</span>
+                            <span className="w-6 h-6 rounded-full flex items-center justify-center border border-[#8a7d65] transition-colors group-hover:bg-[#8a7d65]/10">
+                              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 5H9M9 5L5 1M9 5L5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            </span>
+                          </button>
+                        </div>
+                      </GlassCard>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+              
+              {/* Empty state when no projects match filter */}
+              {filteredProjects.length === 0 && (
+                <div className="text-center py-16">
+                  <p className="text-[#696969] text-lg">Niciun proiect găsit în această categorie.</p>
+                </div>
+              )}
+            </div>
+          </section>
+          
+          {/* Call to Action - Using glassmorphic card */}
+          <section className="py-16 px-4 relative z-10">
+            <div className="container mx-auto max-w-5xl">
+              <GlassCard accent="gold" className="p-8 md:p-12">
+                <div className="text-center">
+                  <h2 className="text-3xl md:text-4xl font-bold text-[#404040] mb-6">
+                    Pregătiți pentru următorul proiect?
+                  </h2>
+                  <p className="text-lg text-[#696969] mb-8 max-w-2xl mx-auto">
+                    Contactați-ne pentru a discuta despre proiectul dumneavoastră și pentru a afla cum vă putem ajuta să creați spații excepționale.
+                  </p>
+                  <Link 
+                    href="/contact"
+                    className="inline-block px-8 py-4 bg-[#8a7d65] text-white rounded-full text-lg font-medium hover:bg-[#8a7d65]/80 transition-colors"
+                  >
+                    Contactați-ne acum
+                  </Link>
+                </div>
+              </GlassCard>
+            </div>
+          </section>
+          
+          <Footer />
+        </div>
         
-        {/* Portfolio Modal */}
+        {/* Modal for project details */}
         <AnimatePresence>
           {selectedProject !== null && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1A1A1A]/90 backdrop-blur-md"
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#f8f8f6]/90 backdrop-blur-md"
               onClick={() => setSelectedProject(null)}
             >
               <motion.div
@@ -202,7 +295,7 @@ const PortfolioPage = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 transition={{ type: 'spring', damping: 25 }}
-                className="relative max-w-4xl w-full bg-[#1A1A1A]/80 backdrop-blur-xl rounded-xl overflow-hidden border border-white/10"
+                className="relative max-w-4xl w-full bg-white/80 backdrop-blur-xl rounded-xl overflow-hidden border border-[#e6e5e3]"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Selected project content */}
@@ -226,13 +319,13 @@ const PortfolioPage = () => {
                         />
                       </div>
                       <div className="p-6 md:p-8">
-                        <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">{project.title}</h2>
-                        <p className="text-white/80 mb-6">{project.description}</p>
+                        <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-2">{project.title}</h2>
+                        <p className="text-[#404040] mb-6">{project.description}</p>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
-                            <h3 className="text-lg font-semibold text-[#B99C4B] mb-3">Detalii Proiect</h3>
-                            <ul className="space-y-2 text-white/70">
+                            <h3 className="text-lg font-semibold text-[#8a7d65] mb-3">Detalii Proiect</h3>
+                            <ul className="space-y-2 text-[#404040]">
                               <li>Categorie: {project.category === 'interior' ? 'Interior' : project.category === 'exterior' ? 'Exterior' : 'Comercial'}</li>
                               <li>Locație: Suceava, România</li>
                               <li>Durată: 3 săptămâni</li>
@@ -240,12 +333,12 @@ const PortfolioPage = () => {
                             </ul>
                           </div>
                           <div>
-                            <h3 className="text-lg font-semibold text-[#B99C4B] mb-3">Servicii</h3>
+                            <h3 className="text-lg font-semibold text-[#8a7d65] mb-3">Servicii</h3>
                             <div className="flex flex-wrap gap-2">
                               {project.tags.map((tag) => (
                                 <span 
                                   key={tag} 
-                                  className="text-sm py-1 px-4 rounded-full bg-[#B99C4B]/20 text-[#F0E4B2]"
+                                  className="text-sm py-1 px-4 rounded-full bg-[#8a7d65]/20 text-[#404040]"
                                 >
                                   {tag}
                                 </span>
@@ -255,7 +348,7 @@ const PortfolioPage = () => {
                         </div>
                       </div>
                       <button
-                        className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+                        className="absolute top-4 right-4 w-10 h-10 rounded-full bg-[#e6e5e3] flex items-center justify-center text-[#404040] hover:bg-[#c3beb4] transition-colors"
                         onClick={() => setSelectedProject(null)}
                       >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -269,35 +362,6 @@ const PortfolioPage = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        
-        {/* Call to Action */}
-        <section className="py-16 px-4 bg-[#333333] relative overflow-hidden">
-          <div className="absolute inset-0 opacity-20">
-            <video 
-              className="w-full h-full object-cover"
-              autoPlay
-              muted
-              loop
-              playsInline
-              src="/videos/paintbrush.mp4"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A] via-transparent to-[#1A1A1A]/70"></div>
-          </div>
-          
-          <div className="container mx-auto relative z-10">
-            <GlassCard className="max-w-3xl mx-auto text-center">
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">Ai un Proiect Similar în Minte?</h2>
-              <p className="text-white/80 mb-8">
-                Fie că este vorba de o renovare completă sau de îmbunătățirea unui spațiu existent, suntem pregătiți să transformăm ideile tale în realitate.
-              </p>
-              <button className="px-8 py-3 bg-[#B99C4B] text-white rounded-full text-lg font-medium hover:bg-[#B99C4B]/80 transition-colors">
-                Discută cu Experții Noștri
-              </button>
-            </GlassCard>
-          </div>
-        </section>
-        
-        <Footer />
       </main>
     </SmoothScrollProvider>
   );

@@ -14,12 +14,15 @@
     font-display: swap;
 }
 :root {
-    --dark: #1a1a1a;
-    --secondary-dark: #333333;
-    --medium: #b99c4b;
-    --light: #f0e4b2;
-    --background: var(--dark);
-    --foreground: var(--light);
+    --light: #f8f8f6;
+    --foreground-light: #f8f8f6;
+    --dark: #404040;
+    --secondary-dark: #696969;
+    --medium: #a3a3a3;
+    --accent: #8a7d65;
+    --accent-light: #c3beb4;
+    --background: var(--light);
+    --foreground: var(--dark);
     --font-heading: "Anti-Grotesk", system-ui, sans-serif;
     --font-body: "Hrangfsey", var(--font-geist-sans), system-ui, sans-serif;
     
@@ -29,10 +32,10 @@
     --font-sans: var(--font-body);
     --font-mono: var(--font-geist-mono);
 }
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
     :root {
-        --background: var(--light);
-        --foreground: var(--dark);
+        --background: var(--dark);
+        --foreground: var(--light);
     }
 }
 body {

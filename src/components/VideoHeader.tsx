@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Space_Grotesk, Playfair_Display } from 'next/font/google';
+import Image from 'next/image';
 
 // Import a more industrial, angular font
 const spaceGrotesk = Space_Grotesk({ 
@@ -21,8 +22,6 @@ const playfair = Playfair_Display({
 gsap.registerPlugin(ScrollTrigger);
 
 const VideoHeader = () => {
-  const videoLeftRef = useRef<HTMLVideoElement>(null);
-  const videoRightRef = useRef<HTMLVideoElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
@@ -31,6 +30,19 @@ const VideoHeader = () => {
   const rightDoorRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const [animationCompleted, setAnimationCompleted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Handle mobile detection after component mounts
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+    
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   useEffect(() => {
     // Initialize GSAP animations
@@ -67,17 +79,6 @@ const VideoHeader = () => {
           } else {
             setAnimationCompleted(false);
           }
-        },
-        onLeave: () => {
-          // Only apply forced scroll on desktop
-          if (!isMobileDevice) {
-            // Force snap to the next section only on desktop
-            window.scrollTo({
-              top: window.innerHeight,
-              behavior: 'auto' // Use 'auto' for instant snap on desktop
-            });
-          }
-          // On mobile, let natural scrolling take over for smoother experience
         }
       }
     });
@@ -133,22 +134,24 @@ const VideoHeader = () => {
             className="w-1/2 h-full relative overflow-hidden"
             style={{ transformOrigin: 'left center' }}
           >
-            {/* Video Background - Left Side */}
+            {/* Left half of the image */}
             <div className="absolute inset-0 overflow-hidden">
-              <video
-                ref={videoLeftRef}
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="absolute h-full w-[200%] object-cover"
-                style={{ objectPosition: 'left center' }}
-                src="/videos/stone.mp4"
-              />
+              <div className="relative h-full w-[200%]">
+                <Image 
+                  src="/images/whiteTexture.jpeg"
+                  alt="Texture background - left half"
+                  fill
+                  className="object-cover opacity-80 transform scale-y-[-1]"
+                  style={{ 
+                    objectPosition: isMobile ? '50% center' : '0% center',
+                    transform: !isMobile ? 'scaleY(1)' : undefined
+                  }}
+                  priority
+                />
+                {/* Add whitening overlay for better text visibility */}
+                <div className="absolute inset-0 bg-white/40"></div>
+              </div>
             </div>
-            {/* Overlay - Left Side */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A]/80 via-[#1A1A1A]/60 to-[#1A1A1A]/70" />
-            <div className="absolute inset-0 bg-[#1A1A1A]/20" />
           </div>
           
           {/* Right Door */}
@@ -157,25 +160,24 @@ const VideoHeader = () => {
             className="w-1/2 h-full relative overflow-hidden"
             style={{ transformOrigin: 'right center' }}
           >
-            {/* Video Background - Right Side */}
+            {/* Right half of the image - no mirroring */}
             <div className="absolute inset-0 overflow-hidden">
-              <video
-                ref={videoRightRef}
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="absolute h-full w-[200%] object-cover"
-                style={{ 
-                  objectPosition: 'left center',
-                  transform: 'scaleX(-1)' /* Mirror the video horizontally */
-                }}
-                src="/videos/stone.mp4"
-              />
+              <div className="relative h-full w-[200%] right-full">
+                <Image 
+                  src="/images/whiteTexture.jpeg"
+                  alt="Texture background - right half"
+                  fill
+                  className="object-cover opacity-80 transform scale-y-[-1]"
+                  style={{ 
+                    objectPosition: isMobile ? '50% center' : '100% center',
+                    transform: !isMobile ? 'scaleY(1)' : undefined
+                  }}
+                  priority
+                />
+                {/* Add whitening overlay for better text visibility */}
+                <div className="absolute inset-0 bg-white/40"></div>
+              </div>
             </div>
-            {/* Overlay - Right Side */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A]/80 via-[#1A1A1A]/60 to-[#1A1A1A]/70" />
-            <div className="absolute inset-0 bg-[#1A1A1A]/20" />
           </div>
         </div>
         
@@ -183,198 +185,289 @@ const VideoHeader = () => {
         <div 
           className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 z-20 pointer-events-none"
         >
-          {/* Desktop heading (hidden on mobile) */}
-          <h1 
-            ref={headingRef}
-            className={`hidden sm:block text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 tracking-tighter whitespace-nowrap pointer-events-auto ${spaceGrotesk.className}`}
-            style={{ 
-              letterSpacing: '-0.02em', 
-              fontWeight: '700',
-              textShadow: '0 2px 15px rgba(0,0,0,0.5)',
-              background: 'linear-gradient(to bottom, #ffffff, #d1d1d1)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              lineHeight: '1.2',
-              textTransform: 'uppercase',
-              paddingBottom: '0.1em',
-            }}
-          >
-            <span style={{ display: 'inline-block', paddingBottom: '0.2em' }}>Esența formelor de fond</span>
-          </h1>
-          
-          {/* Mobile heading with modern minimalist design */}
-          <div className={`sm:hidden flex flex-col items-center justify-center pointer-events-auto ${spaceGrotesk.className} mb-5 w-full`} style={{ paddingTop: '20px' }}>
-            {/* Minimalist text block with balanced design */}
-            <div className="relative flex flex-col items-center" style={{ maxWidth: '340px' }}>
-              {/* "ESENȚA" as an overlay with border frame */}
-              <div className="relative w-full flex flex-col items-center">
-                <div className="absolute top-0 left-0 w-full h-full border-2 border-[#B99C4B]/20 rounded-xl" style={{ transform: 'translate(4px, 4px)' }}></div>
-                
-                <div className="relative z-10 px-5 py-3 w-full rounded-xl border border-white/10" 
-                  style={{ 
-                    backgroundColor: 'rgba(26, 26, 26, 0.35)',
-                    backdropFilter: 'blur(16px)',
-                    WebkitBackdropFilter: 'blur(16px)',
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-                    borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderLeft: '1px solid rgba(255, 255, 255, 0.08)'
-                  }}>
-                  <div
-                    style={{
-                      color: '#B99C4B',
-                      fontSize: '52px',
-                      fontWeight: '700',
-                      textTransform: 'uppercase',
-                      textShadow: '0 2px 15px rgba(0,0,0,0.5)',
-                      letterSpacing: '0.05em',
-                      lineHeight: '1',
-                      textAlign: 'left'
-                    }}
-                  >
-                    ESENȚA
-                  </div>
-                  
-                  {/* Middle row with line separators */}
-                  <div className="flex items-center justify-center my-2">
-                    <div className="h-px w-12 bg-[#B99C4B]/40"></div>
-                    <div
-                      style={{
-                        color: '#FFFFFF',
-                        fontSize: '22px',
-                        fontWeight: '700',
-                        textTransform: 'uppercase',
-                        textShadow: '0 2px 15px rgba(0,0,0,0.5)',
-                        letterSpacing: '0.1em',
-                        lineHeight: '1',
-                        marginLeft: '12px',
-                        marginRight: '12px',
-                      }}
-                    >
-                      FORMELOR DE
-                    </div>
-                    <div className="h-px w-12 bg-[#B99C4B]/40"></div>
-                  </div>
-                  
-                  {/* Bottom: "FOND" */}
-                  <div
-                    style={{
-                      color: '#F0E4B2',
-                      fontSize: '52px',
-                      fontWeight: '700',
-                      textTransform: 'uppercase',
-                      textShadow: '0 2px 15px rgba(0,0,0,0.5)',
-                      letterSpacing: '0.05em',
-                      lineHeight: '1',
-                      textAlign: 'right'
-                    }}
-                  >
-                    FOND
-                  </div>
-                </div>
+          {/* Desktop heading with layered text design */}
+          <div className="hidden sm:block relative mb-40 pointer-events-auto" style={{ maxWidth: "700px" }}>
+            {/* Glassmorphic circle background - using brand accent color with extreme transparency */}
+            <div 
+              className="absolute rounded-full z-0"
+              style={{ 
+                background: 'rgba(138, 125, 101, 0.08)',
+                backdropFilter: 'blur(25px)',
+                WebkitBackdropFilter: 'blur(25px)',
+                boxShadow: '0 8px 32px rgba(138, 125, 101, 0.04)',
+                border: '1px solid rgba(138, 125, 101, 0.12)',
+                width: '130%',
+                height: '140%',
+                top: '-20%',
+                left: '-15%',
+                zIndex: -1,
+              }}
+            ></div>
+            
+            {/* Background "DE" text above - positioned to be tangent to pill */}
+            <div className="absolute w-full text-center top-[-120px] left-[-25%]">
+              <div 
+                className={`flex justify-start text-7xl md:text-8xl font-bold ${spaceGrotesk.className}`}
+                style={{ 
+                  color: 'rgba(180, 175, 160, 0.5)',
+                  textShadow: '0 2px 15px rgba(0,0,0,0.15)',
+                  fontWeight: '700',
+                  zIndex: -1,
+                  textTransform: 'uppercase',
+                  marginLeft: '100px'
+                }}
+              >
+                <span>DE</span>
               </div>
             </div>
             
-            {/* Minimal decoration below */}
-            <div className="mt-4 flex items-center justify-center">
-              <div className="h-[2px] w-[2px] rounded-full bg-[#B99C4B] mx-1"></div>
-              <div className="h-[2px] w-[30px] bg-[#B99C4B]"></div>
-              <div className="h-[2px] w-[2px] rounded-full bg-[#B99C4B] mx-1"></div>
+            {/* Main text "Esența formelor" - perfectly centered */}
+            <h1 
+              ref={headingRef}
+              className={`relative text-5xl md:text-6xl lg:text-7xl font-bold ${spaceGrotesk.className}`}
+              style={{ 
+                fontWeight: '700',
+                color: '#2e2e2e',
+                lineHeight: '1',
+                textTransform: 'uppercase',
+                zIndex: 10,
+              }}
+            >
+              <div className="flex justify-center">
+                <span>ESENȚA</span>
+              </div>
+              <div className="flex justify-center mt-0">
+                <span>FORMELOR</span>
+              </div>
+            </h1>
+            
+            {/* Background "FOND" text below - aligned to the right */}
+            <div className="absolute w-full text-center bottom-[-120px] left-[15%]">
+              <div 
+                className={`flex justify-end text-7xl md:text-8xl font-bold ${spaceGrotesk.className}`}
+                style={{ 
+                  color: 'rgba(180, 175, 160, 0.5)',
+                  textShadow: '0 2px 15px rgba(0,0,0,0.15)',
+                  fontWeight: '700',
+                  zIndex: -1,
+                  textTransform: 'uppercase',
+                  marginRight: '20px'
+                }}
+              >
+                <span>FOND</span>
+              </div>
             </div>
           </div>
           
-          {/* Only show decorative line for desktop */}
-          <div className="hidden sm:flex items-center justify-center mb-6 sm:mb-8">
-            <div className="decorative-line h-[2px] bg-[#B99C4B] mx-2"></div>
+          {/* Mobile heading with layered text design */}
+          <div className={`sm:hidden flex flex-col items-center justify-center pointer-events-auto mb-36 w-full`} style={{ paddingTop: '20px' }}>
+            <div className="relative flex flex-col items-center" style={{ maxWidth: '340px' }}>
+              {/* Glassmorphic circle background - scaled for mobile */}
+              <div 
+                className="absolute rounded-full z-0"
+                style={{ 
+                  background: 'rgba(138, 125, 101, 0.08)',
+                  backdropFilter: 'blur(25px)',
+                  WebkitBackdropFilter: 'blur(25px)',
+                  boxShadow: '0 8px 32px rgba(138, 125, 101, 0.04)',
+                  border: '1px solid rgba(138, 125, 101, 0.12)',
+                  width: '130%',
+                  height: '140%',
+                  top: '-20%',
+                  left: '-15%',
+                  zIndex: -1,
+                }}
+              ></div>
+              
+              {/* Background "DE" text above - positioned to be tangent to pill */}
+              <div className="absolute w-full text-center top-[-60px] left-[-20%]">
+                <div 
+                  className={`flex justify-start text-[55px] font-bold ${spaceGrotesk.className}`}
+                  style={{ 
+                    color: 'rgba(180, 175, 160, 0.5)',
+                    textShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                    fontWeight: '700',
+                    zIndex: -1,
+                    textTransform: 'uppercase',
+                    marginLeft: '35px'
+                  }}
+                >
+                  <span>DE</span>
+                </div>
+              </div>
+              
+              {/* Main text container */}
+              <div className="relative w-full flex flex-col items-center z-10">
+                <div className="relative z-10 py-3 w-full">
+                  {/* Main text "Esența formelor" - perfectly centered */}
+                  <h1 
+                    className={`relative text-4xl font-bold ${spaceGrotesk.className}`}
+                    style={{ 
+                      fontWeight: '700',
+                      color: '#2e2e2e',
+                      lineHeight: '1',
+                      textTransform: 'uppercase',
+                      zIndex: 10,
+                    }}
+                  >
+                    <div className="flex justify-center">
+                      <span>ESENȚA</span>
+                    </div>
+                    <div className="flex justify-center mt-0">
+                      <span>FORMELOR</span>
+                    </div>
+                  </h1>
+                </div>
+              </div>
+              
+              {/* Background "FOND" text below - aligned to the right */}
+              <div className="absolute w-full text-center bottom-[-60px] left-[10%]">
+                <div 
+                  className={`flex justify-end text-[55px] font-bold ${spaceGrotesk.className}`}
+                  style={{ 
+                    color: 'rgba(180, 175, 160, 0.5)',
+                    textShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                    fontWeight: '700',
+                    zIndex: -1,
+                    textTransform: 'uppercase',
+                    marginRight: '10px'
+                  }}
+                >
+                  <span>FOND</span>
+                </div>
+              </div>
+            </div>
           </div>
           
+          {/* Tagline on a single line */}
           <div 
             ref={taglineRef}
-            className="header-tagline mb-3 sm:mb-5 text-lg sm:text-xl md:text-2xl tracking-wider font-light pointer-events-auto relative w-full"
+            className="mb-6 text-lg sm:text-xl md:text-2xl tracking-wider font-medium pointer-events-auto"
+            style={{
+              transform: 'translateY(0)',
+              transition: 'transform 0.5s ease-in-out'
+            }}
           >
-            {/* Grid layout with two equal columns and center separator */}
-            <div className="grid grid-cols-2 relative w-full">
-              {/* Left phrase - stays in left half */}
-              <div className="flex justify-end pr-2">
-                <span className={`${playfair.className} text-[#B99C4B] not-italic font-medium`}>
-                  Vopsele moderne
-                </span>
-              </div>
-              
-              {/* Right phrase - stays in right half */}
-              <div className="flex justify-start pl-2">
-                <span className={`${playfair.className} text-[#F0E4B2] not-italic font-medium`}>
-                  izolații eco-friendly
-                </span>
-              </div>
-              
-              {/* Center separator line exactly at the split point */}
-              <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[1px] h-full">
-                <div className="absolute inset-0 bg-gradient-to-b from-[#B99C4B] via-white/70 to-[#F0E4B2]" 
-                     style={{ height: '130%', top: '-15%' }}></div>
-              </div>
-            </div>
+            <span className="golden-rooster-font text-[#8a7d65]" style={{ display: 'inline-block', position: 'relative' }}>
+              Vopsele moderne
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#8a7d65] opacity-60" style={{ animation: 'expandWidth 3s ease-in-out infinite' }}></span>
+            </span>
+            <span className="mx-4 text-gray-300">|</span>
+            <span className="golden-rooster-font text-[#696969]" style={{ display: 'inline-block', position: 'relative' }}>
+              izolații eco-friendly
+              <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-[#696969] opacity-60" style={{ animation: 'expandWidth 3s ease-in-out infinite 1.5s' }}></span>
+            </span>
           </div>
           
           <p 
             ref={subtitleRef}
-            className="text-sm sm:text-base md:text-lg text-white/80 mb-6 sm:mb-10 max-w-2xl font-light pointer-events-auto"
-            style={{ letterSpacing: '0.05em' }}
+            className="text-sm sm:text-base md:text-lg text-[#333333] mb-12 max-w-2xl font-medium pointer-events-auto golden-rooster-font"
+            style={{ 
+              letterSpacing: '0.05em',
+              maxWidth: '90%',
+              lineHeight: '1.5'
+            }}
           >
             Transformă-ți spațiul cu soluții complete pentru o casă frumoasă, confortabilă și eficientă energetic
           </p>
           
           <div 
             ref={ctaRef}
-            className="flex flex-col items-center justify-center w-full pointer-events-auto relative"
+            className="flex items-center justify-center space-x-0 pointer-events-auto"
+            style={{ position: 'relative' }}
           >
-            {/* Grid layout for desktop, stacked for mobile */}
-            <div className="hidden sm:grid grid-cols-2 gap-x-4 w-full max-w-xl">
-              <div className="flex justify-end">
-                <button className="px-6 sm:px-8 py-2 sm:py-3 bg-transparent border border-[#B99C4B] text-white rounded-full text-base sm:text-lg font-medium hover:bg-[#B99C4B]/10 transition-all duration-300 relative group overflow-hidden">
-                  <span className="relative z-10">Solicită Ofertă</span>
-                  <span className="absolute inset-0 w-0 bg-[#B99C4B]/20 transition-all duration-300 group-hover:w-full"></span>
+            {/* Container to ensure buttons are split by center point */}
+            <div className="flex w-full justify-center" style={{ position: 'relative' }}>
+              {/* Left button - positioned to end exactly at center */}
+              <div className="flex justify-end pr-2" style={{ width: '50%' }}>
+                <button 
+                  className="px-6 sm:px-8 py-3 rounded-full text-sm sm:text-base font-medium transition-all duration-300 tracking-wide whitespace-nowrap w-[160px] sm:w-[200px]"
+                  style={{ 
+                    maxWidth: '100%',
+                    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+                    backdropFilter: 'blur(15px)',
+                    WebkitBackdropFilter: 'blur(15px)',
+                    color: '#404040',
+                    border: '1px solid rgba(255, 255, 255, 0.25)',
+                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.05)',
+                    transform: 'translateY(0)',
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.08)';
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.05)';
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+                  }}
+                >
+                  Solicită ofertă
                 </button>
               </div>
-              <div className="flex justify-start">
-                <button className="px-6 sm:px-8 py-2 sm:py-3 bg-transparent border border-white/50 text-white rounded-full text-base sm:text-lg font-medium hover:bg-white/10 transition-all duration-300">
-                  Descoperă Proiecte
+              
+              {/* Right button - positioned to start exactly at center */}
+              <div className="flex justify-start pl-2" style={{ width: '50%' }}>
+                <button 
+                  className="px-4 pl-5 sm:px-6 py-3 rounded-full text-sm sm:text-base font-medium transition-all duration-300 tracking-wide whitespace-nowrap text-center w-[160px] sm:w-[200px]"
+                  style={{ 
+                    maxWidth: '100%',
+                    backgroundColor: 'rgba(138, 125, 101, 0.3)',
+                    backdropFilter: 'blur(15px)',
+                    WebkitBackdropFilter: 'blur(15px)',
+                    color: '#404040',
+                    border: '1px solid rgba(138, 125, 101, 0.25)',
+                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.05)',
+                    transform: 'translateY(0)',
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.08)';
+                    e.currentTarget.style.backgroundColor = 'rgba(138, 125, 101, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.05)';
+                    e.currentTarget.style.backgroundColor = 'rgba(138, 125, 101, 0.3)';
+                  }}
+                >
+                  Descoperă proiecte
                 </button>
               </div>
             </div>
-            
-            {/* Mobile stacked buttons */}
-            <div className="flex flex-col space-y-3 sm:hidden w-full items-center">
-              <button className="px-6 sm:px-8 py-2 sm:py-3 bg-transparent border border-[#B99C4B] text-white rounded-full text-base sm:text-lg font-medium hover:bg-[#B99C4B]/10 transition-all duration-300 relative group overflow-hidden">
-                <span className="relative z-10">Solicită Ofertă</span>
-                <span className="absolute inset-0 w-0 bg-[#B99C4B]/20 transition-all duration-300 group-hover:w-full"></span>
-              </button>
-              <button className="px-6 sm:px-8 py-2 sm:py-3 bg-transparent border border-white/50 text-white rounded-full text-base sm:text-lg font-medium hover:bg-white/10 transition-all duration-300">
-                Descoperă Proiecte
-              </button>
-            </div>
-            
-            {/* Visual indicator of the split point */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-4 w-[1px] bg-[#B99C4B]/20 hidden sm:block"></div>
           </div>
         </div>
 
         {/* Scroll Indicator - Only show if animation not completed */}
         {!animationCompleted && (
           <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-20">
-            <div className="text-[#B99C4B] text-xs tracking-widest uppercase mb-2 opacity-80">Explorează</div>
-            <div className="w-6 h-10 border border-white/50 rounded-full flex justify-center">
-              <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce mt-2" />
+            <div className="text-[#8a7d65] text-xs tracking-widest uppercase mb-2 opacity-80">Explorează</div>
+            <div className="w-6 h-10 border border-[#404040]/50 rounded-full flex justify-center">
+              <div className="w-1.5 h-1.5 bg-[#404040] rounded-full animate-bounce mt-2" />
             </div>
           </div>
         )}
         
         {/* Decorative Elements */}
-        <div className="absolute top-24 right-[10%] w-20 h-20 border border-[#B99C4B]/20 rounded-full opacity-50 z-20"></div>
-        <div className="absolute bottom-24 left-[10%] w-16 h-16 border border-[#F0E4B2]/20 rounded-full opacity-50 z-20"></div>
+        <div className="absolute top-24 right-[10%] w-20 h-20 border border-[#8a7d65]/20 rounded-full opacity-50 z-20"></div>
+        <div className="absolute bottom-24 left-[10%] w-16 h-16 border border-[#696969]/20 rounded-full opacity-50 z-20"></div>
       </div>
 
-      {/* Spacer for content below */}
-      <div className="h-screen w-full"></div>
+      {/* Invisible content spacer - creates room for scrolling */}
+      <div style={{ height: '200vh' }}></div>
+      
+      {/* Add keyframes for the underline animation */}
+      <style jsx global>{`
+        @keyframes expandWidth {
+          0% { width: 0; left: 0; right: auto; }
+          50% { width: 100%; left: 0; right: auto; }
+          51% { width: 100%; right: 0; left: auto; }
+          100% { width: 0; right: 0; left: auto; }
+        }
+      `}</style>
     </>
   );
 };

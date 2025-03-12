@@ -1,6 +1,8 @@
 'use client';
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
+import { usePathname } from 'next/navigation';
+import BackgroundVideo from '@/components/BackgroundVideo';
 
 interface PageHeaderProps {
   title: string;
@@ -10,7 +12,7 @@ interface PageHeaderProps {
 }
 
 const PageHeader = ({ title, subtitle, videoSrc, align = 'center' }: PageHeaderProps) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const pathname = usePathname();
   
   // Text alignment classes
   const alignmentClasses = {
@@ -19,27 +21,36 @@ const PageHeader = ({ title, subtitle, videoSrc, align = 'center' }: PageHeaderP
     right: 'text-right items-end',
   };
   
+  // Check which page we're on to apply the appropriate overlay
+  const isAboutPage = pathname === '/despre';
+  const isPortfolioPage = pathname === '/portofoliu';
+  const isContactPage = pathname === '/contact';
+  const isServicesPage = pathname === '/servicii';
+  const isProductsPage = pathname === '/produse';
+  
   return (
     <section className="relative h-[70vh] md:h-[80vh] w-full overflow-hidden">
-      {/* Video Background */}
+      {/* Video Background using the BackgroundVideo component */}
       <div className="absolute inset-0 w-full h-full">
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute h-full w-full object-cover"
-          src={videoSrc}
+        <BackgroundVideo 
+          videoSrc={videoSrc}
+          verticalFlip={typeof window !== 'undefined' && window.innerWidth < 768}
         />
-        {/* Overlay with gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A]/90 via-[#1A1A1A]/70 to-[#1A1A1A]" />
+        
+        {/* More pronounced whitening filter and bottom washout for specified pages */}
+        {(isAboutPage || isPortfolioPage || isContactPage) && (
+          <div className="absolute inset-0 bg-gradient-to-b from-[#f8f8f6]/50 via-[#f8f8f6]/30 to-[#f8f8f6]" />
+        )}
+        {/* Bottom washout for services and products pages */}
+        {(isServicesPage || isProductsPage) && (
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#f8f8f6]/20 to-[#f8f8f6]" />
+        )}
       </div>
       
       {/* Content */}
       <div className={`relative z-10 container mx-auto px-4 h-full flex flex-col justify-center ${alignmentClasses[align]}`}>
         <motion.h1 
-          className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6"
+          className="text-4xl md:text-6xl lg:text-7xl font-bold text-[#404040] mb-6"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
@@ -49,7 +60,7 @@ const PageHeader = ({ title, subtitle, videoSrc, align = 'center' }: PageHeaderP
         
         {subtitle && (
           <motion.p 
-            className="text-xl md:text-2xl text-[#F0E4B2] max-w-2xl"
+            className="text-xl md:text-2xl text-[#8a7d65] max-w-2xl"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -60,7 +71,7 @@ const PageHeader = ({ title, subtitle, videoSrc, align = 'center' }: PageHeaderP
         
         {/* Decorative elements */}
         <motion.div 
-          className="w-20 h-1 bg-[#B99C4B] mt-8"
+          className="w-20 h-1 bg-[#8a7d65] mt-8"
           initial={{ opacity: 0, width: 0 }}
           animate={{ opacity: 1, width: 80 }}
           transition={{ duration: 0.8, delay: 0.6 }}
@@ -68,16 +79,27 @@ const PageHeader = ({ title, subtitle, videoSrc, align = 'center' }: PageHeaderP
       </div>
       
       {/* Scroll indicator */}
-      <motion.div 
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 1, repeat: Infinity, repeatType: 'reverse' }}
-      >
-        <div className="w-6 h-10 border border-white/30 rounded-full flex justify-center">
-          <div className="w-1.5 h-1.5 bg-[#B99C4B] rounded-full animate-bounce mt-2" />
-        </div>
-      </motion.div>
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+        <motion.div
+          className="w-8 h-12 rounded-full border-2 border-[#8a7d65] flex justify-center"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+        >
+          <motion.div
+            className="w-1 h-3 bg-[#8a7d65] rounded-full mt-2"
+            animate={{ 
+              y: [0, 6, 0],
+              opacity: [1, 0.5, 1]
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              repeatType: 'loop',
+            }}
+          />
+        </motion.div>
+      </div>
     </section>
   );
 };
