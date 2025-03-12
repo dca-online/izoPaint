@@ -345,7 +345,7 @@ const AboutPage = () => {
               {testimonials.map((testimonial, index) => (
                 <GlassCard key={index} accent="light" delay={index * 0.2}>
                   <div className="flex flex-col h-full">
-                    <div className="text-4xl text-[#B99C4B] mb-4">"</div>
+                    <div className="text-4xl text-[#B99C4B] mb-4">&ldquo;</div>
                     <p className="text-white/90 italic mb-6 flex-grow">{testimonial.quote}</p>
                     <div>
                       <p className="font-bold text-white">{testimonial.author}</p>

@@ -159,7 +159,15 @@ const ServicesPage = () => {
                 <GlassCard key={service.title} accent="light" delay={index * 0.1} className="h-full">
                   <div className="flex flex-col h-full">
                     <div className="flex items-center mb-4">
-                      <img src={service.icon} alt={service.title} className="w-10 h-10 mr-3" />
+                      <div className="relative w-10 h-10 mr-3">
+                        <Image 
+                          src={service.icon}
+                          alt={service.title}
+                          fill
+                          sizes="40px"
+                          style={{ objectFit: 'contain' }}
+                        />
+                      </div>
                       <h3 className="text-2xl font-bold text-[#F0E4B2]">{service.title}</h3>
                     </div>
                     <p className="text-white/70 mb-6">{service.description}</p>
@@ -207,7 +215,15 @@ const ServicesPage = () => {
                 <GlassCard key={service.title} accent="gold" delay={index * 0.1} className="h-full">
                   <div className="flex flex-col h-full">
                     <div className="flex items-center mb-4">
-                      <img src={service.icon} alt={service.title} className="w-10 h-10 mr-3" />
+                      <div className="relative w-10 h-10 mr-3">
+                        <Image 
+                          src={service.icon}
+                          alt={service.title}
+                          fill
+                          sizes="40px"
+                          style={{ objectFit: 'contain' }}
+                        />
+                      </div>
                       <h3 className="text-2xl font-bold text-[#B99C4B]">{service.title}</h3>
                     </div>
                     <p className="text-white/70 mb-6">{service.description}</p>

@@ -55,11 +55,6 @@ const insulationServices = [
   }
 ];
 
-// Image error fallback to prevent broken UI
-const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-  e.currentTarget.src = '/images/placeholder.jpg';
-};
-
 export default function Home() {
   return (
     <SmoothScrollProvider>

@@ -41,13 +41,7 @@ const Navbar = () => {
   const [isPastHero, setIsPastHero] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const navItemRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const [highlightStyle, setHighlightStyle] = useState({
-    width: 0,
-    left: 0,
-    opacity: 0
-  });
-  const [cartCount, setCartCount] = useState(0);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartCount] = useState(0);
 
   // Check if mobile on client side
   useEffect(() => {
@@ -81,30 +75,6 @@ const Navbar = () => {
       document.body.style.overflow = '';
     };
   }, [isMenuOpen]);
-
-  // Update highlight position when activeIndex changes
-  useEffect(() => {
-    if (activeIndex !== null && navItemRefs.current[activeIndex]) {
-      const navItem = navItemRefs.current[activeIndex];
-      if (navItem) {
-        const rect = navItem.getBoundingClientRect();
-        const navbarRect = document.querySelector('nav')?.getBoundingClientRect();
-        const offsetLeft = navbarRect ? rect.left - navbarRect.left : rect.left;
-        
-        setHighlightStyle({
-          width: 100,
-          left: offsetLeft - 10,  // Adjust for better centering
-          opacity: 0.2
-        });
-      }
-    } else {
-      setHighlightStyle({
-        width: 0,
-        left: 0,
-        opacity: 0
-      });
-    }
-  }, [activeIndex]);
 
   return (
     <>
