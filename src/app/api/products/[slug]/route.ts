@@ -177,12 +177,13 @@ const productsDatabase: Record<string, Product> = {
   },
 };
 
-// Use the correct type definition for Next.js 15 route handlers
+// Updated for Next.js 15 with Promise-based params
 export async function GET(
   request: Request,
-  context: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
-  const { slug } = context.params;
+  // Await the params promise to get the actual slug
+  const { slug } = await params;
   
   // Add artificial delay to simulate a real API call
   await new Promise(resolve => setTimeout(resolve, 500));
