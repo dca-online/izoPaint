@@ -390,21 +390,21 @@ export default function ProductsPage() {
             </div>
             
             <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8">
-              <a href="/" className="text-[#1A1A1A] hover:text-[#8a7d65] transition-colors">
+              <Link href="/" className="text-[#1A1A1A] hover:text-[#8a7d65] transition-colors">
                 Acasă
-              </a>
-              <a href="/produse" className="text-[#1A1A1A] hover:text-[#8a7d65] transition-colors">
+              </Link>
+              <Link href="/produse" className="text-[#1A1A1A] hover:text-[#8a7d65] transition-colors">
                 Produse
-              </a>
-              <a href="/servicii" className="text-[#1A1A1A] hover:text-[#8a7d65] transition-colors">
+              </Link>
+              <Link href="/servicii" className="text-[#1A1A1A] hover:text-[#8a7d65] transition-colors">
                 Servicii
-              </a>
-              <a href="/despre" className="text-[#1A1A1A] hover:text-[#8a7d65] transition-colors">
+              </Link>
+              <Link href="/despre" className="text-[#1A1A1A] hover:text-[#8a7d65] transition-colors">
                 Despre Noi
-              </a>
-              <a href="/contact" className="text-[#1A1A1A] hover:text-[#8a7d65] transition-colors">
+                  </Link>
+              <Link href="/contact" className="text-[#1A1A1A] hover:text-[#8a7d65] transition-colors">
                 Contact
-              </a>
+                  </Link>
             </div>
           </div>
           <div className="text-center mt-8 text-sm text-[#696969]">

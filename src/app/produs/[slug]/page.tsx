@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import { Space_Grotesk } from 'next/font/google';
 import { Product } from '@/types/product';
+import Link from 'next/link';
 
 // Using the same font as in the VideoHeader component
 const spaceGrotesk = Space_Grotesk({ 
@@ -85,12 +86,12 @@ export default function ProductPage() {
         <p className="text-[#696969] mb-8 text-center">
           Ne pare rău, dar produsul pe care îl cauți nu există sau a fost eliminat.
         </p>
-        <a 
+        <Link 
           href="/"
           className="px-8 py-3 bg-[#8a7d65] text-white rounded-full text-lg font-medium hover:bg-[#8a7d65]/80 transition-colors"
         >
           Înapoi la pagina principală
-        </a>
+        </Link>
       </div>
     );
   }
@@ -108,22 +109,22 @@ export default function ProductPage() {
       {/* Breadcrumb */}
       <div className="pt-28 pb-4 px-4 sm:px-8 lg:px-16 container mx-auto">
         <div className="text-[#696969] text-sm">
-          <a href="/" className="hover:text-[#8a7d65] transition-colors">Acasă</a>
+          <Link href="/" className="hover:text-[#8a7d65] transition-colors">Acasă</Link>
           <span className="mx-2">/</span>
-          <a href="/produse" className="hover:text-[#8a7d65] transition-colors">Produse</a>
+          <Link href="/produse" className="hover:text-[#8a7d65] transition-colors">Produse</Link>
           <span className="mx-2">/</span>
           {product.categorii[0] === 'vopsele' || product.categorii.some(cat => cat.includes('vopsea')) ? (
-            <a href="/produse?categorie=vopsele" className="hover:text-[#8a7d65] transition-colors capitalize">
+            <Link href="/produse?categorie=vopsele" className="hover:text-[#8a7d65] transition-colors capitalize">
               Vopsele
-            </a>
+            </Link>
           ) : product.categorii[0] === 'izolații' || product.categorii.some(cat => cat.includes('izolatie')) ? (
-            <a href="/produse?categorie=izolații" className="hover:text-[#8a7d65] transition-colors capitalize">
+            <Link href="/produse?categorie=izolații" className="hover:text-[#8a7d65] transition-colors capitalize">
               Izolații
-            </a>
+            </Link>
           ) : (
-            <a href={`/produse?categorie=${product.categorii[0]}`} className="hover:text-[#8a7d65] transition-colors capitalize">
+            <Link href={`/produse?categorie=${product.categorii[0]}`} className="hover:text-[#8a7d65] transition-colors capitalize">
               {product.categorii[0]}
-            </a>
+            </Link>
           )}
           <span className="mx-2">/</span>
           <span className="text-[#8a7d65]">{product.titlu}</span>
