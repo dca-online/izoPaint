@@ -282,7 +282,8 @@ const VideoHeader = () => {
                     fontWeight: '700',
                     zIndex: -1,
                     textTransform: 'uppercase',
-                    marginLeft: '35px'
+                    marginLeft: '50px',
+                    marginTop: '-25px !important'
                   }}
                 >
                   <span>DE</span>
@@ -323,7 +324,8 @@ const VideoHeader = () => {
                     fontWeight: '700',
                     zIndex: -1,
                     textTransform: 'uppercase',
-                    marginRight: '10px'
+                    marginRight: '10px',
+                    marginBottom: '-30px !important'
                   }}
                 >
                   <span>FOND</span>
@@ -335,21 +337,25 @@ const VideoHeader = () => {
           {/* Tagline on a single line */}
           <div 
             ref={taglineRef}
-            className="mb-6 text-lg sm:text-xl md:text-2xl tracking-wider font-medium pointer-events-auto"
+            className="mb-6 text-lg sm:text-xl md:text-2xl tracking-wider font-medium pointer-events-auto flex justify-center items-center w-full"
             style={{
               transform: 'translateY(0)',
               transition: 'transform 0.5s ease-in-out'
             }}
           >
-            <span className="golden-rooster-font text-[#8a7d65]" style={{ display: 'inline-block', position: 'relative' }}>
-              Vopsele moderne
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#8a7d65] opacity-60" style={{ animation: 'expandWidth 3s ease-in-out infinite' }}></span>
-            </span>
-            <span className="mx-4 text-gray-300">|</span>
-            <span className="golden-rooster-font text-[#696969]" style={{ display: 'inline-block', position: 'relative' }}>
-              izolații eco-friendly
-              <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-[#696969] opacity-60" style={{ animation: 'expandWidth 3s ease-in-out infinite 1.5s' }}></span>
-            </span>
+            <div className="flex items-center justify-center w-full px-6">
+              <div className="flex flex-wrap sm:flex-nowrap justify-center items-center max-w-full">
+                <span className="golden-rooster-font text-[#8a7d65] text-sm xs:text-base sm:text-lg md:text-xl whitespace-nowrap" style={{ display: 'inline-block', position: 'relative' }}>
+                  Vopsele moderne
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#8a7d65] opacity-60" style={{ animation: 'expandWidth 3s ease-in-out infinite' }}></span>
+                </span>
+                <span className="mx-2 sm:mx-4 text-gray-300">|</span>
+                <span className="golden-rooster-font text-[#696969] text-sm xs:text-base sm:text-lg md:text-xl whitespace-nowrap" style={{ display: 'inline-block', position: 'relative' }}>
+                  izolații eco-friendly
+                  <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-[#696969] opacity-60" style={{ animation: 'expandWidth 3s ease-in-out infinite 1.5s' }}></span>
+                </span>
+              </div>
+            </div>
           </div>
           
           <p 
@@ -404,7 +410,7 @@ const VideoHeader = () => {
               {/* Right button - positioned to start exactly at center */}
               <div className="flex justify-start pl-2" style={{ width: '50%' }}>
                 <button 
-                  className="px-4 pl-5 sm:px-6 py-3 rounded-full text-sm sm:text-base font-medium transition-all duration-300 tracking-wide whitespace-nowrap text-center w-[160px] sm:w-[200px]"
+                  className="px-3 sm:px-6 py-3 rounded-full text-sm sm:text-base font-medium transition-all duration-300 tracking-wide whitespace-nowrap text-center w-[160px] sm:w-[200px] flex items-center justify-center"
                   style={{ 
                     maxWidth: '100%',
                     backgroundColor: 'rgba(138, 125, 101, 0.3)',
@@ -427,7 +433,7 @@ const VideoHeader = () => {
                     e.currentTarget.style.backgroundColor = 'rgba(138, 125, 101, 0.3)';
                   }}
                 >
-                  Descoperă proiecte
+                  <span className="mx-auto">Descoperă proiecte</span>
                 </button>
               </div>
             </div>
@@ -436,9 +442,8 @@ const VideoHeader = () => {
 
         {/* Scroll Indicator - Only show if animation not completed */}
         {!animationCompleted && (
-          <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-20">
-            <div className="text-[#8a7d65] text-xs tracking-widest uppercase mb-2 opacity-80">Explorează</div>
-            <div className="w-6 h-10 border border-[#404040]/50 rounded-full flex justify-center">
+          <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-20" style={{marginBottom: '30px !important' }}>
+            <div className="w-6 h-10 border border-[#404040] rounded-full flex justify-center">
               <div className="w-1.5 h-1.5 bg-[#404040] rounded-full animate-bounce mt-2" />
             </div>
           </div>

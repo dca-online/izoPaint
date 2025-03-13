@@ -8,6 +8,7 @@ import GlassCard from '@/components/GlassCard';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 import Image from 'next/image';
 import Link from 'next/link';
+import ErrorFallbackImage from '@/components/ErrorFallbackImage';
 
 // Team data
 const teamMembers = [
@@ -290,37 +291,12 @@ const AboutPage = () => {
                     className="group"
                   >
                     <div className="relative aspect-square rounded-xl overflow-hidden mb-4">
-                      <Image
+                      <ErrorFallbackImage
                         src={member.image}
                         alt={member.name}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        onError={(e) => {
-                          // Replace with "Not Found" text
-                          const parent = e.currentTarget.parentElement;
-                          if (parent) {
-                            // Hide the image
-                            e.currentTarget.style.display = 'none';
-                            
-                            // Create a placeholder with person icon
-                            const placeholder = document.createElement('div');
-                            placeholder.className = 'absolute inset-0 flex items-center justify-center bg-[#f5f5f5] text-[#8a7d65]';
-                            placeholder.innerHTML = `
-                              <div class="text-center p-4">
-                                <svg class="w-20 h-20 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                </svg>
-                              </div>
-                            `;
-                            parent.appendChild(placeholder);
-                            
-                            // Remove the gradient overlay if it exists
-                            const overlay = parent.querySelector('div.absolute.inset-0.bg-gradient-to-t');
-                            if (overlay) {
-                              (overlay as HTMLElement).style.display = 'none';
-                            }
-                          }
-                        }}
+                        fallbackType="person"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A] via-transparent to-transparent opacity-60"></div>
                     </div>

@@ -40,15 +40,23 @@ const ContactPage = () => {
   };
   
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormStatus('submitting');
     
-    // Simulate form submission
-    setTimeout(() => {
-      // In a real application, you would send the form data to your server here
-      console.log('Form submitted:', formData);
-      setFormStatus('success');
+    try {
+      // Simulate form submission
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // For now, just simulating success
+      // In a real application, you would send the form data to your API
+      // const response = await fetch('/api/contact', {
+      //   method: 'POST',
+      //   body: JSON.stringify(formData),
+      //   headers: { 'Content-Type': 'application/json' }
+      // });
+      
+      // if (!response.ok) throw new Error('Submission failed');
       
       // Reset form after successful submission
       setFormData({
@@ -59,11 +67,13 @@ const ContactPage = () => {
         message: '',
       });
       
-      // Reset status after a delay
-      setTimeout(() => {
-        setFormStatus('idle');
-      }, 5000);
-    }, 1500);
+      setFormStatus('success');
+    } catch (_) {
+      // Using _ to indicate an intentionally unused parameter
+      setFormStatus('error');
+    } finally {
+      setFormStatus('idle');
+    }
   };
   
   return (

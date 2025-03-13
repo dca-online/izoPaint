@@ -89,6 +89,7 @@ const AccountPageHeader = () => {
 
 const AccountPage = () => {
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   // Login form state
   const [loginForm, setLoginForm] = useState({
@@ -96,6 +97,10 @@ const AccountPage = () => {
     password: '',
     rememberMe: false
   });
+  
+  // Login status state
+  const [loginStatus, setLoginStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [loginError, setLoginError] = useState<string | null>(null);
   
   // Register form state
   const [registerForm, setRegisterForm] = useState({
@@ -106,6 +111,10 @@ const AccountPage = () => {
     confirmPassword: '',
     agreeTerms: false
   });
+  
+  // Register status state
+  const [registerStatus, setRegisterStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [registerError, setRegisterError] = useState<string | null>(null);
   
   // Form errors
   const [errors, setErrors] = useState<{
@@ -139,93 +148,69 @@ const AccountPage = () => {
   };
   
   // Handle login form submission
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoginStatus('submitting');
+    setLoginError(null);
     
-    // Validate form
-    const loginErrors: { email?: string; password?: string } = {};
-    
-    if (!loginForm.email) {
-      loginErrors.email = 'Adresa de email este obligatorie';
-    } else if (!/\S+@\S+\.\S+/.test(loginForm.email)) {
-      loginErrors.email = 'Adresa de email nu este validă';
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // For demo purposes only
+      if (loginForm.email !== 'demo@example.com' || loginForm.password !== 'password') {
+        throw new Error('Invalid credentials');
+      }
+      
+      // In a real app, you would handle JWT or session storage here
+      setIsLoggedIn(true);
+      // Remove logging in production environment
+      // console.log('User logged in:', loginForm.email);
+      setLoginStatus('success');
+    } catch (error) {
+      setLoginError('Email sau parolă incorecte.');
+      setLoginStatus('error');
     }
-    
-    if (!loginForm.password) {
-      loginErrors.password = 'Parola este obligatorie';
-    }
-    
-    if (Object.keys(loginErrors).length > 0) {
-      setErrors({ ...errors, login: loginErrors });
-      return;
-    }
-    
-    // Clear errors
-    setErrors({ ...errors, login: {} });
-    
-    // Submit form - in a real app this would make an API call
-    console.log('Login form submitted', loginForm);
-    alert('Autentificare reușită! (Demo)');
   };
   
   // Handle register form submission
-  const handleRegisterSubmit = (e: React.FormEvent) => {
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setRegisterStatus('submitting');
+    setRegisterError(null);
     
-    // Validate form
-    const registerErrors: {
-      firstName?: string;
-      lastName?: string;
-      email?: string;
-      password?: string;
-      confirmPassword?: string;
-      agreeTerms?: string;
-    } = {};
-    
-    if (!registerForm.firstName) {
-      registerErrors.firstName = 'Prenumele este obligatoriu';
-    }
-    
-    if (!registerForm.lastName) {
-      registerErrors.lastName = 'Numele este obligatoriu';
-    }
-    
-    if (!registerForm.email) {
-      registerErrors.email = 'Adresa de email este obligatorie';
-    } else if (!/\S+@\S+\.\S+/.test(registerForm.email)) {
-      registerErrors.email = 'Adresa de email nu este validă';
-    }
-    
-    if (!registerForm.password) {
-      registerErrors.password = 'Parola este obligatorie';
-    } else if (registerForm.password.length < 6) {
-      registerErrors.password = 'Parola trebuie să aibă minim 6 caractere';
-    }
-    
-    if (!registerForm.confirmPassword) {
-      registerErrors.confirmPassword = 'Confirmarea parolei este obligatorie';
-    } else if (registerForm.password !== registerForm.confirmPassword) {
-      registerErrors.confirmPassword = 'Parolele nu coincid';
-    }
-    
-    if (!registerForm.agreeTerms) {
-      registerErrors.agreeTerms = 'Trebuie să accepți termenii și condițiile';
-    }
-    
-    if (Object.keys(registerErrors).length > 0) {
-      setErrors({ ...errors, register: registerErrors });
+    // Password validation
+    if (registerForm.password !== registerForm.confirmPassword) {
+      setRegisterError('Parolele nu se potrivesc.');
+      setRegisterStatus('error');
       return;
     }
     
-    // Clear errors
-    setErrors({ ...errors, register: {} });
-    
-    // Submit form - in a real app this would make an API call
-    console.log('Register form submitted', registerForm);
-    alert('Înregistrare reușită! (Demo)');
-    
-    // Switch to login tab
-    setActiveTab('login');
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // In a real app, you would make an API call to register the user
+      // Remove logging in production environment
+      // console.log('User registered:', registerForm.email);
+      
+      // Switch to login tab after successful registration
+      setActiveTab('login');
+      setRegisterStatus('success');
+      
+      // Clear register form
+      setRegisterForm({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        agreeTerms: false
+      });
+    } catch (error) {
+      setRegisterError('Eroare la înregistrare. Încercați din nou mai târziu.');
+      setRegisterStatus('error');
+    }
   };
   
   return (

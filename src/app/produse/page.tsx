@@ -1,419 +1,417 @@
 'use client';
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import PageHeader from '@/components/PageHeader';
-import GlassCard from '@/components/GlassCard';
-import SmoothScrollProvider from '@/components/SmoothScrollProvider';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+import Navbar from '@/components/Navbar';
+import { Space_Grotesk } from 'next/font/google';
+import { Product } from '@/types/product';
+import { useRouter, useSearchParams } from 'next/navigation';
+import CategoryOverlay from '@/components/CategoryOverlay';
+import CategoryDropdown from '@/components/CategoryDropdown';
 
-// Product types
-type ProductCategory = 'vopsele' | 'izolatie' | 'accesorii';
+// Using the same font as in other components
+const spaceGrotesk = Space_Grotesk({ 
+  subsets: ['latin'],
+  weight: ['700'],
+  display: 'swap',
+});
 
-type Product = {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  category: ProductCategory;
-  badge?: string;
-  rating?: number;
-  inStock: boolean;
-};
-
-// Products data
-const products: Product[] = [
-  {
-    id: 'vopsea-decorativa-1',
-    name: 'Vopsea decorativă sidefată',
-    description: 'Vopsea decorativă premium cu efect satinat pentru un finisaj elegant în orice încăpere.',
-    price: 189.99,
-    image: '/images/product-1.jpg',
-    category: 'vopsele',
-    badge: 'Popular',
-    rating: 4.8,
-    inStock: true
-  },
-  {
-    id: 'vopsea-decorativa-2',
-    name: 'Vopsea decorativă metalică',
-    description: 'Vopsea cu efect metalic pentru accent și strălucire distinctivă care transformă orice perete.',
-    price: 219.99,
-    image: '/images/product-2.jpg',
-    category: 'vopsele',
-    rating: 4.7,
-    inStock: true
-  },
-  {
-    id: 'vopsea-eco-1',
-    name: 'Vopsea ecologică mată',
-    description: 'Vopsea eco-friendly, fără COV, ideală pentru dormitoare și camere pentru copii.',
-    price: 159.99,
-    image: '/images/product-3.jpg',
-    category: 'vopsele',
-    badge: 'Eco',
-    rating: 4.9,
-    inStock: true
-  },
-  {
-    id: 'vopsea-eco-2',
-    name: 'Vopsea ecologică lavabilă',
-    description: 'Vopsea lavabilă premium, rezistentă la pete și murdărie, perfect pentru spații cu trafic intens.',
-    price: 179.99,
-    image: '/images/product-4.jpg',
-    category: 'vopsele',
-    rating: 4.6,
-    inStock: true
-  },
-  {
-    id: 'izolatie-termica-1',
-    name: 'Sistem izolație termică premium',
-    description: 'Sistem complet de izolație termică pentru fațade, include adeziv, polistiren și plasă de armare.',
-    price: 289.99,
-    image: '/images/product-5.jpg',
-    category: 'izolatie',
-    badge: 'Eficient',
-    rating: 4.9,
-    inStock: true
-  },
-  {
-    id: 'izolatie-fonica-1',
-    name: 'Panouri izolație fonică',
-    description: 'Panouri fonoabsorbante premium pentru reducerea zgomotului și îmbunătățirea acusticii.',
-    price: 249.99,
-    image: '/images/product-6.jpg',
-    category: 'izolatie',
-    rating: 4.7,
-    inStock: true
-  },
-  {
-    id: 'izolatie-hidro-1',
-    name: 'Membrană Hidroizolație',
-    description: 'Membrană premium pentru hidroizolații, ideală pentru terase, băi și fundații.',
-    price: 199.99,
-    image: '/images/product-7.jpg',
-    category: 'izolatie',
-    rating: 4.8,
-    inStock: true
-  },
-  {
-    id: 'accesorii-1',
-    name: 'Set Pensule Premium',
-    description: 'Set complet de pensule profesionale pentru aplicarea perfectă a vopselelor decorative.',
-    price: 89.99,
-    image: '/images/product-8.jpg',
-    category: 'accesorii',
-    rating: 4.6,
-    inStock: false
-  },
-];
-
-// Filter categories
-const categories = [
-  { id: 'toate', label: 'Toate Produsele' },
-  { id: 'vopsele', label: 'Vopsele' },
-  { id: 'izolatie', label: 'Izolație' },
-  { id: 'accesorii', label: 'Accesorii' },
-];
-
-const ProductsPage = () => {
-  const [activeCategory, setActiveCategory] = useState('toate');
-  const [searchTerm, setSearchTerm] = useState('');
+// In a real application, this would be fetched from an API
+const fetchProducts = async (): Promise<Product[]> => {
+  // For demo purposes, we'll just fetch each product individually
+  const slugs = ['vopsea-decorativa-premium', 'izolatie-termica-exterior', 'vopsea-lavabila-interior', 'illusion-crystal'];
   
-  // Filter products based on active category and search term
-  const filteredProducts = products.filter(product => {
-    const matchesCategory = activeCategory === 'toate' || product.category === activeCategory;
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         product.description.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
+  const productsPromises = slugs.map(async (slug) => {
+    const response = await fetch(`/api/products/${slug}`);
+    if (!response.ok) return null;
+    return response.json();
   });
   
+  const products = await Promise.all(productsPromises);
+  return products.filter(Boolean) as Product[];
+};
+
+// Add a mock database reference for generating product URLs
+const productsDatabase: Record<string, { id: string }> = {
+  'vopsea-decorativa-premium': { id: '1' },
+  'izolatie-termica-exterior': { id: '2' },
+  'vopsea-lavabila-interior': { id: '3' },
+  'illusion-crystal': { id: '4' },
+};
+
+export default function ProductsPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get('categorie');
+  
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState<string>(categoryParam || 'toate');
+  const [mainCategory, setMainCategory] = useState<'vopsele' | 'izolatii' | null>(
+    categoryParam === 'vopsele' ? 'vopsele' :
+    categoryParam === 'izolații' ? 'izolatii' : null
+  );
+  const [categories, setCategories] = useState<string[]>(['toate']);
+  const [showCategoryOverlay, setShowCategoryOverlay] = useState(!categoryParam && !mainCategory);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchProducts();
+        setProducts(data);
+        
+        // When a main category is selected, only show relevant subcategories
+        updateSubcategories(data, mainCategory);
+        
+      } catch (error) {
+        // Replace console.error with more production-friendly error handling
+        setError('Eroare la încărcarea produselor. Încercați din nou mai târziu.');
+        // console.error('Error loading products:', error);
+      } finally {
+        setLoading(false);
+        setIsInitialLoad(false);
+      }
+    };
+
+    loadProducts();
+  }, [mainCategory]);
+
+  // Update the subcategories based on the main category selection
+  const updateSubcategories = (productsData: Product[], category: 'vopsele' | 'izolatii' | null) => {
+    const uniqueCategories = new Set<string>();
+    
+    // Always include "toate" (all) category
+    uniqueCategories.add('toate');
+    
+    // Filter products by main category first
+    const filteredProducts = category 
+      ? productsData.filter(product => {
+          if (category === 'vopsele') {
+            return product.categorii.includes('vopsele') || 
+                   product.categorii.includes('vopsea') ||
+                   !product.categorii.some(cat => cat.includes('izolat'));
+          } else if (category === 'izolatii') {
+            return product.categorii.includes('izolații') || 
+                   product.categorii.includes('izolatie') ||
+                   product.categorii.includes('termic') ||
+                   product.categorii.some(cat => cat.includes('izolat'));
+          }
+          return true;
+        })
+      : productsData;
+      
+    // Add subcategories from filtered products
+    filteredProducts.forEach(product => {
+      product.categorii.forEach(cat => {
+        // Only include category-specific subcategories
+        if (category === 'vopsele') {
+          if (!cat.includes('izolat') && cat !== 'izolații') {
+            uniqueCategories.add(cat);
+          }
+        } else if (category === 'izolatii') {
+          if (cat !== 'vopsele' && !cat.includes('vopsea')) {
+            uniqueCategories.add(cat);
+          }
+        } else {
+          uniqueCategories.add(cat);
+        }
+      });
+    });
+    
+    setCategories(Array.from(uniqueCategories));
+  };
+
+  // Handle category selection from the overlay
+  const handleCategorySelect = (category: 'vopsele' | 'izolatii') => {
+    setShowCategoryOverlay(false);
+    
+    if (category === 'vopsele') {
+      setMainCategory('vopsele');
+      setActiveCategory('vopsele');
+      router.push('/produse?categorie=vopsele');
+    } else {
+      setMainCategory('izolatii');
+      setActiveCategory('izolații');
+      router.push('/produse?categorie=izolații');
+    }
+  };
+
+  // Handle subcategory selection
+  const handleSubcategorySelect = (category: string) => {
+    setActiveCategory(category);
+    if (category === 'toate') {
+      if (mainCategory === 'vopsele') {
+        router.push('/produse?categorie=vopsele');
+      } else if (mainCategory === 'izolatii') {
+        router.push('/produse?categorie=izolații');
+      } else {
+        router.push('/produse');
+      }
+    } else {
+      router.push(`/produse?categorie=${category}`);
+    }
+  };
+
+  // Filter products by selected category and main category
+  const filteredProducts = products.filter(product => {
+    // First filter by main category if set
+    if (mainCategory) {
+      if (mainCategory === 'vopsele') {
+        if (product.categorii.some(cat => cat.includes('izolat')) || 
+            product.categorii.includes('izolații')) {
+          return false;
+        }
+      } else if (mainCategory === 'izolatii') {
+        if (product.categorii.includes('vopsele') || 
+            product.categorii.some(cat => cat.includes('vopsea'))) {
+          return false;
+        }
+      }
+    }
+    
+    // Then filter by active subcategory
+    return activeCategory === 'toate'
+      ? true
+      : product.categorii.includes(activeCategory);
+  });
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f8f8f6]">
+        <div className="relative w-24 h-24">
+          <div className="absolute w-full h-full border-4 border-[#8a7d65]/20 rounded-full animate-ping"></div>
+          <div className="absolute w-full h-full border-4 border-t-[#8a7d65] rounded-full animate-spin"></div>
+        </div>
+      </div>
+    );
+  }
+  
   return (
-    <SmoothScrollProvider>
-      <main className="min-h-screen bg-[#f8f8f6] overflow-hidden">
+    <main className="min-h-screen relative bg-[#f8f8f6]">
         <Navbar />
         
-        <PageHeader 
-          title="Produse premium"
-          subtitle="Materiale de înaltă calitate pentru finisaje impecabile"
-          videoSrc="/videos/paint.mp4"
+      {/* Category Overlay - only show on initial load when no category selected */}
+      {isInitialLoad && (
+        <CategoryOverlay 
+          isOpen={showCategoryOverlay}
+          onClose={() => setShowCategoryOverlay(false)}
+          onSelectCategory={handleCategorySelect}
         />
+      )}
+      
+      {/* Hero Section */}
+      <section className="pt-32 pb-16 px-4 sm:px-8 lg:px-16 relative overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-0 right-0 w-full h-full opacity-5">
+            <div className="absolute top-20 right-20 w-[500px] h-[500px] rounded-full bg-[#8a7d65] blur-3xl" />
+            <div className="absolute bottom-20 left-20 w-[500px] h-[500px] rounded-full bg-[#c3beb4] blur-3xl" />
+          </div>
+        </div>
         
-        {/* Content Background Overlay - Makes content more opaque */}
-        <div className="relative">
-          <div className="absolute inset-0 bg-[#f8f8f6] opacity-90 z-0"></div>
+        <div className="container mx-auto relative z-10">
+          <motion.div 
+            className="max-w-3xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className={`${spaceGrotesk.className} text-4xl md:text-5xl lg:text-6xl text-[#404040] mb-6`}>
+              {activeCategory === 'toate' 
+                ? mainCategory === 'vopsele'
+                  ? 'Vopsele Decorative'
+                  : mainCategory === 'izolatii'
+                    ? 'Izolații Termice'
+                    : 'Produsele Noastre'
+                : activeCategory === 'vopsele' 
+                  ? 'Vopsele Decorative' 
+                  : activeCategory === 'izolații' 
+                    ? 'Izolații Termice' 
+                    : `Categoria: ${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}`}
+            </h1>
+            <p className="text-lg text-[#696969] mb-8 max-w-2xl">
+              {activeCategory === 'toate' 
+                ? mainCategory === 'vopsele'
+                  ? 'Colecția noastră de vopsele decorative premium oferă finisaje unice și efecte spectaculoase pentru pereții tăi.'
+                  : mainCategory === 'izolatii'
+                    ? 'Soluțiile noastre de izolație termică asigură eficiență energetică și confort termic pentru casa ta.'
+                    : 'Descoperă gama noastră de vopsele premium și soluții de izolație eco-friendly, create pentru a transforma spațiul tău într-un mediu frumos, confortabil și eficient energetic.'
+                : activeCategory === 'vopsele' || activeCategory.includes('vopsea')
+                  ? 'Colecția noastră de vopsele decorative premium oferă finisaje unice și efecte spectaculoase pentru pereții tăi.'
+                  : activeCategory === 'izolații' || activeCategory.includes('izolatie')
+                    ? 'Soluțiile noastre de izolație termică asigură eficiență energetică și confort termic pentru casa ta.'
+                    : `Produse din categoria ${activeCategory}, selectate pentru calitate și performanță.`}
+            </p>
+            
+            {/* Category selection - use dropdown when already on Produse page */}
+            <CategoryDropdown 
+              currentCategory={mainCategory === 'vopsele' ? 'vopsele' : mainCategory === 'izolatii' ? 'izolații' : 'toate'}
+              onCategoryChange={handleCategorySelect}
+            />
+          </motion.div>
           
-          {/* Filters and Search */}
-          <section className="py-16 px-4 relative z-10">
-            <div className="container mx-auto">
-              <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-4">
-                {/* Category Filter */}
-                <div className="flex flex-wrap justify-center gap-2">
-                  {categories.map((category) => (
-                    <button
-                      key={category.id}
-                      onClick={() => setActiveCategory(category.id)}
-                      className={`px-6 py-2 rounded-full text-sm md:text-base transition-all duration-300 ${
-                        activeCategory === category.id
-                          ? 'bg-[#8a7d65] text-white'
-                          : 'bg-[#e6e5e3] text-[#404040] hover:bg-[#e6e5e3]/70'
-                      }`}
-                    >
-                      {category.label}
-                    </button>
-                  ))}
-                </div>
-                
-                {/* Search Bar */}
-                <div className="relative w-full md:w-auto">
-                  <input
-                    type="text"
-                    placeholder="Caută produse..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full md:w-64 px-4 py-2 rounded-full bg-white border border-[#e6e5e3] text-[#404040] placeholder-[#696969]/60 focus:outline-none focus:ring-2 focus:ring-[#8a7d65]/50"
-                  />
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#696969]/60">
-                    <svg width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M9 17A8 8 0 109 1a8 8 0 000 16z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M19 19l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                </div>
+          {/* Subcategory Filter - only show relevant subcategories */}
+          <div className="flex flex-wrap items-center gap-3 mb-12 mt-8">
+            {categories.map((category, index) => (
+              <motion.button
+                key={category}
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
+                  activeCategory === category 
+                    ? 'bg-[#8a7d65] text-white shadow-md' 
+                    : 'bg-white text-[#404040] hover:bg-[#e6e5e3]/50'
+                }`}
+                onClick={() => handleSubcategorySelect(category)}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 + (index * 0.05) }}
+              >
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </motion.button>
+            ))}
               </div>
             </div>
           </section>
           
           {/* Products Grid */}
-          <section className="pb-16 px-4 relative z-10">
+      <section className="py-12 px-4 sm:px-8 lg:px-16">
             <div className="container mx-auto">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-                <AnimatePresence mode="popLayout">
+          {filteredProducts.length === 0 ? (
+            <div className="text-center py-16">
+              <h2 className="text-2xl text-[#404040] mb-4">Nu am găsit produse în această categorie</h2>
+              <p className="text-[#696969]">Te rugăm să încerci o altă categorie sau contactează-ne pentru asistență.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                   {filteredProducts.map((product, index) => (
                     <motion.div
                       key={product.id}
+                  className="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-lg transition-all group"
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 20, transition: { duration: 0.2 } }}
-                      transition={{ duration: 0.4, delay: index * 0.05 }}
-                      layout
-                    >
-                      <GlassCard className="h-full flex flex-col backdrop-blur-lg" accent={product.category === 'vopsele' ? 'gold' : 'light'}>
-                        {/* Product Image */}
-                        <div className="aspect-square w-full relative overflow-hidden rounded-lg mb-4 group">
-                          <div className="absolute inset-0 w-full h-full bg-[#f5f5f5]">
-                            <Image 
-                              src={product.image}
-                              alt={product.name}
-                              fill
-                              className="object-cover transition-transform duration-700 group-hover:scale-105"
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                              onError={(e) => {
-                                // Replace with "Not Found" text
-                                const parent = e.currentTarget.parentElement;
-                                if (parent) {
-                                  // Hide the image
-                                  e.currentTarget.style.display = 'none';
-                                  
-                                  // Create a placeholder with text
-                                  const placeholder = document.createElement('div');
-                                  placeholder.className = 'absolute inset-0 flex items-center justify-center bg-[#f5f5f5] text-[#696969]';
-                                  placeholder.innerHTML = `
-                                    <div class="text-center p-4">
-                                      <svg class="w-10 h-10 mx-auto mb-2 text-[#8a7d65]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                      </svg>
-                                      <p>Imagine indisponibilă</p>
-                                    </div>
-                                  `;
-                                  parent.appendChild(placeholder);
-                                }
-                              }}
-                            />
-                            {/* Product badge if exists */}
-                            {product.badge && (
-                              <div className="absolute top-2 right-2 bg-[#8a7d65] text-white text-xs px-3 py-1 rounded-full">
-                                {product.badge}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        
-                        {/* Product Info */}
-                        <div className="flex-grow">
-                          <h3 className="text-xl font-bold text-[#404040] mb-2">{product.name}</h3>
-                          <p className="text-[#696969] text-sm mb-4 line-clamp-2">{product.description}</p>
-                          
-                          {/* Rating */}
-                          {product.rating && (
-                            <div className="flex items-center mb-3">
-                              <div className="flex">
-                                {[...Array(5)].map((_, i) => (
-                                  <svg 
-                                    key={i} 
-                                    width="16" 
-                                    height="16" 
-                                    fill={i < Math.floor(product.rating || 0) ? "#F0E4B2" : "none"} 
-                                    stroke={i < Math.floor(product.rating || 0) ? "#F0E4B2" : "#F0E4B2"}
-                                    className="mr-1"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                  </svg>
-                                ))}
-                              </div>
-                              <span className="text-[#696969] text-xs ml-2">{product.rating}</span>
+                  transition={{ duration: 0.5, delay: 0.1 + (index * 0.1) }}
+                >
+                  <Link href={`/produs/${Object.keys(productsDatabase).find(key => productsDatabase[key].id === product.id) || product.id}`}>
+                    <div className="relative h-64">
+                      <Image
+                        src={product.linkImagine || '/images/product-placeholder.svg'}
+                        alt={product.titlu}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      {product.categorii.includes('premium') && (
+                        <div className="absolute top-4 left-4 bg-[#8a7d65] text-white px-4 py-1 rounded-full text-sm font-medium z-10">
+                          Premium
+                            </div>
+                          )}
+                      {product.categorii.includes('eco') && (
+                        <div className="absolute top-4 right-4 bg-[#4D724D] text-white px-4 py-1 rounded-full text-sm font-medium z-10">
+                          Eco
                             </div>
                           )}
                         </div>
-                        
-                        {/* Price and Add to Cart */}
-                        <div className="mt-4 pt-4 border-t border-[#e6e5e3] flex justify-between items-center">
-                          <div className="text-[#8a7d65] text-xl font-bold">{product.price.toFixed(2)} RON</div>
-                          <button 
-                            className={`px-3 py-2 rounded-full text-sm flex items-center ${
-                              product.inStock 
-                                ? 'bg-[#8a7d65] text-white hover:bg-[#8a7d65]/80' 
-                                : 'bg-[#e6e5e3] text-[#696969]/40 cursor-not-allowed'
-                            } transition-colors`}
-                            disabled={!product.inStock}
-                          >
-                            <svg width="16" height="16" className="mr-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M9 22C9.55228 22 10 21.5523 10 21C10 20.4477 9.55228 20 9 20C8.44772 20 8 20.4477 8 21C8 21.5523 8.44772 22 9 22Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                              <path d="M20 22C20.5523 22 21 21.5523 21 21C21 20.4477 20.5523 20 20 20C19.4477 20 19 20.4477 19 21C19 21.5523 19.4477 22 20 22Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                              <path d="M1 1H5L7.68 14.39C7.77144 14.8504 8.02191 15.264 8.38755 15.5583C8.75318 15.8526 9.2107 16.009 9.68 16H19.4C19.8693 16.009 20.3268 15.8526 20.6925 15.5583C21.0581 15.264 21.3086 14.8504 21.4 14.39L23 6H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                            {product.inStock ? 'Adaugă în coș' : 'Stoc epuizat'}
-                          </button>
+                    <div className="p-6">
+                      <h3 className="text-xl font-semibold text-[#404040] mb-2">{product.titlu}</h3>
+                      <p className="text-[#696969] text-sm mb-4 line-clamp-2">{product.descriereScurta}</p>
+                      <div className="flex items-baseline mb-4">
+                        <span className="text-lg font-bold text-[#404040]">
+                          {product.variante[0].pret.minim} - {product.variante[0].pret.maxim} RON
+                        </span>
+                        <span className="ml-2 text-xs text-[#696969]">/ {product.variante[0].cantitatePachet}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <div className="flex flex-wrap gap-2">
+                          {product.categorii.slice(0, 2).map(cat => (
+                            <span key={cat} className="text-xs px-2 py-1 bg-[#f8f8f6] text-[#696969] rounded-full">
+                              {cat}
+                            </span>
+                          ))}
                         </div>
-                      </GlassCard>
+                        <span className="text-[#8a7d65] font-medium group-hover:underline">
+                          Vezi detalii
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
                     </motion.div>
                   ))}
-                </AnimatePresence>
               </div>
+          )}
             </div>
           </section>
           
-          {/* New Products Section */}
-          <section className="py-16 px-4 bg-gradient-to-b from-[#f8f8f6] to-[#f5f5f3] relative z-10">
-            <div className="container mx-auto relative z-10">
-              <div className="text-center mb-16">
-                <h2 className="text-3xl font-bold text-[#404040] mb-4">De ce să alegi produsele noastre</h2>
-                <p className="text-[#696969] max-w-2xl mx-auto">
-                  Oferim materiale premium, selecționate cu grijă pentru durabilitate și rezultate excepționale.
-                </p>
+      {/* CTA Section */}
+      <section className="py-20 px-4 sm:px-8 lg:px-16 bg-white relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full opacity-10">
+          <div className="absolute top-20 right-20 w-80 h-80 rounded-full bg-[#8a7d65] blur-3xl" />
+          <div className="absolute bottom-20 left-20 w-80 h-80 rounded-full bg-[#c3beb4] blur-3xl" />
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {[
-                  {
-                    icon: (
-                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#B99C4B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M12 16V12" stroke="#F0E4B2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M12 8H12.01" stroke="#F0E4B2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    ),
-                    title: 'Calitate Premium',
-                    description: 'Materiale de cea mai înaltă calitate, testate și certificate pentru performanță superioară.'
-                  },
-                  {
-                    icon: (
-                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M19 14C19 18.4183 15.4183 22 11 22C6.58172 22 3 18.4183 3 14C3 9.58172 6.58172 6 11 6" stroke="#B99C4B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M7 10L11 14L22 3" stroke="#F0E4B2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    ),
-                    title: 'Garanție Extinsă',
-                    description: 'Toate produsele beneficiază de garanție extinsă și suport tehnic pentru aplicare.'
-                  },
-                  {
-                    icon: (
-                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5 3V7M3 5H7M6 17V21M4 19H8M13 3L15.2857 9.85714L21 12L15.2857 14.1429L13 21L10.7143 14.1429L5 12L10.7143 9.85714L13 3Z" stroke="#B99C4B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    ),
-                    title: 'Rezultate Excepționale',
-                    description: 'Finisaje impecabile și durabile ce transformă orice spațiu într-un mediu elegant.'
-                  },
-                  {
-                    icon: (
-                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M17 8L21 12M21 12L17 16M21 12H3" stroke="#B99C4B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    ),
-                    title: 'Livrare Rapidă',
-                    description: 'Comandă acum și primește produsele în 24-48 de ore, oriunde în țară.'
-                  }
-                ].map((benefit, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                  >
-                    <GlassCard>
-                      <div className="flex flex-col items-center text-center">
-                        <div className="mb-4">{benefit.icon}</div>
-                        <h3 className="text-xl font-bold text-[#404040] mb-2">{benefit.title}</h3>
-                        <p className="text-[#696969]">{benefit.description}</p>
+        <div className="container mx-auto relative z-10">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className={`${spaceGrotesk.className} text-3xl md:text-4xl text-[#404040] mb-6`}>
+              Nu găsești ce cauți?
+            </h2>
+            <p className="text-[#696969] mb-8">
+              Contactează-ne pentru soluții personalizate sau pentru a afla mai multe detalii despre produsele noastre.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <button className="px-8 py-4 bg-[#8a7d65] text-white rounded-full text-lg font-medium hover:bg-[#8a7d65]/80 transition-colors">
+                Solicită o ofertă
+              </button>
+              <button className="px-8 py-4 bg-transparent border-2 border-[#404040] text-[#404040] rounded-full text-lg font-medium hover:bg-[#404040]/10 transition-colors">
+                Contactează-ne
+              </button>
                       </div>
-                    </GlassCard>
-                  </motion.div>
-                ))}
               </div>
             </div>
           </section>
           
-          {/* Call to Action */}
-          <section className="py-16 px-4 bg-[#f8f8f6] relative z-10">
-            <div className="container mx-auto max-w-5xl">
-              <GlassCard accent="gold" className="p-8 md:p-12">
-                <motion.h2 
-                  className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#404040] mb-6"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8 }}
-                >
-                  Nu Știi Ce Produse Să Alegi?
-                </motion.h2>
-                <motion.p 
-                  className="text-lg text-[#696969] mb-10"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
-                >
-                  Experții noștri îți stau la dispoziție pentru recomandări personalizate și sfaturi profesionale.
-                </motion.p>
-                <motion.div 
-                  className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.4 }}
-                >
-                  <Link href="/contact" className="px-8 py-4 bg-[#8a7d65] text-white rounded-full text-lg font-medium hover:bg-[#8a7d65]/80 transition-colors">
-                    Contactează-ne
-                  </Link>
-                  <Link href="/servicii" className="px-8 py-4 bg-transparent border-2 border-[#404040] text-[#404040] rounded-full text-lg font-medium hover:bg-[#404040]/10 transition-colors">
-                    Vezi Serviciile Noastre
-                  </Link>
-                </motion.div>
-              </GlassCard>
+      {/* Footer would be included here */}
+      <footer className="py-12 px-4 md:px-8 lg:px-16 bg-transparent relative z-10">
+        <div className="absolute inset-0 bg-[#f8f8f6]/80 backdrop-blur-xl border-t border-[#e6e5e3] z-0"
+          style={{
+            boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.3)',
+            backdropFilter: 'blur(25px)',
+            WebkitBackdropFilter: 'blur(25px)'
+          }}
+        ></div>
+        <div className="container mx-auto relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="mb-6 md:mb-0">
+              <h3 className="text-xl font-bold text-[#404040] mb-2">
+                <span className="text-[#8a7d65]">Vopsele</span> & <span className="text-[#696969]">Izolații</span>
+              </h3>
+              <p className="text-[#1A1A1A] text-sm">
+                Soluții complete pentru spații moderne
+              </p>
             </div>
-          </section>
-          
-          <Footer />
+            
+            <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8">
+              <a href="/" className="text-[#1A1A1A] hover:text-[#8a7d65] transition-colors">
+                Acasă
+              </a>
+              <a href="/produse" className="text-[#1A1A1A] hover:text-[#8a7d65] transition-colors">
+                Produse
+              </a>
+              <a href="/servicii" className="text-[#1A1A1A] hover:text-[#8a7d65] transition-colors">
+                Servicii
+              </a>
+              <a href="/despre" className="text-[#1A1A1A] hover:text-[#8a7d65] transition-colors">
+                Despre Noi
+              </a>
+              <a href="/contact" className="text-[#1A1A1A] hover:text-[#8a7d65] transition-colors">
+                Contact
+              </a>
+            </div>
+          </div>
+          <div className="text-center mt-8 text-sm text-[#696969]">
+            © 2025 Vopsele & Izolații. Toate drepturile rezervate.
+          </div>
         </div>
+      </footer>
       </main>
-    </SmoothScrollProvider>
   );
-};
-
-export default ProductsPage; 
+} 

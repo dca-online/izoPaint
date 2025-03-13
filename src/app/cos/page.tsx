@@ -11,6 +11,7 @@ import GlassCard from '@/components/GlassCard';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 // Remove unused fadeIn import
 import BackgroundVideo from '@/components/BackgroundVideo';
+import ErrorFallbackImage from '@/components/ErrorFallbackImage';
 
 // Mock cart items
 type CartItem = {
@@ -270,30 +271,12 @@ const CartPage = () => {
                           <div key={item.id} className="flex flex-col sm:flex-row border-b border-[#e6e5e3] pb-6">
                             {/* Product Image */}
                             <div className="w-full sm:w-24 h-24 bg-[#f5f5f5] rounded-lg overflow-hidden mb-4 sm:mb-0 sm:mr-4 relative">
-                              <Image 
+                              <ErrorFallbackImage 
                                 src={item.image} 
                                 alt={item.name}
                                 fill
                                 className="object-cover"
                                 sizes="96px"
-                                onError={(e) => {
-                                  // Replace with cart placeholder
-                                  const parent = e.currentTarget.parentElement;
-                                  if (parent) {
-                                    // Hide the image
-                                    e.currentTarget.style.display = 'none';
-                                    
-                                    // Create a placeholder with shopping bag icon
-                                    const placeholder = document.createElement('div');
-                                    placeholder.className = 'absolute inset-0 flex items-center justify-center bg-[#f5f5f5] text-[#8a7d65]';
-                                    placeholder.innerHTML = `
-                                      <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                                      </svg>
-                                    `;
-                                    parent.appendChild(placeholder);
-                                  }
-                                }}
                               />
                             </div>
                             

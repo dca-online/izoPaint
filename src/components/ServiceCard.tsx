@@ -2,8 +2,8 @@
 
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
+import ErrorFallbackImage from './ErrorFallbackImage';
 
 interface ServiceCardProps {
   title: string;
@@ -53,17 +53,12 @@ const ServiceCard = ({
       
       {/* Image layer (if available) - with increased opacity */}
       <div className="absolute inset-0 rounded-2xl overflow-hidden">
-        <Image 
+        <ErrorFallbackImage 
           src={imageSrc}
           alt={title}
           fill
           className="object-cover opacity-50 rounded-2xl"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          // If image fails, we still maintain the glassmorphic effect
-          onError={(e) => {
-            // Just hide the image but keep glass effect
-            e.currentTarget.style.display = 'none';
-          }}
         />
       </div>
 

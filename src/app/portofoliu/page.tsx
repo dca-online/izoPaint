@@ -6,9 +6,9 @@ import Footer from '@/components/Footer';
 // Remove unused PageHeader import
 import GlassCard from '@/components/GlassCard';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
-import Image from 'next/image';
 import Link from 'next/link';
 import BackgroundVideo from '@/components/BackgroundVideo';
+import ErrorFallbackImage from '@/components/ErrorFallbackImage';
 
 // Project data with categories
 const projects = [
@@ -184,7 +184,7 @@ const PortfolioPage = () => {
                           onClick={() => setSelectedProject(project.id)}
                         >
                           <div className="absolute inset-0 w-full h-full bg-[#f5f5f5]">
-                            <Image 
+                            <ErrorFallbackImage 
                               src={project.image}
                               alt={project.title}
                               fill
@@ -306,16 +306,12 @@ const PortfolioPage = () => {
                   return (
                     <>
                       <div className="relative aspect-video">
-                        <Image 
+                        <ErrorFallbackImage 
                           src={project.image}
                           alt={project.title}
                           fill
                           className="object-cover"
                           sizes="(max-width: 1536px) 100vw, 1536px"
-                          onError={(e) => {
-                            // Fallback for image errors
-                            e.currentTarget.style.opacity = '0';
-                          }}
                         />
                       </div>
                       <div className="p-6 md:p-8">

@@ -8,6 +8,7 @@ import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 import Image from 'next/image';
 import Link from 'next/link';
 import BackgroundVideo from '@/components/BackgroundVideo';
+import ErrorFallbackImage from '@/components/ErrorFallbackImage';
 
 // Service data
 const paintServices = [
@@ -22,7 +23,6 @@ const paintServices = [
       'Tencuieli decorative',
       'Finisaje personalizate',
     ],
-    image: '/images/paint-service-1.jpg',
   },
   {
     title: 'Vopsele ecologice',
@@ -35,7 +35,6 @@ const paintServices = [
       'Lavabile și durabile',
       'Gamă variată de culori',
     ],
-    image: '/images/paint-service-2.jpg',
   },
   {
     title: 'Finisaje speciale',
@@ -48,7 +47,6 @@ const paintServices = [
       'Glazuri decorative',
       'Tencuieli texturate',
     ],
-    image: '/images/paint-service-3.jpg',
   },
 ];
 
@@ -64,7 +62,6 @@ const insulationServices = [
       'Sisteme ETICS complete',
       'Consultanță eficiență energetică',
     ],
-    image: '/images/insulation-service-1.jpg',
   },
   {
     title: 'Izolație fonică',
@@ -77,7 +74,6 @@ const insulationServices = [
       'Izolație pentru pereți și tavane',
       'Soluții pentru spații comerciale',
     ],
-    image: '/images/insulation-service-2.jpg',
   },
   {
     title: 'Hidroizolații',
@@ -90,7 +86,6 @@ const insulationServices = [
       'Protecție terase și balcoane',
       'Tratamente anti-umiditate',
     ],
-    image: '/images/insulation-service-3.jpg',
   },
 ];
 
@@ -194,30 +189,13 @@ const ServicesPage = () => {
                       <div className="flex flex-col h-full">
                         <div className="flex items-center mb-4">
                           <div className="relative w-10 h-10 mr-3">
-                            <Image 
+                            <ErrorFallbackImage 
                               src={service.icon}
                               alt={service.title}
                               fill
                               sizes="40px"
                               style={{ objectFit: 'contain' }}
-                              onError={(e) => {
-                                // Replace with a default icon
-                                const parent = e.currentTarget.parentElement;
-                                if (parent) {
-                                  // Hide the image
-                                  e.currentTarget.style.display = 'none';
-                                  
-                                  // Create a placeholder icon
-                                  const placeholder = document.createElement('div');
-                                  placeholder.className = 'absolute inset-0 flex items-center justify-center text-[#8a7d65]';
-                                  placeholder.innerHTML = `
-                                    <svg class="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
-                                    </svg>
-                                  `;
-                                  parent.appendChild(placeholder);
-                                }
-                              }}
+                              fallbackType="service"
                             />
                           </div>
                           <h3 className="text-2xl font-bold text-[#404040]">{service.title}</h3>
@@ -272,30 +250,13 @@ const ServicesPage = () => {
                       <div className="flex flex-col h-full">
                         <div className="flex items-center mb-4">
                           <div className="relative w-10 h-10 mr-3">
-                            <Image 
+                            <ErrorFallbackImage 
                               src={service.icon}
                               alt={service.title}
                               fill
                               sizes="40px"
                               style={{ objectFit: 'contain' }}
-                              onError={(e) => {
-                                // Replace with a default icon
-                                const parent = e.currentTarget.parentElement;
-                                if (parent) {
-                                  // Hide the image
-                                  e.currentTarget.style.display = 'none';
-                                  
-                                  // Create a placeholder icon
-                                  const placeholder = document.createElement('div');
-                                  placeholder.className = 'absolute inset-0 flex items-center justify-center text-[#8a7d65]';
-                                  placeholder.innerHTML = `
-                                    <svg class="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
-                                    </svg>
-                                  `;
-                                  parent.appendChild(placeholder);
-                                }
-                              }}
+                              fallbackType="service"
                             />
                           </div>
                           <h3 className="text-2xl font-bold text-[#404040]">{service.title}</h3>

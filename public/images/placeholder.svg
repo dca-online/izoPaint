@@ -1,0 +1,13 @@
+<svg width="800" height="800" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="800" fill="#f8f8f6"/>
+  
+  <!-- Image icon -->
+  <path d="M600 200H200C188.954 200 180 208.954 180 220V580C180 591.046 188.954 600 200 600H600C611.046 600 620 591.046 620 580V220C620 208.954 611.046 200 600 200Z" stroke="#8a7d65" stroke-width="20" fill="none"/>
+  
+  <!-- Mountain/landscape icon -->
+  <path d="M180 500L280 400L360 480L520 320L620 420V580C620 591.046 611.046 600 600 600H200C188.954 600 180 591.046 180 580V500Z" fill="#c3beb4" fill-opacity="0.5"/>
+  
+  <!-- Sun/circle -->
+  <circle cx="380" cy="300" r="40" fill="#c3beb4" fill-opacity="0.8"/>
+</svg> 
