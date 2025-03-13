@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { Product } from '@/types/product';
 
 // This would typically come from a database in a real application
@@ -177,12 +177,12 @@ const productsDatabase: Record<string, Product> = {
   },
 };
 
+// Use the correct type definition for Next.js 15 route handlers
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { slug: string } }
+  request: Request,
+  context: { params: { slug: string } }
 ) {
-  // Simplify the slug handling - it's always a string in Next.js route params
-  const slug = params.slug;
+  const { slug } = context.params;
   
   // Add artificial delay to simulate a real API call
   await new Promise(resolve => setTimeout(resolve, 500));
