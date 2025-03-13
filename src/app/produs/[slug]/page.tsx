@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -26,7 +26,8 @@ const fetchProductData = async (slug: string): Promise<Product> => {
   return response.json();
 };
 
-export default function ProductPage() {
+// Client component that uses useParams
+function ProductDetailContent() {
   const params = useParams();
   const slug = params?.slug as string;
   
@@ -103,9 +104,7 @@ export default function ProductPage() {
   };
 
   return (
-    <main className="min-h-screen relative bg-[#f8f8f6]">
-      <Navbar />
-      
+    <>
       {/* Breadcrumb */}
       <div className="pt-28 pb-4 px-4 sm:px-8 lg:px-16 container mx-auto">
         <div className="text-[#696969] text-sm">
@@ -504,6 +503,25 @@ export default function ProductPage() {
           </div>
         </div>
       </footer>
+    </>
+  );
+}
+
+// Main component that wraps the client component in Suspense
+export default function ProductPage() {
+  return (
+    <main className="min-h-screen relative bg-[#f8f8f6]">
+      <Navbar />
+      <Suspense fallback={
+        <div className="min-h-screen flex items-center justify-center bg-[#f8f8f6]">
+          <div className="relative w-24 h-24">
+            <div className="absolute w-full h-full border-4 border-[#8a7d65]/20 rounded-full animate-ping"></div>
+            <div className="absolute w-full h-full border-4 border-t-[#8a7d65] rounded-full animate-spin"></div>
+          </div>
+        </div>
+      }>
+        <ProductDetailContent />
+      </Suspense>
     </main>
   );
 } 

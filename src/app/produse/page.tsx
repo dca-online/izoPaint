@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -40,7 +40,8 @@ const productsDatabase: Record<string, { id: string }> = {
   'illusion-crystal': { id: '4' },
 };
 
-export default function ProductsPage() {
+// Create a client component that uses useSearchParams
+function ProductsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('categorie');
@@ -191,9 +192,7 @@ export default function ProductsPage() {
   }
   
   return (
-    <main className="min-h-screen relative bg-[#f8f8f6]">
-        <Navbar />
-        
+    <>
       {/* Category Overlay - only show on initial load when no category selected */}
       {isInitialLoad && (
         <CategoryOverlay 
@@ -271,13 +270,13 @@ export default function ProductsPage() {
                 {category.charAt(0).toUpperCase() + category.slice(1)}
               </motion.button>
             ))}
-              </div>
-            </div>
-          </section>
-          
-          {/* Products Grid */}
+          </div>
+        </div>
+      </section>
+      
+      {/* Products Grid */}
       <section className="py-12 px-4 sm:px-8 lg:px-16">
-            <div className="container mx-auto">
+        <div className="container mx-auto">
           {filteredProducts.length === 0 ? (
             <div className="text-center py-16">
               <h2 className="text-2xl text-[#404040] mb-4">Nu am găsit produse în această categorie</h2>
@@ -285,12 +284,12 @@ export default function ProductsPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {filteredProducts.map((product, index) => (
-                    <motion.div
-                      key={product.id}
+              {filteredProducts.map((product, index) => (
+                <motion.div
+                  key={product.id}
                   className="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-lg transition-all group"
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.1 + (index * 0.1) }}
                 >
                   <Link href={`/produs/${Object.keys(productsDatabase).find(key => productsDatabase[key].id === product.id) || product.id}`}>
@@ -304,14 +303,14 @@ export default function ProductsPage() {
                       {product.categorii.includes('premium') && (
                         <div className="absolute top-4 left-4 bg-[#8a7d65] text-white px-4 py-1 rounded-full text-sm font-medium z-10">
                           Premium
-                            </div>
-                          )}
+                        </div>
+                      )}
                       {product.categorii.includes('eco') && (
                         <div className="absolute top-4 right-4 bg-[#4D724D] text-white px-4 py-1 rounded-full text-sm font-medium z-10">
                           Eco
-                            </div>
-                          )}
                         </div>
+                      )}
+                    </div>
                     <div className="p-6">
                       <h3 className="text-xl font-semibold text-[#404040] mb-2">{product.titlu}</h3>
                       <p className="text-[#696969] text-sm mb-4 line-clamp-2">{product.descriereScurta}</p>
@@ -335,19 +334,19 @@ export default function ProductsPage() {
                       </div>
                     </div>
                   </Link>
-                    </motion.div>
-                  ))}
-              </div>
-          )}
+                </motion.div>
+              ))}
             </div>
-          </section>
-          
+          )}
+        </div>
+      </section>
+      
       {/* CTA Section */}
       <section className="py-20 px-4 sm:px-8 lg:px-16 bg-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full opacity-10">
           <div className="absolute top-20 right-20 w-80 h-80 rounded-full bg-[#8a7d65] blur-3xl" />
           <div className="absolute bottom-20 left-20 w-80 h-80 rounded-full bg-[#c3beb4] blur-3xl" />
-              </div>
+        </div>
               
         <div className="container mx-auto relative z-10">
           <div className="max-w-3xl mx-auto text-center">
@@ -364,11 +363,11 @@ export default function ProductsPage() {
               <button className="px-8 py-4 bg-transparent border-2 border-[#404040] text-[#404040] rounded-full text-lg font-medium hover:bg-[#404040]/10 transition-colors">
                 Contactează-ne
               </button>
-                      </div>
-              </div>
             </div>
-          </section>
-          
+          </div>
+        </div>
+      </section>
+      
       {/* Footer would be included here */}
       <footer className="py-12 px-4 md:px-8 lg:px-16 bg-transparent relative z-10">
         <div className="absolute inset-0 bg-[#f8f8f6]/80 backdrop-blur-xl border-t border-[#e6e5e3] z-0"
@@ -401,10 +400,10 @@ export default function ProductsPage() {
               </Link>
               <Link href="/despre" className="text-[#1A1A1A] hover:text-[#8a7d65] transition-colors">
                 Despre Noi
-                  </Link>
+              </Link>
               <Link href="/contact" className="text-[#1A1A1A] hover:text-[#8a7d65] transition-colors">
                 Contact
-                  </Link>
+              </Link>
             </div>
           </div>
           <div className="text-center mt-8 text-sm text-[#696969]">
@@ -412,6 +411,25 @@ export default function ProductsPage() {
           </div>
         </div>
       </footer>
-      </main>
+    </>
+  );
+}
+
+// Main component that wraps the client component in Suspense
+export default function ProductsPage() {
+  return (
+    <main className="min-h-screen relative bg-[#f8f8f6]">
+      <Navbar />
+      <Suspense fallback={
+        <div className="min-h-screen flex items-center justify-center bg-[#f8f8f6]">
+          <div className="relative w-24 h-24">
+            <div className="absolute w-full h-full border-4 border-[#8a7d65]/20 rounded-full animate-ping"></div>
+            <div className="absolute w-full h-full border-4 border-t-[#8a7d65] rounded-full animate-spin"></div>
+          </div>
+        </div>
+      }>
+        <ProductsContent />
+      </Suspense>
+    </main>
   );
 } 
