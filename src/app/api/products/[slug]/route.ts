@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { Product } from '@/types/product';
 
 // This would typically come from a database in a real application
@@ -178,7 +178,7 @@ const productsDatabase: Record<string, Product> = {
 };
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { slug: string } }
 ) {
   // Simplify the slug handling - it's always a string in Next.js route params
