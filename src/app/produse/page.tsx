@@ -27,8 +27,8 @@ const bebasNeue = Bebas_Neue({
 
 // Add CSS for hiding scrollbars across browsers
 const scrollbarHideStyles = {
-  scrollbarWidth: 'none' as 'none', // Firefox
-  msOverflowStyle: 'none' as 'none', // IE/Edge
+  scrollbarWidth: 'none' as const, // Firefox
+  msOverflowStyle: 'none' as const, // IE/Edge
 };
 
 const scrollbarHideClass = `
@@ -523,7 +523,7 @@ function ProductsContent() {
       console.log(`Filtering by subcategory: ${selectedSubcategory}`);
       
       // Map URL param back to subcategory display name
-      let subcategoryName = getSubcategoryDisplayName(selectedSubcategory);
+      const subcategoryName = getSubcategoryDisplayName(selectedSubcategory);
       
       console.log(`Mapped to display name: ${subcategoryName}`);
       
