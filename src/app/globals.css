@@ -46,6 +46,11 @@ body {
     font-family: var(--font-body);
     overflow-x: hidden;
 }
+/* Styles for when the category overlay is open */
+body.overlay-open {
+    /* Prevent scrolling but keep elements in their current position */
+    overflow: hidden !important;
+}
 h1,
 h2,
 h3,

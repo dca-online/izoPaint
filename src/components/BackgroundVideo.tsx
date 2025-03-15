@@ -4,19 +4,73 @@ import { useRef, useEffect, useState } from 'react';
 interface BackgroundVideoProps {
   videoSrc: string;
   verticalFlip?: boolean;
+  horizontalFlip?: boolean;
 }
 
-const BackgroundVideo = ({ videoSrc, verticalFlip = false }: BackgroundVideoProps) => {
+const BackgroundVideo = ({ videoSrc, verticalFlip = false, horizontalFlip = false }: BackgroundVideoProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isPlayingForward, setIsPlayingForward] = useState(true);
   const animationRef = useRef<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   
-  // A bit of DOM magic for the vertical flip effect on mobile
+  // Check for mobile device and set state
   useEffect(() => {
-    if (videoRef.current && verticalFlip) {
-      videoRef.current.style.transform = 'scale(1, -1)';
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  // Apply flips for better positioning
+  useEffect(() => {
+    if (!videoRef.current) return;
+    
+    // Apply the appropriate transform based on the flip props
+    if (verticalFlip && horizontalFlip) {
+      videoRef.current.style.transform = 'scale(-1, -1)'; // Both flips
+    } else if (verticalFlip) {
+      videoRef.current.style.transform = 'scale(1, -1)'; // Vertical only
+    } else if (horizontalFlip) {
+      videoRef.current.style.transform = 'scale(-1, 1)'; // Horizontal only
+    } else {
+      videoRef.current.style.transform = ''; // No flip
     }
-  }, [verticalFlip]);
+    
+    // Ensure video always covers the screen on mobile
+    if (isMobile) {
+      videoRef.current.style.width = '100vw';
+      videoRef.current.style.height = '100vh';
+      videoRef.current.style.objectFit = 'cover';
+      videoRef.current.style.position = 'fixed';
+      videoRef.current.style.top = '0';
+      videoRef.current.style.left = '0';
+    }
+  }, [verticalFlip, horizontalFlip, isMobile]);
+  
+  // Add scroll listener to ensure video stays fixed during scroll
+  useEffect(() => {
+    if (!isMobile || !containerRef.current || !videoRef.current) return;
+    
+    const handleScroll = () => {
+      if (videoRef.current) {
+        // Ensure video maintains its position during scroll
+        videoRef.current.style.position = 'fixed';
+        videoRef.current.style.top = '0';
+        videoRef.current.style.left = '0';
+        videoRef.current.style.width = '100vw';
+        videoRef.current.style.height = '100vh';
+        videoRef.current.style.objectFit = 'cover';
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isMobile]);
   
   useEffect(() => {
     const video = videoRef.current;
@@ -98,13 +152,32 @@ const BackgroundVideo = ({ videoSrc, verticalFlip = false }: BackgroundVideoProp
   }, [isPlayingForward]);
   
   return (
-    <div className="fixed inset-0 z-0 w-full h-full">
+    <div 
+      ref={containerRef}
+      className="fixed inset-0 z-0 w-full h-full overflow-hidden"
+      style={{ 
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        overflow: 'hidden'
+      }}
+    >
       <video
         ref={videoRef}
         autoPlay
         muted
         playsInline
-        className="absolute h-full w-full object-cover"
+        className={`absolute h-full w-full object-cover ${isMobile ? 'will-change-transform' : ''}`}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          objectFit: 'cover'
+        }}
         src={videoSrc}
       />
     </div>

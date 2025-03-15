@@ -95,7 +95,8 @@ const AboutPage = () => {
         <PageHeader 
           title="Despre Noi"
           subtitle="Pasiune pentru Calitate și Inovație în Finisaje"
-          videoSrc="/videos/palettes.mp4"
+          videoSrc="/videos/paint.mp4"
+          horizontalFlip={true}
         />
         
         {/* Content Background Overlay */}

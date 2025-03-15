@@ -103,6 +103,43 @@ function ProductDetailContent() {
     }
   };
 
+  const getSubcategoryUrlParam = (subcategory: string | undefined): string => {
+    if (!subcategory) return '';
+    
+    // Map each subcategory to its URL parameter
+    switch (subcategory) {
+      // Vopsele subcategories
+      case 'ELF Decor':
+        return 'elf-decor';
+      case 'Vopsele interior':
+        return 'vopsele-interior';
+      case 'Amorse interior':
+        return 'amorse-interior';
+      case 'Vopsele & Amorse exterior':
+        return 'vopsele-exterior';
+      case 'Tencuieli/Amorse exterior':
+        return 'tencuieli-amorse-exterior';
+      case 'Vopsele epoxidice':
+        return 'vopsele-epoxidice';
+      case 'Vopsele pentru lemn/metal':
+        return 'vopsele-lemn-metal';
+      case 'Protectia lemnului':
+        return 'protectia-lemnului';
+        
+      // Izolatii subcategories
+      case 'IZOLATII ECO-FRIENDLY':
+        return 'izolatii-eco-friendly';
+      case 'MATERIALE HIDROIZOLANTE':
+        return 'materiale-hidroizolante';
+      case 'ADEZIVI&CHITURI':
+        return 'adezivi-chituri';
+        
+      default:
+        // Fallback to standard URL conversion
+        return subcategory.replace(/\s+/g, '-').toLowerCase();
+    }
+  };
+
   return (
     <>
       {/* Breadcrumb */}
@@ -110,18 +147,92 @@ function ProductDetailContent() {
         <div className="text-[#696969] text-sm">
           <Link href="/" className="hover:text-[#8a7d65] transition-colors">Acasă</Link>
           <span className="mx-2">/</span>
+          {/* Send to main categories view */}
           <Link href="/produse" className="hover:text-[#8a7d65] transition-colors">Produse</Link>
           <span className="mx-2">/</span>
-          {product.categorii[0] === 'vopsele' || product.categorii.some(cat => cat.includes('vopsea')) ? (
-            <Link href="/produse?categorie=vopsele" className="hover:text-[#8a7d65] transition-colors capitalize">
-              Vopsele
-            </Link>
-          ) : product.categorii[0] === 'izolații' || product.categorii.some(cat => cat.includes('izolatie')) ? (
-            <Link href="/produse?categorie=izolații" className="hover:text-[#8a7d65] transition-colors capitalize">
-              Izolații
-            </Link>
+          
+          {/* Main Category - Vopsele or Izolații */}
+          {product.categorii.some(cat => 
+            cat === 'ELF Decor' || 
+            cat === 'Vopsele interior' || 
+            cat === 'Amorse interior' || 
+            cat === 'Vopsele & Amorse exterior' || 
+            cat === 'Tencuieli/Amorse exterior' || 
+            cat === 'Vopsele epoxidice' || 
+            cat === 'Vopsele pentru lemn/metal' || 
+            cat === 'Protectia lemnului') ? (
+            <>
+              <Link href="/produse?categorie=vopsele" className="hover:text-[#8a7d65] transition-colors">
+                Vopsele
+              </Link>
+              <span className="mx-2">/</span>
+              
+              {/* Find the appropriate subcategory */}
+              {product.categorii.find(cat => 
+                cat === 'ELF Decor' || 
+                cat === 'Vopsele interior' || 
+                cat === 'Amorse interior' || 
+                cat === 'Vopsele & Amorse exterior' || 
+                cat === 'Tencuieli/Amorse exterior' || 
+                cat === 'Vopsele epoxidice' || 
+                cat === 'Vopsele pentru lemn/metal' || 
+                cat === 'Protectia lemnului') && (
+                <Link 
+                  href={`/produse?categorie=vopsele&subcategorie=${getSubcategoryUrlParam(
+                    product.categorii.find(cat => 
+                      cat === 'ELF Decor' || 
+                      cat === 'Vopsele interior' || 
+                      cat === 'Amorse interior' || 
+                      cat === 'Vopsele & Amorse exterior' || 
+                      cat === 'Tencuieli/Amorse exterior' || 
+                      cat === 'Vopsele epoxidice' || 
+                      cat === 'Vopsele pentru lemn/metal' || 
+                      cat === 'Protectia lemnului') || '')}`} 
+                  className="hover:text-[#8a7d65] transition-colors"
+                >
+                  {product.categorii.find(cat => 
+                    cat === 'ELF Decor' || 
+                    cat === 'Vopsele interior' || 
+                    cat === 'Amorse interior' || 
+                    cat === 'Vopsele & Amorse exterior' || 
+                    cat === 'Tencuieli/Amorse exterior' || 
+                    cat === 'Vopsele epoxidice' || 
+                    cat === 'Vopsele pentru lemn/metal' || 
+                    cat === 'Protectia lemnului')}
+                </Link>
+              )}
+            </>
+          ) : product.categorii.includes('izolații') || product.categorii.some(cat => cat.includes('izolatie')) ? (
+            <>
+              <Link href="/produse?categorie=izolatii" className="hover:text-[#8a7d65] transition-colors">
+                Izolații
+              </Link>
+              
+              {/* Show subcategory for Izolații if it exists */}
+              {product.categorii.find(cat => 
+                cat === 'IZOLATII ECO-FRIENDLY' || 
+                cat === 'MATERIALE HIDROIZOLANTE' || 
+                cat === 'ADEZIVI&CHITURI') && (
+                <>
+                  <span className="mx-2">/</span>
+                  <Link 
+                    href={`/produse?categorie=izolatii&subcategorie=${getSubcategoryUrlParam(
+                      product.categorii.find(cat => 
+                        cat === 'IZOLATII ECO-FRIENDLY' || 
+                        cat === 'MATERIALE HIDROIZOLANTE' || 
+                        cat === 'ADEZIVI&CHITURI') || '')}`} 
+                    className="hover:text-[#8a7d65] transition-colors"
+                  >
+                    {product.categorii.find(cat => 
+                      cat === 'IZOLATII ECO-FRIENDLY' || 
+                      cat === 'MATERIALE HIDROIZOLANTE' || 
+                      cat === 'ADEZIVI&CHITURI')}
+                  </Link>
+                </>
+              )}
+            </>
           ) : (
-            <Link href={`/produse?categorie=${product.categorii[0]}`} className="hover:text-[#8a7d65] transition-colors capitalize">
+            <Link href={`/produse?categorie=${encodeURIComponent(product.categorii[0])}`} className="hover:text-[#8a7d65] transition-colors">
               {product.categorii[0]}
             </Link>
           )}

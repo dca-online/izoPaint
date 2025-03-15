@@ -21,12 +21,20 @@ interface CategoryOverlayProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectCategory: (category: 'vopsele' | 'izolatii') => void;
+  preserveBackground?: boolean; // Indicates if background should be preserved
 }
 
-const CategoryOverlay: React.FC<CategoryOverlayProps> = ({ isOpen, onClose, onSelectCategory }) => {
+const CategoryOverlay: React.FC<CategoryOverlayProps> = ({ 
+  isOpen, 
+  onClose, 
+  onSelectCategory, 
+  preserveBackground = false
+}) => {
   const [hoveredCategory, setHoveredCategory] = useState<'vopsele' | 'izolatii' | null>(null);
   const [isMobile, setIsMobile] = useState(true);
+  const [animationComplete, setAnimationComplete] = useState(false);
 
+  // Detect mobile device
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
     
@@ -37,6 +45,54 @@ const CategoryOverlay: React.FC<CategoryOverlayProps> = ({ isOpen, onClose, onSe
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+  
+  // Reset animation state when overlay closes
+  useEffect(() => {
+    if (!isOpen) {
+      setAnimationComplete(false);
+    }
+  }, [isOpen]);
+  
+  // Handle scroll locking based on context
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Save the current scroll position
+    const scrollY = window.scrollY;
+    
+    // Calculate scrollbar width to prevent layout shift
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    
+    // Add overlay-open class to body to prevent scrolling
+    document.body.classList.add('overlay-open');
+    
+    // Apply padding right to prevent layout shift from scrollbar disappearing
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+    
+    // If we're not preserving background, store the scroll position
+    if (!preserveBackground) {
+      document.body.setAttribute('data-scroll-position', scrollY.toString());
+    }
+    
+    return () => {
+      // Remove the overlay-open class
+      document.body.classList.remove('overlay-open');
+      
+      // Restore padding
+      document.body.style.paddingRight = '';
+      
+      // Only restore scroll position if we're not preserving background
+      if (!preserveBackground) {
+        const storedPosition = document.body.getAttribute('data-scroll-position');
+        if (storedPosition) {
+          window.scrollTo(0, parseInt(storedPosition, 10));
+          document.body.removeAttribute('data-scroll-position');
+        }
+      }
+    };
+  }, [isOpen, preserveBackground]);
 
   // Motion variants for animations
   const overlayVariants = {
@@ -63,7 +119,10 @@ const CategoryOverlay: React.FC<CategoryOverlayProps> = ({ isOpen, onClose, onSe
       y: 0,
       transition: { 
         duration: 0.4,
-        ease: [0.16, 1, 0.3, 1] // Custom easing function
+        ease: [0.16, 1, 0.3, 1], // Custom easing function
+        onComplete: () => {
+          setAnimationComplete(true);
+        }
       }
     },
     exit: { 
@@ -80,6 +139,20 @@ const CategoryOverlay: React.FC<CategoryOverlayProps> = ({ isOpen, onClose, onSe
     return category === hoveredCategory ? '60%' : '40%';
   };
 
+  // Only allow mouse interactions with categories after animation completes or on mobile
+  const handleMouseEnter = (category: 'vopsele' | 'izolatii') => {
+    if (animationComplete || isMobile) {
+      setHoveredCategory(category);
+    }
+  };
+  
+  // Handle category selection to maintain context
+  const handleCategorySelect = (category: 'vopsele' | 'izolatii') => {
+    if (animationComplete || isMobile) {
+      onSelectCategory(category);
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -90,20 +163,22 @@ const CategoryOverlay: React.FC<CategoryOverlayProps> = ({ isOpen, onClose, onSe
           exit="exit"
           variants={overlayVariants}
         >
-          {/* Backdrop element */}
+          {/* Dynamic backdrop with context-aware styling */}
           <div 
-            className="absolute inset-0 bg-transparent"
+            className="absolute inset-0"
             onClick={onClose}
             style={{
-              backdropFilter: isMobile ? 'blur(10px)' : 'none',
-              WebkitBackdropFilter: isMobile ? 'blur(10px)' : 'none',
+              background: preserveBackground ? 'rgba(0, 0, 0, 0.5)' : 'transparent',
+              backdropFilter: isMobile || preserveBackground ? 'blur(10px)' : 'none',
+              WebkitBackdropFilter: isMobile || preserveBackground ? 'blur(10px)' : 'none',
             }}
           />
           
-          {/* Main container */}
+          {/* Main container - Block pointer events until animation completes */}
           <motion.div 
-            className="relative w-[95%] h-[85%] max-w-7xl overflow-hidden rounded-3xl"
+            className={`relative w-[95%] h-[85%] max-w-7xl overflow-hidden rounded-3xl ${!animationComplete && !isMobile ? 'pointer-events-none' : ''}`}
             variants={containerVariants}
+            onAnimationComplete={() => setAnimationComplete(true)}
           >
             {/* Close button */}
             <button 
@@ -155,7 +230,7 @@ const CategoryOverlay: React.FC<CategoryOverlayProps> = ({ isOpen, onClose, onSe
                   flex: 'none',
                   ...(isMobile ? {} : { width: getDesktopWidth('vopsele') })
                 }}
-                onMouseEnter={() => setHoveredCategory('vopsele')}
+                onMouseEnter={() => handleMouseEnter('vopsele')}
                 onMouseLeave={() => setHoveredCategory(null)}
               >
                 {/* Background card element */}
@@ -195,7 +270,7 @@ const CategoryOverlay: React.FC<CategoryOverlayProps> = ({ isOpen, onClose, onSe
                 {/* Content container */}
                 <div 
                   className="relative h-full flex flex-col items-center justify-center text-white p-8 cursor-pointer"
-                  onClick={() => onSelectCategory('vopsele')}
+                  onClick={() => handleCategorySelect('vopsele')}
                 >
                   <motion.div
                     className="flex flex-col items-center"
@@ -206,7 +281,7 @@ const CategoryOverlay: React.FC<CategoryOverlayProps> = ({ isOpen, onClose, onSe
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   >
                     <h2 className={`${bebasNeue.className} text-5xl md:text-8xl font-normal mb-3 md:mb-4 tracking-wide text-white/95`}>VOPSELE</h2>
-                    <p className={`${spaceGrotesk.className} text-lg md:text-2xl font-light text-white/80 mb-4 md:mb-6`}>și produse decorative</p>
+                    <p className={`${spaceGrotesk.className} text-lg md:text-2xl font-light text-white/80 mb-4 md:mb-6`}>tencuieli și produse decorative.</p>
                     
                     {/* Divider element */}
                     <div className="w-24 md:w-32 h-px bg-white/30 rounded-full mb-6 md:mb-8" />
@@ -224,7 +299,10 @@ const CategoryOverlay: React.FC<CategoryOverlayProps> = ({ isOpen, onClose, onSe
                         y: hoveredCategory === 'vopsele' || isMobile ? 0 : 20
                       }}
                       transition={{ duration: 0.5 }}
-                      onClick={() => onSelectCategory('vopsele')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCategorySelect('vopsele');
+                      }}
                       style={{
                         background: 'rgba(255, 255, 255, 0.1)',
                         backdropFilter: 'blur(10px)',
@@ -248,7 +326,7 @@ const CategoryOverlay: React.FC<CategoryOverlayProps> = ({ isOpen, onClose, onSe
                   flex: 'none',
                   ...(isMobile ? {} : { width: getDesktopWidth('izolatii') })
                 }}
-                onMouseEnter={() => setHoveredCategory('izolatii')}
+                onMouseEnter={() => handleMouseEnter('izolatii')}
                 onMouseLeave={() => setHoveredCategory(null)}
               >
                 {/* Background card element */}
@@ -288,7 +366,7 @@ const CategoryOverlay: React.FC<CategoryOverlayProps> = ({ isOpen, onClose, onSe
                 {/* Content container */}
                 <div 
                   className="relative h-full flex flex-col items-center justify-center text-white p-8 cursor-pointer"
-                  onClick={() => onSelectCategory('izolatii')}
+                  onClick={() => handleCategorySelect('izolatii')}
                 >
                   <motion.div
                     className="flex flex-col items-center"
@@ -299,7 +377,7 @@ const CategoryOverlay: React.FC<CategoryOverlayProps> = ({ isOpen, onClose, onSe
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   >
                     <h2 className={`${bebasNeue.className} text-5xl md:text-8xl font-normal mb-3 md:mb-4 tracking-wide text-white/95`}>IZOLAȚII</h2>
-                    <p className={`${spaceGrotesk.className} text-lg md:text-2xl font-light text-white/80 mb-4 md:mb-6`}>termice și fonice</p>
+                    <p className={`${spaceGrotesk.className} text-lg md:text-2xl font-light text-white/80 mb-4 md:mb-6`}>adezivi, chituri și hidroizolanți.</p>
                     
                     {/* Divider element */}
                     <div className="w-24 md:w-32 h-px bg-white/30 rounded-full mb-6 md:mb-8" />
@@ -317,7 +395,10 @@ const CategoryOverlay: React.FC<CategoryOverlayProps> = ({ isOpen, onClose, onSe
                         y: hoveredCategory === 'izolatii' || isMobile ? 0 : 20
                       }}
                       transition={{ duration: 0.5 }}
-                      onClick={() => onSelectCategory('izolatii')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCategorySelect('izolatii');
+                      }}
                       style={{
                         background: 'rgba(255, 255, 255, 0.1)',
                         backdropFilter: 'blur(10px)',

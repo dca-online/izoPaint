@@ -20,4 +20,5 @@ export interface Product {
     [key: string]: string;
   };
   categorii: string[];
+  subcategorii: string[];
 } 

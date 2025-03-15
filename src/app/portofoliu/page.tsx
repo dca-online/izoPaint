@@ -94,10 +94,11 @@ const PortfolioPageHeader = () => {
       <div className="absolute inset-0 w-full h-full">
         <BackgroundVideo 
           videoSrc="/videos/paint.mp4" 
-          verticalFlip={typeof window !== 'undefined' && window.innerWidth < 768}
+          verticalFlip={true}
+          horizontalFlip={false}
         />
         {/* Adding bottom washout effect */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#f8f8f6]/30 to-[#f8f8f6]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#f8f8f6]/70 via-[#f8f8f6]/50 to-[#f8f8f6]" />
       </div>
       
       {/* Content */}
@@ -119,6 +120,37 @@ const PortfolioPageHeader = () => {
         >
           Proiecte care inspiră și transformă spații
         </motion.p>
+        
+        {/* Decorative accent line */}
+        <motion.div 
+          className="w-20 h-1 bg-[#8a7d65] mt-8"
+          initial={{ opacity: 0, width: 0 }}
+          animate={{ opacity: 1, width: 80 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        />
+      </div>
+      
+      {/* Mouse scroll indicator */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+        <motion.div
+          className="w-8 h-12 rounded-full border-2 border-[#8a7d65] flex justify-center"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+        >
+          <motion.div
+            className="w-1 h-3 bg-[#8a7d65] rounded-full mt-2"
+            animate={{ 
+              y: [0, 6, 0],
+              opacity: [1, 0.5, 1]
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              repeatType: 'loop',
+            }}
+          />
+        </motion.div>
       </div>
     </div>
   );

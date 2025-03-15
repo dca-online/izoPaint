@@ -84,7 +84,9 @@ const ContactPage = () => {
         <PageHeader 
           title="Contactează-ne"
           subtitle="Suntem Aici pentru a Răspunde Întrebărilor Tale"
-          videoSrc="/videos/paintbrush.mp4"
+          videoSrc="/videos/paint.mp4"
+          horizontalFlip={true}
+          verticalFlip={false}
         />
         
         {/* Content Background Overlay */}

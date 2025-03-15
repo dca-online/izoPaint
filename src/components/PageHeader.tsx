@@ -9,9 +9,18 @@ interface PageHeaderProps {
   subtitle?: string;
   videoSrc: string;
   align?: 'left' | 'center' | 'right';
+  verticalFlip?: boolean;
+  horizontalFlip?: boolean;
 }
 
-const PageHeader = ({ title, subtitle, videoSrc, align = 'center' }: PageHeaderProps) => {
+const PageHeader = ({ 
+  title, 
+  subtitle, 
+  videoSrc, 
+  align = 'center', 
+  verticalFlip = false, 
+  horizontalFlip = false 
+}: PageHeaderProps) => {
   const pathname = usePathname();
   
   // These classes help us align text nicely depending on what the page needs
@@ -34,15 +43,16 @@ const PageHeader = ({ title, subtitle, videoSrc, align = 'center' }: PageHeaderP
       <div className="absolute inset-0 w-full h-full">
         <BackgroundVideo 
           videoSrc={videoSrc}
-          verticalFlip={typeof window !== 'undefined' && window.innerWidth < 768}
+          verticalFlip={verticalFlip || (typeof window !== 'undefined' && window.innerWidth < 768)}
+          horizontalFlip={horizontalFlip}
         />
         
         {/* A gentle whitening effect for these content-heavy pages */}
-        {(isAboutPage || isPortfolioPage || isContactPage) && (
-          <div className="absolute inset-0 bg-gradient-to-b from-[#f8f8f6]/50 via-[#f8f8f6]/30 to-[#f8f8f6]" />
+        {(isAboutPage || isPortfolioPage || isContactPage || isServicesPage) && (
+          <div className="absolute inset-0 bg-gradient-to-b from-[#f8f8f6]/70 via-[#f8f8f6]/50 to-[#f8f8f6]" />
         )}
-        {/* A softer transition for our more visual service and product pages */}
-        {(isServicesPage || isProductsPage) && (
+        {/* A softer transition for our product pages */}
+        {(isProductsPage) && (
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#f8f8f6]/20 to-[#f8f8f6]" />
         )}
       </div>

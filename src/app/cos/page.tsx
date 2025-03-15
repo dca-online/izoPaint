@@ -71,10 +71,11 @@ const VerticallyFlippedVideoHeader = () => {
       <div className="absolute inset-0 w-full h-full">
         <BackgroundVideo 
           videoSrc="/videos/paint.mp4" 
-          verticalFlip={typeof window !== 'undefined' && window.innerWidth < 768}
+          verticalFlip={false}
+          horizontalFlip={false}
         />
         {/* Adding bottom washout effect */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#f8f8f6]/30 to-[#f8f8f6]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#f8f8f6]/70 via-[#f8f8f6]/50 to-[#f8f8f6]" />
       </div>
       
       {/* Content */}

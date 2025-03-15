@@ -63,8 +63,8 @@ const VideoHeader = () => {
       scrollTrigger: {
         trigger: 'body',
         start: 'top top',
-        end: '30% top',
-        scrub: isMobileDevice ? 1 : 2, // Phones need less resistance for smoother scrolling
+        end: isMobileDevice ? '15% top' : '30% top', // Shorter scroll distance on mobile
+        scrub: isMobileDevice ? 0.5 : 2, // Reduced resistance for smoother/faster scrolling on mobile
         onUpdate: (self) => {
           // Once we're mostly done with the animation, let's hide some elements
           if (self.progress > 0.8) {
@@ -77,9 +77,9 @@ const VideoHeader = () => {
     });
 
     // The doors need to move differently depending on your device
-    const easingType = isMobileDevice ? 'power1.out' : 'power1.out';
-    const doorDelay = isMobileDevice ? 0.1 : 0.05;
-    const doorDuration = isMobileDevice ? 1.2 : 1.5; // A bit quicker on phones feels better
+    const easingType = isMobileDevice ? 'power2.out' : 'power1.out'; // Faster easing for mobile
+    const doorDelay = isMobileDevice ? 0 : 0.05; // Immediate start on mobile
+    const doorDuration = isMobileDevice ? 0.8 : 1.5; // Much quicker animation on phones
     
     // Mobile users scroll differently, so we adjust the timing
     // Desktop gets a slightly different treatment
@@ -102,8 +102,8 @@ const VideoHeader = () => {
       .to(header, { 
         opacity: 0,
         y: '-50%',
-        duration: isMobileDevice ? 0.8 : 1, // Text fades a bit faster on mobile
-        ease: 'power2.inOut',
+        duration: isMobileDevice ? 0.5 : 1, // Text fades even faster on mobile
+        ease: isMobileDevice ? 'power3.in' : 'power2.inOut', // Stronger easing for mobile
         delay: headerDelay
       }, headerTiming);
 
@@ -223,7 +223,7 @@ const VideoHeader = () => {
                 color: '#2e2e2e',
                 lineHeight: '1',
                 textTransform: 'uppercase',
-                zIndex: 10,
+                zIndex: 10
               }}
             >
               <div className="flex justify-center">
@@ -301,7 +301,7 @@ const VideoHeader = () => {
                       color: '#2e2e2e',
                       lineHeight: '1',
                       textTransform: 'uppercase',
-                      zIndex: 10,
+                      zIndex: 10
                     }}
                   >
                     <div className="flex justify-center">
@@ -345,12 +345,12 @@ const VideoHeader = () => {
           >
             <div className="flex items-center justify-center w-full px-6">
               <div className="flex flex-wrap sm:flex-nowrap justify-center items-center max-w-full">
-                <span className="golden-rooster-font text-[#8a7d65] text-sm xs:text-base sm:text-lg md:text-xl whitespace-nowrap" style={{ display: 'inline-block', position: 'relative' }}>
+                <span className={`text-[#8a7d65] text-sm xs:text-base sm:text-lg md:text-xl whitespace-nowrap ${spaceGrotesk.className}`} style={{ display: 'inline-block', position: 'relative' }}>
                   Vopsele moderne
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#8a7d65] opacity-60" style={{ animation: 'expandWidth 3s ease-in-out infinite' }}></span>
                 </span>
                 <span className="mx-2 sm:mx-4 text-gray-300">|</span>
-                <span className="golden-rooster-font text-[#696969] text-sm xs:text-base sm:text-lg md:text-xl whitespace-nowrap" style={{ display: 'inline-block', position: 'relative' }}>
+                <span className={`text-[#696969] text-sm xs:text-base sm:text-lg md:text-xl whitespace-nowrap ${spaceGrotesk.className}`} style={{ display: 'inline-block', position: 'relative' }}>
                   izolații eco-friendly
                   <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-[#696969] opacity-60" style={{ animation: 'expandWidth 3s ease-in-out infinite 1.5s' }}></span>
                 </span>
@@ -360,7 +360,7 @@ const VideoHeader = () => {
           
           <p 
             ref={subtitleRef}
-            className="text-sm sm:text-base md:text-lg text-[#333333] mb-12 max-w-2xl font-medium pointer-events-auto golden-rooster-font"
+            className={`text-sm sm:text-base md:text-lg text-[#333333] mb-12 max-w-2xl font-medium pointer-events-auto ${spaceGrotesk.className}`}
             style={{ 
               letterSpacing: '0.05em',
               maxWidth: '90%',
@@ -380,7 +380,7 @@ const VideoHeader = () => {
               {/* Left button - positioned to end exactly at center */}
               <div className="flex justify-end pr-2" style={{ width: '50%' }}>
                 <button 
-                  className="px-6 sm:px-8 py-3 rounded-full text-sm sm:text-base font-medium transition-all duration-300 tracking-wide whitespace-nowrap w-[160px] sm:w-[200px]"
+                  className={`px-6 sm:px-8 py-3 rounded-full text-sm sm:text-base font-medium transition-all duration-300 tracking-wide whitespace-nowrap w-[160px] sm:w-[200px] ${spaceGrotesk.className}`}
                   style={{ 
                     maxWidth: '100%',
                     backgroundColor: 'rgba(255, 255, 255, 0.4)',
@@ -410,7 +410,7 @@ const VideoHeader = () => {
               {/* Right button - positioned to start exactly at center */}
               <div className="flex justify-start pl-2" style={{ width: '50%' }}>
                 <button 
-                  className="px-3 sm:px-6 py-3 rounded-full text-sm sm:text-base font-medium transition-all duration-300 tracking-wide whitespace-nowrap text-center w-[160px] sm:w-[200px] flex items-center justify-center"
+                  className={`px-3 sm:px-6 py-3 rounded-full text-sm sm:text-base font-medium transition-all duration-300 tracking-wide whitespace-nowrap text-center w-[160px] sm:w-[200px] flex items-center justify-center ${spaceGrotesk.className}`}
                   style={{ 
                     maxWidth: '100%',
                     backgroundColor: 'rgba(138, 125, 101, 0.3)',
@@ -455,7 +455,7 @@ const VideoHeader = () => {
       </div>
 
       {/* Invisible content spacer - creates room for scrolling */}
-      <div style={{ height: '200vh' }}></div>
+      <div style={{ height: isMobile ? '120vh' : '200vh' }}></div>
       
       {/* Add keyframes for the underline animation */}
       <style jsx global>{`

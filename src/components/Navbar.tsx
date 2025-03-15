@@ -88,12 +88,23 @@ const Navbar = () => {
   const [isHovering, setIsHovering] = useState(false);
   const [showCategoryOverlay, setShowCategoryOverlay] = useState(false);
 
+  // Function to check if we're on a product-related page
+  const isProductPage = (path: string) => {
+    return path.includes('/produse') || path.includes('/produs/') || path.includes('/cos');
+  };
+
   // Hide scrollbar on homepage and measure it for consistent layout
   useEffect(() => {
     // Check if we're on the homepage
     const path = window.location.pathname;
     routerPath.current = path;
     setCurrentPath(path);
+    
+    // Set hasScrolled to true immediately for product pages
+    if (isProductPage(path)) {
+      setHasScrolled(true);
+      setIsPastHero(true);
+    }
     
     // Calculate scrollbar width
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
@@ -149,8 +160,16 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
-      setHasScrolled(scrollPosition > 100);
-      setIsPastHero(scrollPosition > window.innerHeight * 0.75); // We're about 3/4 down the hero section
+      
+      // For product-related pages, always keep hasScrolled true
+      if (isProductPage(routerPath.current)) {
+        setHasScrolled(true);
+        setIsPastHero(true);
+      } else {
+        // For other pages, use normal scroll behavior
+        setHasScrolled(scrollPosition > 100);
+        setIsPastHero(scrollPosition > window.innerHeight * 0.75); // We're about 3/4 down the hero section
+      }
     };
 
     // Check scroll position immediately on mount
@@ -159,6 +178,15 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Update hasScrolled and isPastHero on route change
+  useEffect(() => {
+    // Set hasScrolled to true for product-related pages
+    if (isProductPage(currentPath)) {
+      setHasScrolled(true);
+      setIsPastHero(true);
+    }
+  }, [currentPath]);
 
   // Let's make sure the menu doesn't make everything jumpy when it's open
   useEffect(() => {
@@ -290,15 +318,25 @@ const Navbar = () => {
     if (category === 'vopsele') {
       router.push('/produse?categorie=vopsele');
     } else {
-      router.push('/produse?categorie=izolații');
+      router.push('/produse?categorie=izolatii');
     }
   };
 
   // Handle navigation link click
   const handleNavLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
-    if (path === '/produse' && pathname !== '/produse') {
-      e.preventDefault();
-      setShowCategoryOverlay(true);
+    if (path === '/produse') {
+      // Only redirect directly to /produse if already in a produse or produs context
+      const isProdusePage = pathname?.startsWith('/produse');
+      const isProductPage = pathname?.startsWith('/produs');
+      
+      if (isProdusePage || isProductPage) {
+        e.preventDefault();
+        router.push('/produse');
+      } else {
+        // Otherwise show the category overlay
+        e.preventDefault();
+        setShowCategoryOverlay(true);
+      }
     }
   };
 
@@ -368,12 +406,12 @@ const Navbar = () => {
                 style={{
                   width: activeIndex !== null ? '85px' : '0',
                   // Recalibrated pixel values
-                  left: activeIndex === 0 ? '0px' : 
-                        activeIndex === 1 ? '110px' : 
-                        activeIndex === 2 ? '235px' : 
-                        activeIndex === 3 ? '375px' :
-                        activeIndex === 4 ? '505px' :
-                        activeIndex === 5 ? '635px' : '0',
+                  left: activeIndex === 0 ? '12px' : 
+                        activeIndex === 1 ? '125px' : 
+                        activeIndex === 2 ? '250px' : 
+                        activeIndex === 3 ? '380px' :
+                        activeIndex === 4 ? '525px' :
+                        activeIndex === 5 ? '657px' : '0',
                   opacity: activeIndex !== null ? 0.2 : 0,
                   top: '50%',
                   transform: 'translateY(-50%)',
@@ -407,6 +445,7 @@ const Navbar = () => {
                           ? 'text-[#8a7d65]' 
                           : 'text-[#404040] hover:text-[#8a7d65]'
                       }`}
+                      onClick={(e) => handleNavLinkClick(e, link.path)}
                       onMouseEnter={() => {
                         setActiveIndex(index);
                         setIsHovering(true);
@@ -415,7 +454,6 @@ const Navbar = () => {
                         setActiveIndex(null);
                         setIsHovering(false);
                       }}
-                      onClick={(e) => handleNavLinkClick(e, link.path)}
                     >
                       {link.name}
                     </Link>
@@ -611,15 +649,7 @@ const Navbar = () => {
                             ? 'text-[#8a7d65]' 
                             : 'text-[#404040] hover:text-[#8a7d65]'
                         }`}
-                        onClick={(e) => {
-                          if (link.path === '/produse' && pathname !== '/produse') {
-                            e.preventDefault();
-                            setIsMenuOpen(false);
-                            setShowCategoryOverlay(true);
-                          } else {
-                            setIsMenuOpen(false);
-                          }
-                        }}
+                        onClick={(e) => handleNavLinkClick(e, link.path)}
                         onMouseEnter={() => setIsHovering(true)}
                         onMouseLeave={() => setIsHovering(false)}
                       >
@@ -886,15 +916,7 @@ const Navbar = () => {
                           ? 'text-[#8a7d65]' 
                           : 'text-[#404040] hover:text-[#8a7d65]'
                       }`}
-                      onClick={(e) => {
-                        if (link.path === '/produse' && pathname !== '/produse') {
-                          e.preventDefault();
-                          setIsMenuOpen(false);
-                          setShowCategoryOverlay(true);
-                        } else {
-                          setIsMenuOpen(false);
-                        }
-                      }}
+                      onClick={(e) => handleNavLinkClick(e, link.path)}
                       onMouseEnter={() => setIsHovering(true)}
                       onMouseLeave={() => setIsHovering(false)}
                     >
@@ -914,6 +936,7 @@ const Navbar = () => {
         isOpen={showCategoryOverlay}
         onClose={() => setShowCategoryOverlay(false)}
         onSelectCategory={handleCategorySelect}
+        preserveBackground={true}
       />
     </>
   );
