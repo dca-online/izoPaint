@@ -227,7 +227,7 @@ const ServicesPage = () => {
                               fill
                               sizes="40px"
                               style={{ objectFit: 'contain' }}
-                              fallbackType="service"
+                              type="service"
                             />
                           </div>
                           <h3 className="text-2xl font-bold text-[#404040]">{service.title}</h3>
@@ -288,7 +288,7 @@ const ServicesPage = () => {
                               fill
                               sizes="40px"
                               style={{ objectFit: 'contain' }}
-                              fallbackType="service"
+                              type="service"
                             />
                           </div>
                           <h3 className="text-2xl font-bold text-[#404040]">{service.title}</h3>
