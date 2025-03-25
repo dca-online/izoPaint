@@ -768,7 +768,6 @@ function ProductsContent() {
   // The rest of the ProductsContent component...
 
   return (
-    // The component JSX...
     <>
       {/* Category overlay */}
       {showCategoryOverlay && (
@@ -815,239 +814,251 @@ function ProductsContent() {
         />
       )}
 
-      {/* Main content */}
-      <div className="pt-32 px-4 sm:px-8 lg:px-16 min-h-screen">
-        <PageVideoBackground />
-        <div className="container mx-auto">
-          {/* Content sections */}
-          {/* ... */}
-          
-          {/* Main categories view - shown when no category is selected */}
-          {!activeCategory ? (
-            <div className="py-16">
-              <h2 className={`${spaceGrotesk.className} text-4xl md:text-5xl text-[#404040] mb-12 text-center`}>
-                CATEGORII PRINCIPALE
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                {mainCategoryCardsData.map((category, index) => (
-                  <motion.div
-                    key={category.id}
-                    className="bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all cursor-pointer group h-[500px]"
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.2 }}
-                    onClick={() => {
-                      router.push(`/produse?categorie=${category.id.toLowerCase()}`);
-                    }}
-                  >
-                    <div className="relative h-72">
-                      <ErrorFallbackImage
-                        src={category.image}
-                        alt={category.title}
-                        fill
-                        type="category"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-60"></div>
-                      <div className="absolute bottom-0 w-full p-8">
-                        <h3 className={`${spaceGrotesk.className} text-4xl text-white font-bold mb-0`}>
-                          {category.title}
-                        </h3>
-                        <p className="text-white text-lg opacity-90 leading-tight">{category.subtitle}</p>
+      {/* Fixed Navbar */}
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <Navbar />
+      </div>
+
+      {/* Main content with video background */}
+      <div className="relative min-h-screen">
+        {/* Video background */}
+        <div className="fixed inset-0 -z-10">
+          <PageVideoBackground />
+        </div>
+
+        {/* Content wrapper */}
+        <div className="pt-32 px-4 sm:px-8 lg:px-16">
+          <div className="container mx-auto">
+            {/* Content sections */}
+            {/* ... */}
+            
+            {/* Main categories view - shown when no category is selected */}
+            {!activeCategory ? (
+              <div className="py-16">
+                <h2 className={`${spaceGrotesk.className} text-4xl md:text-5xl text-[#404040] mb-12 text-center`}>
+                  CATEGORII PRINCIPALE
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                  {mainCategoryCardsData.map((category, index) => (
+                    <motion.div
+                      key={category.id}
+                      className="bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all cursor-pointer group h-[500px]"
+                      initial={{ opacity: 0, y: 50 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.2 }}
+                      onClick={() => {
+                        router.push(`/produse?categorie=${category.id.toLowerCase()}`);
+                      }}
+                    >
+                      <div className="relative h-72">
+                        <ErrorFallbackImage
+                          src={category.image}
+                          alt={category.title}
+                          fill
+                          type="category"
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-60"></div>
+                        <div className="absolute bottom-0 w-full p-8">
+                          <h3 className={`${spaceGrotesk.className} text-4xl text-white font-bold mb-0`}>
+                            {category.title}
+                          </h3>
+                          <p className="text-white text-lg opacity-90 leading-tight">{category.subtitle}</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="p-8">
-                      <p className="text-[#696969] mb-6">{category.description}</p>
-                      <div className="flex items-center text-[#8a7d65] font-medium group-hover:underline">
-                        Vezi toate produsele
-                        <svg 
-                          xmlns="http://www.w3.org/2000/svg" 
-                          className="h-5 w-5 ml-2 transform group-hover:translate-x-1 transition-transform" 
-                          viewBox="0 0 20 20" 
-                          fill="currentColor"
-                        >
-                          <path 
-                            fillRule="evenodd" 
-                            d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" 
-                            clipRule="evenodd" 
-                          />
-                        </svg>
+                      <div className="p-8">
+                        <p className="text-[#696969] mb-6">{category.description}</p>
+                        <div className="flex items-center text-[#8a7d65] font-medium group-hover:underline">
+                          Vezi toate produsele
+                          <svg 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            className="h-5 w-5 ml-2 transform group-hover:translate-x-1 transition-transform" 
+                            viewBox="0 0 20 20" 
+                            fill="currentColor"
+                          >
+                            <path 
+                              fillRule="evenodd" 
+                              d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" 
+                              clipRule="evenodd" 
+                            />
+                          </svg>
+                        </div>
                       </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <>
-              {/* Heading section - now at the top since tabs were removed */}
-              <div className="mb-8">
-                <h1 className={`${spaceGrotesk.className} text-4xl md:text-5xl text-[#404040] mb-4`}>
-                  {activeCategory === 'vopsele' ? 'VOPSELE' : 'IZOLAȚII'}
-                </h1>
-                <p className="text-xl text-[#696969] mb-6">
-                  {activeCategory === 'vopsele' 
-                    ? 'Explorează colecția noastră de vopsele premium pentru interior și exterior.' 
-                    : 'Descoperă soluțiile noastre profesionale de izolare pentru proiectele tale.'}
-                </p>
-                
-                {/* Category switcher positioned under the heading */}
-                <div className="mb-6">
-                  <CategorySwitcher 
-                    currentCategory={activeCategory === 'vopsele' ? 'vopsele' : activeCategory === 'izolatii' ? 'izolatii' : 'vopsele'}
-                    onCategoryChange={(category) => {
-                      // Clear any selected subcategory when changing the main category
-                      setSelectedSubcategory(null);
-                      
-                      // Set the active category and main category
-                      setActiveCategory(category);
-                      setMainCategory(category);
-                      
-                      // Reset the products to trigger a new load
-                      setProducts([]);
-                      
-                      // Load products for this category
-                      loadProducts(category);
-                      
-                      // Update URL without reloading the page
-                      router.push(`/produse?categorie=${encodeURIComponent(category)}`, { 
-                        scroll: false
-                      });
-                    }}
-                  />
+                    </motion.div>
+                  ))}
                 </div>
               </div>
-
-              {/* Product List */}
-              <div className="w-full pt-8 md:pt-12">
-                {/* Display breadcrumb information for selected subcategory */}
-                {selectedSubcategory && (
+            ) : (
+              <>
+                {/* Heading section - now at the top since tabs were removed */}
+                <div className="mb-8">
+                  <h1 className={`${spaceGrotesk.className} text-4xl md:text-5xl text-[#404040] mb-4`}>
+                    {activeCategory === 'vopsele' ? 'VOPSELE' : 'IZOLAȚII'}
+                  </h1>
+                  <p className="text-xl text-[#696969] mb-6">
+                    {activeCategory === 'vopsele' 
+                      ? 'Explorează colecția noastră de vopsele premium pentru interior și exterior.' 
+                      : 'Descoperă soluțiile noastre profesionale de izolare pentru proiectele tale.'}
+                  </p>
+                  
+                  {/* Category switcher positioned under the heading */}
                   <div className="mb-6">
-                    <p className="text-sm text-gray-600">
-                      <span 
-                        className="cursor-pointer hover:text-[#8a7d65] hover:underline"
-                        onClick={() => {
-                          // Simply clear the subcategory selection and update the URL
-                          setSelectedSubcategory(null);
-                          router.push(`/produse?categorie=${activeCategory}`);
-                        }}
-                      >
-                        {mainCategory === 'vopsele' ? 'VOPSELE' : 'IZOLAȚII'}
-                      </span> {'>'} {getSubcategoryDisplayName(selectedSubcategory)}
-                    </p>
-                  </div>
-                )}
-
-                {/* Subcategory pills for VOPSELE - only show when in a specific subcategory */}
-                {mainCategory === 'vopsele' && selectedSubcategory && (
-                  <div className="mb-8 overflow-x-auto" style={scrollbarHideStyles}>
-                    <style jsx global>{scrollbarHideClass}</style>
-                    <div className="flex space-x-2 pb-2 min-w-max">
-                      {subcategories.map((subcategory) => (
-                        <button
-                          key={subcategory.id}
-                          className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                            selectedSubcategory === subcategory.id
-                              ? 'bg-[#8a7d65] text-white'
-                              : 'bg-gray-100 text-[#404040] hover:bg-gray-200'
-                          }`}
-                          onClick={() => handleSubcategoryCardSelect(subcategory.id)}
-                        >
-                          {subcategory.title}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Subcategory pills for IZOLATII - only show when in a specific subcategory */}
-                {mainCategory === 'izolatii' && selectedSubcategory && (
-                  <div className="mb-8 overflow-x-auto" style={scrollbarHideStyles}>
-                    <style jsx global>{scrollbarHideClass}</style>
-                    <div className="flex space-x-2 pb-2 min-w-max">
-                      {subcategories.map((subcategory) => (
-                        <button
-                          key={subcategory.id}
-                          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 whitespace-nowrap ${
-                            selectedSubcategory === subcategory.id
-                              ? 'bg-amber-500 text-white'
-                              : 'bg-gray-100 text-[#404040] hover:bg-gray-200'
-                          }`}
-                          onClick={() => handleSubcategoryCardSelect(subcategory.id)}
-                        >
-                          {subcategory.title}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Display subcategory cards for main categories when no subcategory is selected */}
-                {mainCategory === 'vopsele' && !selectedSubcategory && (
-                  <div className="mb-8 -mx-4 md:-mx-8 lg:-mx-16">
-                    <SubcategoryScroller 
-                      subcategories={subcategories} 
-                      onSelectSubcategory={handleSubcategoryCardSelect} 
-                      activeCategory={activeCategory || ''}
+                    <CategorySwitcher 
+                      currentCategory={activeCategory === 'vopsele' ? 'vopsele' : activeCategory === 'izolatii' ? 'izolatii' : 'vopsele'}
+                      onCategoryChange={(category) => {
+                        // Clear any selected subcategory when changing the main category
+                        setSelectedSubcategory(null);
+                        
+                        // Set the active category and main category
+                        setActiveCategory(category);
+                        setMainCategory(category);
+                        
+                        // Reset the products to trigger a new load
+                        setProducts([]);
+                        
+                        // Load products for this category
+                        loadProducts(category);
+                        
+                        // Update URL without reloading the page
+                        router.push(`/produse?categorie=${encodeURIComponent(category)}`, { 
+                          scroll: false
+                        });
+                      }}
                     />
                   </div>
-                )}
+                </div>
 
-                {/* Display subcategory cards for IZOLATII when no subcategory is selected */}
-                {mainCategory === 'izolatii' && !selectedSubcategory && (
-                  <div className="mb-8 -mx-4 md:-mx-8 lg:-mx-16">
-                    <SubcategoryScroller 
-                      subcategories={subcategories} 
-                      onSelectSubcategory={handleSubcategoryCardSelect} 
-                      activeCategory={activeCategory || ''}
-                    />
-                  </div>
-                )}
+                {/* Product List */}
+                <div className="w-full pt-8 md:pt-12">
+                  {/* Display breadcrumb information for selected subcategory */}
+                  {selectedSubcategory && (
+                    <div className="mb-6">
+                      <p className="text-sm text-gray-600">
+                        <span 
+                          className="cursor-pointer hover:text-[#8a7d65] hover:underline"
+                          onClick={() => {
+                            // Simply clear the subcategory selection and update the URL
+                            setSelectedSubcategory(null);
+                            router.push(`/produse?categorie=${activeCategory}`);
+                          }}
+                        >
+                          {mainCategory === 'vopsele' ? 'VOPSELE' : 'IZOLAȚII'}
+                        </span> {'>'} {getSubcategoryDisplayName(selectedSubcategory)}
+                      </p>
+                    </div>
+                  )}
 
-                {/* Only display products when a subcategory is selected */}
-                {selectedSubcategory && (
-                  <>
-                    {loading ? (
-                      <div className="flex flex-col items-center justify-center py-16">
-                        <div className="relative">
-                          {/* Outer ping animation */}
-                          <div className="absolute -inset-1 rounded-full opacity-75 animate-ping bg-gradient-to-r from-[#8a7d65]/40 to-[#8a7d65]/70"></div>
-                          {/* Spinning loader */}
-                          <div className="relative h-16 w-16 rounded-full border-4 border-gray-200">
-                            <div className="absolute inset-0 rounded-full border-4 border-t-[#8a7d65] border-r-transparent border-b-[#8a7d65]/70 border-l-transparent animate-spin"></div>
-                          </div>
-                        </div>
-                        <p className="mt-6 text-lg font-medium text-[#696969]">Se încarcă produsele...</p>
-                      </div>
-                    ) : getFilteredProducts().length === 0 ? (
-                      <div className="text-center py-12">
-                        <p className="text-lg text-[#696969]">Nu am găsit produse în această categorie.</p>
-                        {selectedSubcategory && (
-                          <button 
-                            onClick={() => {
-                              // Simply clear the subcategory selection and update the URL
-                              setSelectedSubcategory(null);
-                              router.push(`/produse?categorie=${activeCategory}`);
-                            }}
-                            className="mt-4 px-6 py-2 bg-[#8a7d65] text-white rounded-lg hover:bg-[#776d59] transition-colors"
+                  {/* Subcategory pills for VOPSELE - only show when in a specific subcategory */}
+                  {mainCategory === 'vopsele' && selectedSubcategory && (
+                    <div className="mb-8 overflow-x-auto" style={scrollbarHideStyles}>
+                      <style jsx global>{scrollbarHideClass}</style>
+                      <div className="flex space-x-2 pb-2 min-w-max">
+                        {subcategories.map((subcategory) => (
+                          <button
+                            key={subcategory.id}
+                            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                              selectedSubcategory === subcategory.id
+                                ? 'bg-[#8a7d65] text-white'
+                                : 'bg-gray-100 text-[#404040] hover:bg-gray-200'
+                            }`}
+                            onClick={() => handleSubcategoryCardSelect(subcategory.id)}
                           >
-                            Înapoi la {mainCategory === 'vopsele' ? 'VOPSELE' : 'IZOLAȚII'}
+                            {subcategory.title}
                           </button>
-                        )}
+                        ))}
                       </div>
-                    ) : (
-                      <div className="-mx-4 md:-mx-8 lg:-mx-16 mb-12">
-                        <ProductScroller
-                          products={getFilteredProducts()}
-                          activeCategory={activeCategory || ''}
-                        />
+                    </div>
+                  )}
+
+                  {/* Subcategory pills for IZOLATII - only show when in a specific subcategory */}
+                  {mainCategory === 'izolatii' && selectedSubcategory && (
+                    <div className="mb-8 overflow-x-auto" style={scrollbarHideStyles}>
+                      <style jsx global>{scrollbarHideClass}</style>
+                      <div className="flex space-x-2 pb-2 min-w-max">
+                        {subcategories.map((subcategory) => (
+                          <button
+                            key={subcategory.id}
+                            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 whitespace-nowrap ${
+                              selectedSubcategory === subcategory.id
+                                ? 'bg-amber-500 text-white'
+                                : 'bg-gray-100 text-[#404040] hover:bg-gray-200'
+                            }`}
+                            onClick={() => handleSubcategoryCardSelect(subcategory.id)}
+                          >
+                            {subcategory.title}
+                          </button>
+                        ))}
                       </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </>
-          )}
+                    </div>
+                  )}
+
+                  {/* Display subcategory cards for main categories when no subcategory is selected */}
+                  {mainCategory === 'vopsele' && !selectedSubcategory && (
+                    <div className="mb-8 -mx-4 md:-mx-8 lg:-mx-16">
+                      <SubcategoryScroller 
+                        subcategories={subcategories} 
+                        onSelectSubcategory={handleSubcategoryCardSelect} 
+                        activeCategory={activeCategory || ''}
+                      />
+                    </div>
+                  )}
+
+                  {/* Display subcategory cards for IZOLATII when no subcategory is selected */}
+                  {mainCategory === 'izolatii' && !selectedSubcategory && (
+                    <div className="mb-8 -mx-4 md:-mx-8 lg:-mx-16">
+                      <SubcategoryScroller 
+                        subcategories={subcategories} 
+                        onSelectSubcategory={handleSubcategoryCardSelect} 
+                        activeCategory={activeCategory || ''}
+                      />
+                    </div>
+                  )}
+
+                  {/* Only display products when a subcategory is selected */}
+                  {selectedSubcategory && (
+                    <>
+                      {loading ? (
+                        <div className="flex flex-col items-center justify-center py-16">
+                          <div className="relative">
+                            {/* Outer ping animation */}
+                            <div className="absolute -inset-1 rounded-full opacity-75 animate-ping bg-gradient-to-r from-[#8a7d65]/40 to-[#8a7d65]/70"></div>
+                            {/* Spinning loader */}
+                            <div className="relative h-16 w-16 rounded-full border-4 border-gray-200">
+                              <div className="absolute inset-0 rounded-full border-4 border-t-[#8a7d65] border-r-transparent border-b-[#8a7d65]/70 border-l-transparent animate-spin"></div>
+                            </div>
+                          </div>
+                          <p className="mt-6 text-lg font-medium text-[#696969]">Se încarcă produsele...</p>
+                        </div>
+                      ) : getFilteredProducts().length === 0 ? (
+                        <div className="text-center py-12">
+                          <p className="text-lg text-[#696969]">Nu am găsit produse în această categorie.</p>
+                          {selectedSubcategory && (
+                            <button 
+                              onClick={() => {
+                                // Simply clear the subcategory selection and update the URL
+                                setSelectedSubcategory(null);
+                                router.push(`/produse?categorie=${activeCategory}`);
+                              }}
+                              className="mt-4 px-6 py-2 bg-[#8a7d65] text-white rounded-lg hover:bg-[#776d59] transition-colors"
+                            >
+                              Înapoi la {mainCategory === 'vopsele' ? 'VOPSELE' : 'IZOLAȚII'}
+                            </button>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="-mx-4 md:-mx-8 lg:-mx-16 mb-12">
+                          <ProductScroller
+                            products={getFilteredProducts()}
+                            activeCategory={activeCategory || ''}
+                          />
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
