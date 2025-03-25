@@ -297,7 +297,7 @@ const AboutPage = () => {
                         alt={member.name}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        fallbackType="person"
+                        type="person"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A] via-transparent to-transparent opacity-60"></div>
                     </div>

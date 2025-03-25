@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Image, { ImageProps } from 'next/image';
 
 type ErrorFallbackImageProps = ImageProps & {
-  type?: 'product' | 'category' | 'subcategory' | 'default';
+  type?: 'product' | 'category' | 'subcategory' | 'default' | 'person';
   fallbackSrc?: string;
 };
 
@@ -32,6 +32,8 @@ const ErrorFallbackImage = ({
         return '/images/category-placeholder.svg';
       case 'subcategory':
         return '/images/subcategory-placeholder.svg';
+      case 'person':
+        return '/images/person-placeholder.svg';
       default:
         return '/images/placeholder.svg';
     }
