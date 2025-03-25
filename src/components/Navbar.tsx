@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { useRouter, usePathname } from 'next/navigation';
 import CategoryOverlay from './CategoryOverlay';
+import { useCart } from '@/lib/context/CartContext';
 
 // Our custom icons with a touch of brand personality
 const CartIcon = () => (
@@ -77,16 +78,36 @@ const Navbar = () => {
   const pathname = usePathname();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [hasScrolled, setHasScrolled] = useState(typeof window !== 'undefined' && window.location.pathname !== '/');
-  const [isPastHero, setIsPastHero] = useState(typeof window !== 'undefined' && window.location.pathname !== '/');
+  const [hasScrolled, setHasScrolled] = useState(false);
+  const [isPastHero, setIsPastHero] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const navItemRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const [cartCount] = useState(0);
+  const { itemCount: cartCount } = useCart();
   const [animationComplete, setAnimationComplete] = useState(false);
-  const routerPath = useRef<string>("");
+  const [routerPath, setRouterPath] = useState('/');
   const [currentPath, setCurrentPath] = useState<string>("/");
   const [isHovering, setIsHovering] = useState(false);
   const [showCategoryOverlay, setShowCategoryOverlay] = useState(false);
+
+  // Update routerPath when the URL changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Update initially
+      setRouterPath(window.location.pathname);
+      
+      // Update on navigation
+      const handleRouteChange = () => {
+        setRouterPath(window.location.pathname);
+      };
+      
+      // Listen for URL changes
+      window.addEventListener('popstate', handleRouteChange);
+      
+      return () => {
+        window.removeEventListener('popstate', handleRouteChange);
+      };
+    }
+  }, []);
 
   // Function to check if we're on a product-related page
   const isProductPage = (path: string) => {
@@ -97,7 +118,6 @@ const Navbar = () => {
   useEffect(() => {
     // Check if we're on the homepage
     const path = window.location.pathname;
-    routerPath.current = path;
     setCurrentPath(path);
     
     // Set hasScrolled to true immediately for product pages
@@ -147,37 +167,50 @@ const Navbar = () => {
   // The first time this loads, we need to figure out what device we're on
   useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      if (typeof window !== 'undefined') {
+        setIsMobile(window.innerWidth < 768);
+      }
     };
-    
-    // Check device type immediately on mount
-    checkIfMobile();
-    
-    window.addEventListener('resize', checkIfMobile);
-    return () => window.removeEventListener('resize', checkIfMobile);
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', checkIfMobile);
+      checkIfMobile(); // Initial check
+
+      return () => {
+        window.removeEventListener('resize', checkIfMobile);
+      };
+    }
   }, []);
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      
-      // For product-related pages, always keep hasScrolled true
-      if (isProductPage(routerPath.current)) {
-        setHasScrolled(true);
-        setIsPastHero(true);
-      } else {
-        // For other pages, use normal scroll behavior
-        setHasScrolled(scrollPosition > 100);
-        setIsPastHero(scrollPosition > window.innerHeight * 0.75); // We're about 3/4 down the hero section
+      if (typeof window !== 'undefined') {
+        if (window.scrollY > 50) {
+          setHasScrolled(true);
+        } else {
+          setHasScrolled(false);
+        }
+        
+        // Check if mobile and the user has scrolled past the hero
+        if (isMobile && window.scrollY > 300) {
+          setIsPastHero(true);
+        } else {
+          setIsPastHero(false);
+        }
       }
     };
 
-    // Check scroll position immediately on mount
-    handleScroll();
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', handleScroll);
+      
+      // Initial check on mount
+      handleScroll();
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [isMobile]);
 
   // Update hasScrolled and isPastHero on route change
   useEffect(() => {
@@ -191,7 +224,7 @@ const Navbar = () => {
   // Let's make sure the menu doesn't make everything jumpy when it's open
   useEffect(() => {
     // Only handle scrollbar for non-homepage routes since homepage already has it hidden
-    if (routerPath.current !== '/') {
+    if (routerPath !== '/') {
       if (isMenuOpen) {
         // Calculate scrollbar width by measuring the difference between window and document width
         const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
@@ -208,7 +241,7 @@ const Navbar = () => {
         document.body.style.paddingRight = '';
       };
     }
-  }, [isMenuOpen, routerPath.current]);
+  }, [isMenuOpen, routerPath]);
 
   // Animation variants for the decorative lines
   const underlineVariants: Variants = {
@@ -485,10 +518,10 @@ const Navbar = () => {
                   }}
                   transition={{ duration: 0.4, ease: 'easeOut' }}
                 >
-                  <Link href="/cos" className="w-10 h-10 flex items-center justify-center">
+                  <Link href="/cos" className="w-10 h-10 flex items-center justify-center relative">
                     <CartIcon />
                     {cartCount > 0 && (
-                      <span className="absolute top-0 right-0 bg-[#8a7d65] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      <span className="absolute -top-1 -right-1 bg-[#8a7d65] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                         {cartCount}
                       </span>
                     )}
@@ -542,13 +575,16 @@ const Navbar = () => {
                   }}
                   transition={{ duration: 0.4, ease: 'easeOut' }}
                 >
-                  {hasScrolled && !isMobile && (
-                    <span className="mr-3 text-[#696969] hidden md:block">Menu</span>
-                  )}
-                  <div className={`flex flex-col items-center justify-center space-y-1 ${isMobile ? 'h-full w-full' : 'w-6'}`}>
-                    <span className={`block ${isMobile ? 'w-5' : 'w-full'} h-0.5 rounded-full bg-[#404040] transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
-                    <span className={`block ${isMobile ? 'w-5' : 'w-full'} h-0.5 rounded-full bg-[#404040] transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`}></span>
-                    <span className={`block ${isMobile ? 'w-5' : 'w-full'} h-0.5 rounded-full bg-[#404040] transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
+                  {/* Use a wrapper div to ensure consistent structure between server and client */}
+                  <div className="flex items-center">
+                    {typeof window !== 'undefined' && hasScrolled && !isMobile && (
+                      <span className="mr-3 text-[#696969] hidden md:block">Menu</span>
+                    )}
+                    <div className={`flex flex-col items-center justify-center space-y-1 ${isMobile ? 'h-full w-full' : 'w-6'}`}>
+                      <span className={`block ${isMobile ? 'w-5' : 'w-full'} h-0.5 rounded-full bg-[#404040] transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
+                      <span className={`block ${isMobile ? 'w-5' : 'w-full'} h-0.5 rounded-full bg-[#404040] transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`}></span>
+                      <span className={`block ${isMobile ? 'w-5' : 'w-full'} h-0.5 rounded-full bg-[#404040] transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
+                    </div>
                   </div>
                 </motion.button>
               </div>

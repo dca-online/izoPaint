@@ -12,6 +12,7 @@ export interface Product {
   id: string;
   titlu: string;
   linkImagine: string;
+  imagini?: string[];
   descriere: string;
   descriereScurta: string;
   variante: ProductVariant[];

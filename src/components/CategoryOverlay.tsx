@@ -147,9 +147,26 @@ const CategoryOverlay: React.FC<CategoryOverlayProps> = ({
   };
   
   // Handle category selection to maintain context
-  const handleCategorySelect = (category: 'vopsele' | 'izolatii') => {
-    if (animationComplete || isMobile) {
-      onSelectCategory(category);
+  const handleCategorySelect = (category: string) => {
+    console.log(`Category selected from overlay: ${category}`);
+    
+    try {
+      // First update local state to prevent stale data
+      if (onSelectCategory) {
+        onSelectCategory(category as 'vopsele' | 'izolatii');
+      }
+      
+      // Force browser to recognize a navigation event by using full URL
+      const params = new URLSearchParams();
+      params.set('categorie', category);
+      
+      const url = `/produse?${params.toString()}`;
+      console.log(`Navigating to: ${url}`);
+      
+      // Use replace instead of push for a cleaner navigation history
+      window.location.href = url;
+    } catch (error) {
+      console.error('Error in CategoryOverlay handleCategorySelect:', error);
     }
   };
 

@@ -8,8 +8,13 @@ import { Space_Grotesk, Bebas_Neue } from 'next/font/google';
 import { Product } from '@/types/product';
 import { useRouter, useSearchParams } from 'next/navigation';
 import CategoryOverlay from '@/components/CategoryOverlay';
-import CategoryDropdown from '@/components/CategoryDropdown';
 import { PhotoIcon } from '@heroicons/react/24/outline';
+import ErrorFallbackImage from '@/components/ErrorFallbackImage';
+import CategorySwitcher from '@/components/CategorySwitcher';
+import ProductCardBackground from '@/components/ProductCardBackground';
+import PageVideoBackground from '@/components/PageVideoBackground';
+import SubcategoryScroller from '@/components/SubcategoryScroller';
+import ProductScroller from '@/components/ProductScroller';
 
 // Using the same font as in other components
 const spaceGrotesk = Space_Grotesk({ 
@@ -38,61 +43,55 @@ const scrollbarHideClass = `
 `;
 
 // In a real application, this would be fetched from an API
-const fetchProducts = async (): Promise<Product[]> => {
-  // All product slugs
-  const slugs = [
-    // ELF Decor products
-    'illusion-crystal',
-    'elf-decor-1', 'elf-decor-2', 'elf-decor-3', 'elf-decor-4',
-    'elf-decor-5', 'elf-decor-6', 'elf-decor-7',
-    
-    // Vopsele interior products
-    'vopsea-interior-1', 'vopsea-interior-2', 'vopsea-interior-3',
-    'vopsea-interior-4', 'vopsea-interior-5', 'vopsea-interior-6',
-    
-    // Amorse interior products
-    'amorsa-interior-1', 'amorsa-interior-2', 'amorsa-interior-3', 'amorsa-interior-4',
-    
-    // Vopsele & Amorse exterior products
-    'vopsea-exterior-1', 'vopsea-exterior-2', 'vopsea-exterior-3', 'vopsea-exterior-4',
-    
-    // Tencuieli/Amorse exterior products
-    'tencuiala-1', 'tencuiala-2', 'tencuiala-3', 'tencuiala-4', 'tencuiala-5', 'tencuiala-6',
-    'tencuiala-7', 'tencuiala-8', 'tencuiala-9', 'tencuiala-10', 'tencuiala-11', 'tencuiala-12',
-    
-    // Vopsele epoxidice products
-    'vopsea-epoxidica-1', 'vopsea-epoxidica-2', 'vopsea-epoxidica-3', 'vopsea-epoxidica-4',
-    'vopsea-epoxidica-5', 'vopsea-epoxidica-6', 'vopsea-epoxidica-7', 'vopsea-epoxidica-8',
-    
-    // Vopsele pentru lemn/metal products
-    'vopsea-lemn-metal-1', 'vopsea-lemn-metal-2', 'vopsea-lemn-metal-3', 'vopsea-lemn-metal-4',
-    'vopsea-lemn-metal-5', 'vopsea-lemn-metal-6', 'vopsea-lemn-metal-7', 'vopsea-lemn-metal-8',
-    
-    // Protectia lemnului products
-    'protectie-lemn-1', 'protectie-lemn-2', 'protectie-lemn-3', 'protectie-lemn-4', 'protectie-lemn-5'
-  ];
+const fetchProducts = async (category?: string, subcategory?: string): Promise<Product[]> => {
+  // Use the optimized batch endpoint instead of fetching all products individually
+  let apiUrl = '/api/products/batch?';
+  const queryParams = new URLSearchParams();
   
-  const productsPromises = slugs.map(async (slug) => {
-    const response = await fetch(`/api/products/${slug}`);
-    if (!response.ok) return null;
-    return response.json();
-  });
+  // Add category filter if provided
+  if (category) {
+    queryParams.append('category', category);
+  }
   
-  const products = await Promise.all(productsPromises);
-  return products.filter(Boolean) as Product[];
+  // Add subcategory filter if provided
+  if (subcategory) {
+    queryParams.append('subcategory', subcategory);
+  }
+  
+  // Default to ELF Decor if no filters are provided (for demo purposes)
+  if (!queryParams.toString()) {
+    queryParams.append('category', 'elf-decor');
+  }
+  
+  apiUrl += queryParams.toString();
+  
+  try {
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      console.error(`API error: ${response.status}`);
+      return [];
+    }
+    
+    // API now returns an array directly
+    const data = await response.json();
+    return data as Product[];
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    return [];
+  }
 };
 
 // Update the mock database reference for generating product URLs
 const productsDatabase: Record<string, { id: string }> = {
   // ELF Decor products
   'illusion-crystal': { id: 'illusion-crystal' },
-  'elf-decor-1': { id: '1' },
-  'elf-decor-2': { id: '2' },
-  'elf-decor-3': { id: '3' },
-  'elf-decor-4': { id: '4' },
-  'elf-decor-5': { id: '5' },
-  'elf-decor-6': { id: '6' },
-  'elf-decor-7': { id: '7' },
+  'persia': { id: 'persia' },
+  'sahara': { id: 'sahara' },
+  'feerie': { id: 'feerie' },
+  'mirage': { id: 'mirage' },
+  'grotto': { id: 'grotto' },
+  'toscana': { id: 'toscana' },
+  'pigment-decotoner': { id: 'pigment-decotoner' },
   
   // Vopsele interior products
   'vopsea-interior-1': { id: '8' },
@@ -227,11 +226,11 @@ function ProductsContent() {
     // Default to null if no category is selected
     return null;
   });
-  const [mainCategory, setMainCategory] = useState<string | null>(
-    categoryParam === 'vopsele' ? 'vopsele' :
-    categoryParam === 'izolatii' ? 'izolatii' : null
-  );
-  const [categories, setCategories] = useState<string[]>([]);
+  const [mainCategory, setMainCategory] = useState<'vopsele' | 'izolatii' | null>(() => {
+    if (categoryParam === 'vopsele') return 'vopsele';
+    if (categoryParam === 'izolatii') return 'izolatii';
+    return null;
+  });
   const [showCategoryOverlay, setShowCategoryOverlay] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -240,118 +239,294 @@ function ProductsContent() {
     subcategoryParam || null
   );
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [subcategories, setSubcategories] = useState<SubcategoryCard[]>([]);
 
-  // Update the subcategories based on the main category selection
+  // Update the subcategories based on the main category selection with specific ordering
   const updateSubcategories = (productsData: Product[], category: 'vopsele' | 'izolatii' | null) => {
-    const uniqueCategories = new Set<string>();
+    if (!category) {
+      setSubcategories([]);
+      return;
+    }
+
+    // Create sets for unique subcategories
+    const uniqueSubcategories = new Set<string>();
     
-    // Define the fixed subcategories for vopsele
-    const vopseleSubcategories = [
-      'ELF Decor',
-      'Vopsele interior',
-      'Amorse interior',
-      'Vopsele & Amorse exterior',
-      'Tencuieli/Amorse exterior',
-      'Vopsele epoxidice',
-      'Vopsele pentru lemn/metal',
-      'Protectia lemnului'
-    ];
-    
-    // Define the fixed subcategories for izolatii
-    const izolatiiSubcategories = [
-      'IZOLATII ECO-FRIENDLY',
-      'MATERIALE HIDROIZOLANTE',
-      'ADEZIVI&CHITURI'
-    ];
-    
-    // Filter products by main category first
+    // Add default subcategories based on category
     if (category === 'vopsele') {
-      vopseleSubcategories.forEach(cat => uniqueCategories.add(cat));
+      ['ELF Decor', 'Vopsele interior', 'Amorse interior', 'Vopsele & Amorse exterior', 
+       'Tencuieli/Amorse exterior', 'Vopsele epoxidice', 'Vopsele pentru lemn/metal', 
+       'Protectia lemnului'].forEach(sub => uniqueSubcategories.add(sub));
     } else if (category === 'izolatii') {
-      izolatiiSubcategories.forEach(cat => uniqueCategories.add(cat));
+      ['IZOLATII ECO-FRIENDLY', 'MATERIALE HIDROIZOLANTE', 'ADEZIVI&CHITURI'].forEach(sub => 
+        uniqueSubcategories.add(sub));
     }
     
-    return Array.from(uniqueCategories);
-  };
-
-  // Load products from API
-  const loadProducts = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Fetch actual products from the API
-      const slugs = [
-        // ELF Decor products
-        'illusion-crystal',
-        'elf-decor-1', 'elf-decor-2', 'elf-decor-3', 'elf-decor-4',
-        'elf-decor-5', 'elf-decor-6', 'elf-decor-7',
-        
-        // Vopsele interior products
-        'vopsea-interior-1', 'vopsea-interior-2', 'vopsea-interior-3',
-        'vopsea-interior-4', 'vopsea-interior-5', 'vopsea-interior-6',
-        
-        // Amorse interior products
-        'amorsa-interior-1', 'amorsa-interior-2', 'amorsa-interior-3', 'amorsa-interior-4',
-        
-        // Vopsele & Amorse exterior products
-        'vopsea-exterior-1', 'vopsea-exterior-2', 'vopsea-exterior-3', 'vopsea-exterior-4',
-        
-        // Tencuieli/Amorse exterior products
-        'tencuiala-1', 'tencuiala-2', 'tencuiala-3', 'tencuiala-4', 'tencuiala-5', 'tencuiala-6',
-        'tencuiala-7', 'tencuiala-8', 'tencuiala-9', 'tencuiala-10', 'tencuiala-11', 'tencuiala-12',
-        
-        // Vopsele epoxidice products
-        'vopsea-epoxidica-1', 'vopsea-epoxidica-2', 'vopsea-epoxidica-3', 'vopsea-epoxidica-4',
-        'vopsea-epoxidica-5', 'vopsea-epoxidica-6', 'vopsea-epoxidica-7', 'vopsea-epoxidica-8',
-        
-        // Vopsele pentru lemn/metal products
-        'vopsea-lemn-metal-1', 'vopsea-lemn-metal-2', 'vopsea-lemn-metal-3', 'vopsea-lemn-metal-4',
-        'vopsea-lemn-metal-5', 'vopsea-lemn-metal-6', 'vopsea-lemn-metal-7', 'vopsea-lemn-metal-8',
-        
-        // Protectia lemnului products
-        'protectie-lemn-1', 'protectie-lemn-2', 'protectie-lemn-3', 'protectie-lemn-4', 'protectie-lemn-5',
-        
-        // IZOLATII ECO-FRIENDLY products
-        'izolatie-celuloza', 'izolatie-fibra-lemn', 'izolatie-fibra-canepa', 'izolatie-iuta',
-        'izolatie-lana', 'izolatie-pluta', 'izolatie-vata-minerala-vrac', 'izolatie-perlit',
-        'izolatie-fibra-minerala', 'izolatie-granule-polistiren',
-        
-        // MATERIALE HIDROIZOLANTE products
-        'aquamat-mortar-hidroizolant', 'aquamat-elastic-bicomponent', 'aquamat-flex-bicomponent',
-        'aquamat-monoelastic-fibre', 'aquamat-sr-sulfatice', 'isoflex-pu-560-bt',
-        
-        // ADEZIVI&CHITURI products
-        'isomat-ak-9', 'isomat-ak-14', 'isomat-ak-16', 'isomat-ak-20', 'isomat-ak-22',
-        'isomat-ak-25', 'isomat-ak-rapid', 'isomat-ak-rapid-flex', 'isomat-ak-megarapid',
-        'isomat-ak-stone', 'isomat-ak-marble', 'isomat-ak-parquet', 'montage-w', 'superbond-pu'
-      ];
-      
-      const productsPromises = slugs.map(async (slug) => {
-        try {
-          const response = await fetch(`/api/products/${slug}`);
-          if (!response.ok) return null;
-          return await response.json();
-        } catch (error) {
-          console.error(`Error fetching product ${slug}:`, error);
-          return null;
+    // Add subcategories from products if available
+    if (productsData && productsData.length > 0) {
+      productsData.forEach(product => {
+        // Check if product has subcategorii property
+        if (product.subcategorii && Array.isArray(product.subcategorii)) {
+          product.subcategorii.forEach(subcategory => {
+            if (subcategory) {
+              uniqueSubcategories.add(subcategory);
+            }
+          });
+        } else if (product.categorii && Array.isArray(product.categorii)) {
+          // Fallback to categorii if subcategorii is not available
+          product.categorii.forEach(cat => {
+            if (
+              (category === 'vopsele' && vopseleMainCategories.includes(cat)) ||
+              (category === 'izolatii' && izolatiiMainCategories.includes(cat))
+            ) {
+              uniqueSubcategories.add(cat);
+            }
+          });
         }
       });
+    }
+
+    // Map subcategories to cards
+    const subcategoryCards: SubcategoryCard[] = Array.from(uniqueSubcategories).map(subcat => {
+      const urlParam = subcat.toLowerCase()
+        .replace(/\s+/g, '-')       // Replace spaces with hyphens
+        .replace(/[^\w\-]+/g, '')   // Remove any non-word or non-hyphen characters
+        .replace(/\-\-+/g, '-')     // Replace multiple hyphens with single hyphen
+        .replace(/^-+/, '')         // Trim hyphens from start
+        .replace(/-+$/, '');        // Trim hyphens from end
+
+      // Use Illusion Crystal as the image for the ELF Decor subcategory
+      const subcategoryImage = subcat === 'ELF Decor' 
+        ? '/images/vopsele/elf-decor/illusion-crystal/illusionCrystal.png'
+        : '/images/subcategory-placeholder.svg';
+
+      return {
+        id: urlParam,
+        title: subcat,
+        description: `Produse din categoria ${subcat}`,
+        image: subcategoryImage,
+        color: `var(--subcategory-${Math.floor(Math.random() * 5) + 1})` // Random color from predefined variables
+      };
+    });
+
+    // Define the specific order for vopsele subcategories
+    if (category === 'vopsele') {
+      const vopseleOrder = [
+        'ELF Decor',
+        'Vopsele interior',
+        'Amorse interior',
+        'Vopsele & Amorse exterior',
+        'Tencuieli/Amorse exterior',
+        'Vopsele epoxidice',
+        'Vopsele pentru lemn/metal',
+        'Protectia lemnului'
+      ];
       
-      const fetchedProducts = await Promise.all(productsPromises);
-      const validProducts = fetchedProducts.filter(Boolean) as Product[];
+      // Sort subcategories according to the defined order
+      subcategoryCards.sort((a, b) => {
+        const indexA = vopseleOrder.indexOf(a.title);
+        const indexB = vopseleOrder.indexOf(b.title);
+        
+        // If both subcategories are in our ordered list, sort by their position
+        if (indexA !== -1 && indexB !== -1) {
+          return indexA - indexB;
+        }
+        
+        // If only one is in the list, prioritize the one in the list
+        if (indexA !== -1) return -1;
+        if (indexB !== -1) return 1;
+        
+        // If neither is in the list, sort alphabetically
+        return a.title.localeCompare(b.title);
+      });
+    } else if (category === 'izolatii') {
+      // Define order for izolatii subcategories
+      const izolatiiOrder = [
+        'IZOLATII ECO-FRIENDLY',
+        'MATERIALE HIDROIZOLANTE',
+        'ADEZIVI&CHITURI'
+      ];
       
-      setProducts(validProducts);
-    } catch (err) {
-      console.error('Error loading products:', err);
-      setError('Nu am putut încărca produsele. Vă rugăm încercați din nou.');
+      // Sort izolatii subcategories
+      subcategoryCards.sort((a, b) => {
+        const indexA = izolatiiOrder.indexOf(a.title);
+        const indexB = izolatiiOrder.indexOf(b.title);
+        
+        // If both subcategories are in our ordered list, sort by their position
+        if (indexA !== -1 && indexB !== -1) {
+          return indexA - indexB;
+        }
+        
+        // If only one is in the list, prioritize the one in the list
+        if (indexA !== -1) return -1;
+        if (indexB !== -1) return 1;
+        
+        // If neither is in the list, sort alphabetically
+        return a.title.localeCompare(b.title);
+      });
+    }
+
+    console.log(`Updated subcategories for ${category}:`, subcategoryCards);
+    setSubcategories(subcategoryCards);
+  };
+
+  // Fix the loadProducts function to accept a category parameter
+  const loadProducts = async (categoryOverride?: string) => {
+    setLoading(true);
+    
+    try {
+      // Determine which category to load
+      const categoryToLoad = categoryOverride || activeCategory;
+      console.log(`Loading products for category: ${categoryToLoad}`);
+      
+      // Fetch products for each main category directly from productsDatabase
+      // This is a client-side filter approach since we don't have a batch endpoint
+      let allProducts = [];
+      
+      // This simulates the batch API by making individual requests
+      if (categoryToLoad === 'vopsele') {
+        const vopseleProducts = [
+          'illusion-crystal', 
+          'persia', 
+          'sahara',
+          'feerie',
+          'mirage',
+          'grotto', 
+          'toscana',
+          'pigment-decotoner',
+          'vopsea-lavabila-interior',
+          'vopsea-interior-1',
+          'vopsea-interior-2',
+          'vopsea-interior-3'
+        ];
+        
+        // Get vopsele products
+        const productResponses = await Promise.all(
+          vopseleProducts.map(async (slug) => {
+            try {
+              const response = await fetch(`/api/products/${slug}`);
+              if (response.ok) {
+                return await response.json();
+              }
+              return null;
+            } catch (error) {
+              console.error(`Error fetching product ${slug}:`, error);
+              return null;
+            }
+          })
+        );
+        
+        allProducts = productResponses.filter(product => product !== null);
+        
+        // Force add these subcategories even if no products exist
+        if (allProducts.length === 0) {
+          updateSubcategories([
+            { 
+              subcategorii: ['ELF Decor', 'Vopsele interior', 'Amorse interior', 'Vopsele & Amorse exterior', 
+                'Tencuieli/Amorse exterior', 'Vopsele epoxidice', 'Vopsele pentru lemn/metal', 'Protectia lemnului'],
+              categorii: ['vopsele']
+            } as Product
+          ], 'vopsele');
+        } else {
+          // Update subcategories based on the loaded products
+          updateSubcategories(allProducts, 'vopsele');
+        }
+      } else if (categoryToLoad === 'izolatii') {
+        const izolatiiProducts = [
+          'izolatie-termica-exterior',
+          'isomat-ak-9',
+          'isomat-ak-14',
+          'isomat-ak-16',
+          'isomat-ak-20',
+          'isomat-ak-22',
+          'isomat-ak-25',
+          'isomat-ak-rapid',
+          'isomat-ak-rapid-flex',
+          'isomat-ak-megarapid',
+          'isomat-ak-stone',
+          'isomat-ak-marble',
+          'isomat-ak-parquet',
+          'montage-w',
+          'superbond-pu',
+          'izolatie-celuloza',
+          'izolatie-fibra-lemn',
+          'izolatie-fibra-canepa',
+          'izolatie-iuta',
+          'izolatie-lana',
+          'izolatie-pluta',
+          'izolatie-vata-minerala-vrac',
+          'izolatie-perlit',
+          'izolatie-fibra-minerala',
+          'izolatie-granule-polistiren',
+          'aquamat-mortar-hidroizolant',
+          'aquamat-elastic-bicomponent',
+          'aquamat-flex-bicomponent',
+          'aquamat-monoelastic-fibre',
+          'aquamat-sr-sulfatice',
+          'isoflex-pu-560-bt'
+        ];
+        
+        // Get izolatii products
+        const productResponses = await Promise.all(
+          izolatiiProducts.map(async (slug) => {
+            try {
+              const response = await fetch(`/api/products/${slug}`);
+              if (response.ok) {
+                return await response.json();
+              }
+              return null;
+            } catch (error) {
+              console.error(`Error fetching product ${slug}:`, error);
+              return null;
+            }
+          })
+        );
+        
+        allProducts = productResponses.filter(product => product !== null);
+        
+        // Force add these subcategories even if no products exist
+        if (allProducts.length === 0) {
+          updateSubcategories([
+            { 
+              subcategorii: ['IZOLATII ECO-FRIENDLY', 'MATERIALE HIDROIZOLANTE', 'ADEZIVI&CHITURI'],
+              categorii: ['izolatii']
+            } as Product
+          ], 'izolatii');
+        } else {
+          // Update subcategories based on the loaded products
+          updateSubcategories(allProducts, 'izolatii');
+        }
+      }
+      
+      console.log(`Loaded ${allProducts.length} products for category: ${categoryToLoad}`);
+      
+      setProducts(allProducts);
+    } catch (error) {
+      console.error('Error loading products:', error);
+      setError('Failed to load products. Please try again later.');
+      
+      // Even on error, ensure we have some subcategories
+      if (categoryOverride === 'vopsele' || activeCategory === 'vopsele') {
+        updateSubcategories([
+          { 
+            subcategorii: ['ELF Decor', 'Vopsele interior', 'Amorse interior', 'Vopsele & Amorse exterior', 
+              'Tencuieli/Amorse exterior', 'Vopsele epoxidice', 'Vopsele pentru lemn/metal', 'Protectia lemnului'],
+            categorii: ['vopsele']
+          } as Product
+        ], 'vopsele');
+      } else if (categoryOverride === 'izolatii' || activeCategory === 'izolatii') {
+        updateSubcategories([
+          { 
+            subcategorii: ['IZOLATII ECO-FRIENDLY', 'MATERIALE HIDROIZOLANTE', 'ADEZIVI&CHITURI'],
+            categorii: ['izolatii']
+          } as Product
+        ], 'izolatii');
+      }
     } finally {
       setLoading(false);
-      setIsInitialLoad(false);
     }
   };
 
-  // Initialize state tracking and URL parameters
+  // Update the useEffect that handles URL parameter changes
   useEffect(() => {
     // Parse URL params
     const categoryParam = searchParams.get('categorie');
@@ -370,11 +545,12 @@ function ProductsContent() {
     // Set selected subcategory from URL
     setSelectedSubcategory(subcategoryParam);
     
-    // Only load products if a subcategory is selected
-    if (subcategoryParam) {
-      loadProducts();
+    // Load products if we have a category param
+    if (categoryParam) {
+      // Always load all products for the category, and do client-side filtering
+      loadProducts(categoryParam);
     } else {
-      // If no subcategory is selected, clear products and set loading to false
+      // If no category is selected, clear products
       setProducts([]);
       setLoading(false);
       setIsInitialLoad(false);
@@ -386,82 +562,81 @@ function ProductsContent() {
     if (products.length > 0) {
       // Get categories for the current activeCategory
       const categoryList = updateSubcategories(products, activeCategory as 'vopsele' | 'izolatii' | null);
-      setCategories(categoryList);
     }
   }, [products, activeCategory]);
 
-  // Function to handle subcategory card selection
+  // Update the other useEffect to load products correctly
+  useEffect(() => {
+    if (isInitialLoad && activeCategory) {
+      loadProducts(activeCategory);
+    }
+  }, [isInitialLoad, activeCategory]);
+
+  // Update handleCategoryCardSelect to clear selected subcategory when changing category
+  const handleCategoryCardSelect = (category: string) => {
+    console.log(`Selecting main category: ${category}`);
+    try {
+      // Force update navigation state first
+      setActiveCategory(category);
+      setMainCategory(category as 'vopsele' | 'izolatii');
+      setSelectedSubcategory(null);
+
+      // Create new URL with the selected category
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('categorie', category);
+      if (params.has('subcategorie')) params.delete('subcategorie');
+      
+      // Update the URL without reloading the page but trigger all client components
+      const nextURL = `/produse?${params.toString()}`;
+      console.log(`Navigating to: ${nextURL}`);
+      
+      // First load products, then update URL
+      loadProducts(category);
+      router.push(nextURL, { scroll: false });
+    } catch (error) {
+      console.error('Error in handleCategoryCardSelect:', error);
+      setError('A apărut o eroare la încărcarea categoriei.');
+    }
+  };
+
+  // Also update the handleCategoryChange function
+  const handleCategoryChange = (newCategory: string) => {
+    console.log(`Switching category from ${activeCategory} to ${newCategory}`);
+    try {
+      // Update state first
+      setActiveCategory(newCategory);
+      setMainCategory(newCategory as 'vopsele' | 'izolatii');
+      setSelectedSubcategory(null);
+      setShowCategoryOverlay(false);
+
+      // Create new URL with the selected category
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('categorie', newCategory);
+      if (params.has('subcategorie')) params.delete('subcategorie');
+      
+      // Update the URL without reloading the page but trigger all client components
+      const nextURL = `/produse?${params.toString()}`;
+      console.log(`Navigating to: ${nextURL}`);
+      
+      // First load products, then update URL
+      loadProducts(newCategory);
+      router.push(nextURL, { scroll: false });
+    } catch (error) {
+      console.error('Error in handleCategoryChange:', error);
+      setError('A apărut o eroare la încărcarea categoriei.');
+    }
+  };
+
+  // Restore the handleSubcategoryCardSelect function
   const handleSubcategoryCardSelect = (subcategory: string) => {
-    // Map subcategory display names to URL params
-    let urlParam = '';
+    setSelectedSubcategory(subcategory);
     
-    switch (subcategory) {
-      // Vopsele subcategories
-      case 'ELF Decor':
-        urlParam = 'elf-decor';
-        break;
-      case 'Vopsele interior':
-        urlParam = 'vopsele-interior';
-        break;
-      case 'Amorse interior':
-        urlParam = 'amorse-interior';
-        break;
-      case 'Vopsele & Amorse exterior':
-        urlParam = 'vopsele-exterior';
-        break;
-      case 'Tencuieli/Amorse exterior':
-        urlParam = 'tencuieli-amorse-exterior';
-        break;
-      case 'Vopsele epoxidice':
-        urlParam = 'vopsele-epoxidice';
-        break;
-      case 'Vopsele pentru lemn/metal':
-        urlParam = 'vopsele-lemn-metal';
-        break;
-      case 'Protectia lemnului':
-        urlParam = 'protectia-lemnului';
-        break;
-        
-      // Insulation subcategories
-      case 'IZOLATII ECO-FRIENDLY':
-        urlParam = 'izolatii-eco-friendly';
-        break;
-      case 'MATERIALE HIDROIZOLANTE':
-        urlParam = 'materiale-hidroizolante';
-        break;
-      case 'ADEZIVI&CHITURI':
-        urlParam = 'adezivi-chituri';
-        break;
-    }
-
-    // Set loading state to show the loader immediately
-    setLoading(true);
-
-    // Update local state right away to prevent UI lag
-    setSelectedSubcategory(urlParam);
+    // Update the URL without full page reload - use categorie and subcategorie to match expectations
+    const newUrl = `/produse?categorie=${activeCategory}${subcategory ? `&subcategorie=${subcategory}` : ''}`;
+    router.push(newUrl, { scroll: false });
     
-    // Construct URL with both main category and subcategory parameters
-    const currentParams = new URLSearchParams(searchParams.toString());
-    currentParams.set('subcategorie', urlParam);
-    
-    // If we don't have a main category set in the URL, determine and set it
-    if (!currentParams.has('categorie')) {
-      // Determine main category from subcategory
-      if (subcategory.includes('ELF Decor') || 
-          subcategory.includes('Vopsele') || 
-          subcategory.includes('Amorse') || 
-          subcategory.includes('Tencuieli') ||
-          subcategory.includes('epoxidice') ||
-          subcategory.includes('lemn') ||
-          subcategory.includes('Protectia')) {
-        currentParams.set('categorie', 'vopsele');
-      } else {
-        currentParams.set('categorie', 'izolatii');
-      }
-    }
-    
-    const newUrl = `/produse?${currentParams.toString()}`;
-    router.push(newUrl);
+    // No need to load products as we already have all products for the main category
+    // Client-side filtering will now handle showing the correct products
   };
 
   // Define category collections for filtering
@@ -491,24 +666,18 @@ function ProductsContent() {
     'ADEZIVI&CHITURI'
   ];
 
-  // Get products filtered by subcategory and category
+  // Update getFilteredProducts to handle client-side filtering
   const getFilteredProducts = () => {
     // If no products loaded yet, return empty array
     if (!products || products.length === 0) {
       return [];
     }
     
-    console.log("Filtering products:");
-    console.log("Active Category:", activeCategory);
-    console.log("Selected Subcategory:", selectedSubcategory);
-    console.log("Products Count:", products.length);
-    
     // First get all products
     let filteredProducts = [...products];
     
-    // Filter by main category if it's one of the main categories
+    // Filter by main category if needed (should already be filtered by the API, but just in case)
     if (activeCategory === 'vopsele' || activeCategory === 'izolatii') {
-      console.log(`Filtering by main category: ${activeCategory}`);
       filteredProducts = filteredProducts.filter(product => 
         product.categorii.some(cat => 
           cat.toLowerCase() === activeCategory.toLowerCase() ||
@@ -520,22 +689,13 @@ function ProductsContent() {
 
     // Then filter by subcategory if applicable
     if (selectedSubcategory) {
-      console.log(`Filtering by subcategory: ${selectedSubcategory}`);
-      
       // Map URL param back to subcategory display name
       const subcategoryName = getSubcategoryDisplayName(selectedSubcategory);
-      
-      console.log(`Mapped to display name: ${subcategoryName}`);
       
       if (subcategoryName) {
         filteredProducts = filteredProducts.filter(product => {
           const hasSubcategory = product.subcategorii && 
             product.subcategorii.some(subcat => subcat === subcategoryName);
-          
-          console.log(`Product ${product.id} (${product.titlu}) has subcategory ${subcategoryName}: ${hasSubcategory}`);
-          if (hasSubcategory) {
-            console.log(`Subcategories: ${product.subcategorii.join(', ')}`);
-          }
           
           return hasSubcategory;
         });
@@ -553,21 +713,27 @@ function ProductsContent() {
       });
     }
 
-    console.log(`Final filtered products count: ${filteredProducts.length}`);
     return filteredProducts;
   };
 
-  // Helper function to get display name from URL param
+  // Update getSubcategoryDisplayName to use the correct display names
   const getSubcategoryDisplayName = (urlParam: string): string => {
-    switch (urlParam) {
-      // Vopsele subcategories
+    // Find the matching subcategory card
+    const subcategoryCard = subcategories.find(sub => sub.id === urlParam);
+    if (subcategoryCard) {
+      return subcategoryCard.title;
+    }
+    
+    // Handle specific cases that might not be in the subcategories list yet
+    // Use the exact names as specified in the requirements
+    switch(urlParam) {
       case 'elf-decor':
         return 'ELF Decor';
       case 'vopsele-interior':
         return 'Vopsele interior';
       case 'amorse-interior':
         return 'Amorse interior';
-      case 'vopsele-exterior':
+      case 'vopsele-amorse-exterior':
         return 'Vopsele & Amorse exterior';
       case 'tencuieli-amorse-exterior':
         return 'Tencuieli/Amorse exterior';
@@ -577,8 +743,6 @@ function ProductsContent() {
         return 'Vopsele pentru lemn/metal';
       case 'protectia-lemnului':
         return 'Protectia lemnului';
-        
-      // Insulation subcategories
       case 'izolatii-eco-friendly':
         return 'IZOLATII ECO-FRIENDLY';
       case 'materiale-hidroizolante':
@@ -589,6 +753,17 @@ function ProductsContent() {
         return '';
     }
   };
+
+  // Update useEffect to properly sync mainCategory with activeCategory
+  useEffect(() => {
+    // Make sure mainCategory is always set correctly based on activeCategory
+    if (activeCategory === 'vopsele' || activeCategory === 'izolatii') {
+      if (mainCategory !== activeCategory) {
+        console.log(`Syncing mainCategory to ${activeCategory}`);
+        setMainCategory(activeCategory);
+      }
+    }
+  }, [activeCategory, mainCategory]);
 
   // The rest of the ProductsContent component...
 
@@ -601,16 +776,47 @@ function ProductsContent() {
           isOpen={showCategoryOverlay}
           onClose={() => setShowCategoryOverlay(false)}
           onSelectCategory={(category: 'vopsele' | 'izolatii') => {
+            console.log(`--------------------`);
+            console.log(`CategoryOverlay selecting category: ${category}`);
+            console.log(`Current state - activeCategory: ${activeCategory}, mainCategory: ${mainCategory}`);
+            
+            // Clear any selected subcategory when changing the main category
+            setSelectedSubcategory(null);
+            
+            // Set the active category and main category
             setActiveCategory(category);
-            router.push(`/produse?categorie=${encodeURIComponent(category)}`);
+            setMainCategory(category);
+            
+            console.log(`New state - activeCategory: ${category}, mainCategory: ${category}`);
+            
+            // Reset the products to trigger a new load
+            setProducts([]);
+            
+            // Load products for this category
+            try {
+              console.log(`Starting product load for category: ${category}`);
+              loadProducts(category);
+              console.log(`Finished triggering product load for: ${category}`);
+            } catch (err) {
+              console.error(`Error loading products for ${category}:`, err);
+            }
+            
+            // Update URL without reloading the page
+            console.log(`Updating URL to: /produse?categorie=${encodeURIComponent(category)}`);
+            router.push(`/produse?categorie=${encodeURIComponent(category)}`, { 
+              scroll: false
+            });
+            
+            // Close the overlay
             setShowCategoryOverlay(false);
+            console.log(`--------------------`);
           }}
           preserveBackground={true}
         />
       )}
 
       {/* Main content */}
-      <div className="pt-32 px-4 sm:px-8 lg:px-16 min-h-screen bg-[#f8f8f6]">
+      <div className="pt-32 px-4 sm:px-8 lg:px-16 min-h-screen">
         <div className="container mx-auto">
           {/* Content sections */}
           {/* ... */}
@@ -634,10 +840,11 @@ function ProductsContent() {
                     }}
                   >
                     <div className="relative h-72">
-                      <Image
+                      <ErrorFallbackImage
                         src={category.image}
                         alt={category.title}
                         fill
+                        type="category"
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-60"></div>
@@ -672,7 +879,7 @@ function ProductsContent() {
             </div>
           ) : (
             <>
-              {/* Heading and dropdown section */}
+              {/* Heading section - now at the top since tabs were removed */}
               <div className="mb-8">
                 <h1 className={`${spaceGrotesk.className} text-4xl md:text-5xl text-[#404040] mb-4`}>
                   {activeCategory === 'vopsele' ? 'VOPSELE' : 'IZOLAȚII'}
@@ -682,20 +889,34 @@ function ProductsContent() {
                     ? 'Explorează colecția noastră de vopsele premium pentru interior și exterior.' 
                     : 'Descoperă soluțiile noastre profesionale de izolare pentru proiectele tale.'}
                 </p>
+                
+                {/* Category switcher positioned under the heading */}
+                <div className="mb-6">
+                  <CategorySwitcher 
+                    currentCategory={activeCategory === 'vopsele' ? 'vopsele' : activeCategory === 'izolatii' ? 'izolatii' : 'vopsele'}
+                    onCategoryChange={(category) => {
+                      // Clear any selected subcategory when changing the main category
+                      setSelectedSubcategory(null);
+                      
+                      // Set the active category and main category
+                      setActiveCategory(category);
+                      setMainCategory(category);
+                      
+                      // Reset the products to trigger a new load
+                      setProducts([]);
+                      
+                      // Load products for this category
+                      loadProducts(category);
+                      
+                      // Update URL without reloading the page
+                      router.push(`/produse?categorie=${encodeURIComponent(category)}`, { 
+                        scroll: false
+                      });
+                    }}
+                  />
+                </div>
               </div>
 
-              {/* Dropdown for mobile filtering */}
-              <div className="mb-8">
-                <CategoryDropdown 
-                  currentCategory={activeCategory === 'vopsele' ? 'vopsele' : activeCategory === 'izolatii' ? 'izolatii' : 'toate'}
-                  onCategoryChange={(category) => {
-                    setActiveCategory(category);
-                    setMainCategory(category);
-                    router.push(`/produse?categorie=${encodeURIComponent(category)}`);
-                  }}
-                />
-              </div>
-              
               {/* Product List */}
               <div className="w-full pt-8 md:pt-12">
                 {/* Display breadcrumb information for selected subcategory */}
@@ -705,23 +926,23 @@ function ProductsContent() {
                       <span 
                         className="cursor-pointer hover:text-[#8a7d65] hover:underline"
                         onClick={() => {
-                          router.push(`/produse?categorie=${mainCategory}`);
+                          // Simply clear the subcategory selection and update the URL
                           setSelectedSubcategory(null);
+                          router.push(`/produse?categorie=${activeCategory}`);
                         }}
                       >
                         {mainCategory === 'vopsele' ? 'VOPSELE' : 'IZOLAȚII'}
                       </span> {'>'} {getSubcategoryDisplayName(selectedSubcategory)}
                     </p>
-                    <h2 className="text-2xl font-bold mt-2">{getSubcategoryDisplayName(selectedSubcategory)}</h2>
                   </div>
                 )}
 
-                {/* Subcategory pills - only show when a subcategory is selected */}
+                {/* Subcategory pills for VOPSELE - only show when in a specific subcategory */}
                 {mainCategory === 'vopsele' && selectedSubcategory && (
                   <div className="mb-8 overflow-x-auto" style={scrollbarHideStyles}>
                     <style jsx global>{scrollbarHideClass}</style>
                     <div className="flex space-x-2 pb-2 min-w-max">
-                      {subcategoryCardsData.map((subcategory) => (
+                      {subcategories.map((subcategory) => (
                         <button
                           key={subcategory.id}
                           className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
@@ -729,7 +950,7 @@ function ProductsContent() {
                               ? 'bg-[#8a7d65] text-white'
                               : 'bg-gray-100 text-[#404040] hover:bg-gray-200'
                           }`}
-                          onClick={() => handleSubcategoryCardSelect(subcategory.title)}
+                          onClick={() => handleSubcategoryCardSelect(subcategory.id)}
                         >
                           {subcategory.title}
                         </button>
@@ -738,20 +959,20 @@ function ProductsContent() {
                   </div>
                 )}
 
-                {/* Subcategory pills for IZOLATII - only show when a subcategory is selected */}
+                {/* Subcategory pills for IZOLATII - only show when in a specific subcategory */}
                 {mainCategory === 'izolatii' && selectedSubcategory && (
                   <div className="mb-8 overflow-x-auto" style={scrollbarHideStyles}>
                     <style jsx global>{scrollbarHideClass}</style>
                     <div className="flex space-x-2 pb-2 min-w-max">
-                      {izolationSubcategoryCardsData.map((subcategory) => (
+                      {subcategories.map((subcategory) => (
                         <button
                           key={subcategory.id}
-                          className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 whitespace-nowrap ${
                             selectedSubcategory === subcategory.id
-                              ? 'bg-[#4A6741] text-white'
+                              ? 'bg-amber-500 text-white'
                               : 'bg-gray-100 text-[#404040] hover:bg-gray-200'
                           }`}
-                          onClick={() => handleSubcategoryCardSelect(subcategory.title)}
+                          onClick={() => handleSubcategoryCardSelect(subcategory.id)}
                         >
                           {subcategory.title}
                         </button>
@@ -762,77 +983,23 @@ function ProductsContent() {
 
                 {/* Display subcategory cards for main categories when no subcategory is selected */}
                 {mainCategory === 'vopsele' && !selectedSubcategory && (
-                  <div className="mb-8">
-                    <h2 className={`${spaceGrotesk.className} text-3xl text-[#404040] mb-8`}>
-                      SUBCATEGORII VOPSELE
-                    </h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                      {subcategoryCardsData.map((subcategory, index) => (
-                        <motion.div
-                          key={subcategory.id}
-                          className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all cursor-pointer h-72"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3, delay: index * 0.05 }}
-                          onClick={() => handleSubcategoryCardSelect(subcategory.title)}
-                        >
-                          <div className="relative h-40">
-                            <Image
-                              src={subcategory.image}
-                              alt={subcategory.title}
-                              fill
-                              className="object-cover"
-                            />
-                            <div 
-                              className="absolute inset-0 opacity-40"
-                              style={{ backgroundColor: subcategory.color }}
-                            ></div>
-                          </div>
-                          <div className="p-4">
-                            <h3 className="text-lg font-semibold mb-2 text-[#404040]">{subcategory.title}</h3>
-                            <p className="text-sm text-[#696969] line-clamp-2">{subcategory.description}</p>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
+                  <div className="mb-8 -mx-4 md:-mx-8 lg:-mx-16">
+                    <SubcategoryScroller 
+                      subcategories={subcategories} 
+                      onSelectSubcategory={handleSubcategoryCardSelect} 
+                      activeCategory={activeCategory || ''}
+                    />
                   </div>
                 )}
 
                 {/* Display subcategory cards for IZOLATII when no subcategory is selected */}
                 {mainCategory === 'izolatii' && !selectedSubcategory && (
-                  <div className="mb-8">
-                    <h2 className={`${spaceGrotesk.className} text-3xl text-[#404040] mb-8`}>
-                      SUBCATEGORII IZOLAȚII
-                    </h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {izolationSubcategoryCardsData.map((subcategory, index) => (
-                        <motion.div
-                          key={subcategory.id}
-                          className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all cursor-pointer h-72"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3, delay: index * 0.05 }}
-                          onClick={() => handleSubcategoryCardSelect(subcategory.title)}
-                        >
-                          <div className="relative h-40">
-                            <Image
-                              src={subcategory.image}
-                              alt={subcategory.title}
-                              fill
-                              className="object-cover"
-                            />
-                            <div 
-                              className="absolute inset-0 opacity-40"
-                              style={{ backgroundColor: subcategory.color }}
-                            ></div>
-                          </div>
-                          <div className="p-4">
-                            <h3 className="text-lg font-semibold mb-2 text-[#404040]">{subcategory.title}</h3>
-                            <p className="text-sm text-[#696969] line-clamp-2">{subcategory.description}</p>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
+                  <div className="mb-8 -mx-4 md:-mx-8 lg:-mx-16">
+                    <SubcategoryScroller 
+                      subcategories={subcategories} 
+                      onSelectSubcategory={handleSubcategoryCardSelect} 
+                      activeCategory={activeCategory || ''}
+                    />
                   </div>
                 )}
 
@@ -857,8 +1024,9 @@ function ProductsContent() {
                         {selectedSubcategory && (
                           <button 
                             onClick={() => {
+                              // Simply clear the subcategory selection and update the URL
                               setSelectedSubcategory(null);
-                              router.push(`/produse?categorie=${mainCategory}`);
+                              router.push(`/produse?categorie=${activeCategory}`);
                             }}
                             className="mt-4 px-6 py-2 bg-[#8a7d65] text-white rounded-lg hover:bg-[#776d59] transition-colors"
                           >
@@ -867,44 +1035,11 @@ function ProductsContent() {
                         )}
                       </div>
                     ) : (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {getFilteredProducts().map((product, index) => (
-                          <Link href={`/produs/${product.id}`} key={product.id}>
-                            <motion.div
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ duration: 0.3, delay: index * 0.05 }}
-                              className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 h-full flex flex-col"
-                            >
-                              {/* Product image */}
-                              <div className="relative h-48 bg-gray-100">
-                                {product.linkImagine ? (
-                                  <Image
-                                    src={product.linkImagine}
-                                    alt={product.titlu}
-                                    fill
-                                    className="object-contain p-2"
-                                  />
-                                ) : (
-                                  <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                                    <PhotoIcon className="h-12 w-12" />
-                                  </div>
-                                )}
-                              </div>
-                              
-                              {/* Product details */}
-                              <div className="p-4 flex-grow flex flex-col">
-                                <h3 className="text-lg font-semibold mb-2 line-clamp-2 text-[#404040]">{product.titlu}</h3>
-                                <p className="text-sm text-[#696969] mb-4 line-clamp-3">{product.descriereScurta}</p>
-                                <div className="mt-auto">
-                                  <span className="inline-block px-3 py-1 rounded-full text-sm font-medium bg-[#8a7d65]/10 text-[#8a7d65] hover:bg-[#8a7d65]/20 transition-colors">
-                                    Vezi detalii
-                                  </span>
-                                </div>
-                              </div>
-                            </motion.div>
-                          </Link>
-                        ))}
+                      <div className="-mx-4 md:-mx-8 lg:-mx-16 mb-12">
+                        <ProductScroller
+                          products={getFilteredProducts()}
+                          activeCategory={activeCategory || ''}
+                        />
                       </div>
                     )}
                   </>
@@ -955,91 +1090,6 @@ function ProductsContent() {
   );
 }
 
-// Define the subcategory cards data for vopsele
-const subcategoryCardsData: SubcategoryCard[] = [
-  {
-    id: 'elf-decor',
-    title: 'ELF Decor',
-    description: 'Colecția noastră de vopsele decorative premium cu efecte speciale și finisaje unice pentru pereții tăi.',
-    image: '/images/categories/elf-decor.jpg',
-    color: '#8a7d65',
-  },
-  {
-    id: 'vopsele-interior',
-    title: 'Vopsele interior',
-    description: 'Vopsele de înaltă calitate pentru interior, cu acoperire excelentă și rezistență la spălare.',
-    image: '/images/categories/vopsele-interior.jpg',
-    color: '#A67C52',
-  },
-  {
-    id: 'amorse-interior',
-    title: 'Amorse interior',
-    description: 'Amorse profesionale pentru pregătirea suprafețelor interioare și asigurarea unei aderențe perfecte.',
-    image: '/images/categories/amorse-interior.jpg',
-    color: '#B3A999',
-  },
-  {
-    id: 'vopsele-amorse-exterior',
-    title: 'Vopsele & Amorse exterior',
-    description: 'Soluții complete pentru protecția și finisarea fațadelor, cu rezistență ridicată la intemperii.',
-    image: '/images/categories/vopsele-exterior.jpg',
-    color: '#746D67',
-  },
-  {
-    id: 'tencuieli-amorse-exterior',
-    title: 'Tencuieli/Amorse exterior',
-    description: 'Sisteme complete de tencuieli decorative și amorse pentru fațade, cu multiple texturi și efecte.',
-    image: '/images/categories/tencuieli.jpg',
-    color: '#9E8E7A',
-  },
-  {
-    id: 'vopsele-epoxidice',
-    title: 'Vopsele epoxidice',
-    description: 'Vopsele epoxidice profesionale pentru pardoseli și suprafețe industriale, cu rezistență chimică și mecanică ridicată.',
-    image: '/images/categories/vopsele-epoxidice.jpg',
-    color: '#5D5C59',
-  },
-  {
-    id: 'vopsele-lemn-metal',
-    title: 'Vopsele pentru lemn/metal',
-    description: 'Vopsele și emailuri de calitate superioară pentru protecția și decorarea suprafețelor din lemn și metal.',
-    image: '/images/categories/vopsele-lemn-metal.jpg',
-    color: '#A38F75',
-  },
-  {
-    id: 'protectia-lemnului',
-    title: 'Protectia lemnului',
-    description: 'Produse specializate pentru protecția și întreținerea lemnului, de la lacuri și lazuri până la uleiuri și ceruri.',
-    image: '/images/categories/protectia-lemnului.jpg',
-    color: '#7D6E59',
-  },
-];
-
-// Define insulation subcategory cards data
-const izolationSubcategoryCardsData: SubcategoryCard[] = [
-  {
-    id: 'izolatii-eco-friendly',
-    title: 'IZOLATII ECO-FRIENDLY',
-    description: 'Soluții de izolare termică și fonică ecologice, realizate din materiale sustenabile și prietenoase cu mediul.',
-    image: '/images/categories/izolatii-eco.jpg',
-    color: '#4D724D', // Green for eco-friendly
-  },
-  {
-    id: 'materiale-hidroizolante',
-    title: 'MATERIALE HIDROIZOLANTE',
-    description: 'Produse de înaltă calitate pentru impermeabilizarea și protecția împotriva umezelii și infiltrațiilor de apă.',
-    image: '/images/categories/hidroizolante.jpg',
-    color: '#2E5984', // Blue for waterproofing
-  },
-  {
-    id: 'adezivi-chituri',
-    title: 'ADEZIVI&CHITURI',
-    description: 'Materiale de construcție pentru fixarea și etanșarea elementelor de zidărie, gresie, faianță și alte suprafețe.',
-    image: '/images/categories/adezivi-chituri.jpg',
-    color: '#6E6E6E', // Grey for construction materials
-  },
-];
-
 // Define the main category cards data
 const mainCategoryCardsData: MainCategoryCard[] = [
   {
@@ -1047,7 +1097,7 @@ const mainCategoryCardsData: MainCategoryCard[] = [
     title: 'VOPSELE',
     subtitle: 'tencuieli si produse decorative',
     description: 'Colecția noastră de vopsele premium pentru interior și exterior, tencuieli decorative și produse pentru protecția suprafețelor. Descoperă soluții profesionale pentru orice suprafață și proiect.',
-    image: '/images/categories/vopsele-main.jpg',
+    image: '/images/category-placeholder.svg',
     color: '#8a7d65',
     gradient: 'from-[#8a7d65]/30 to-[#8a7d65]/90',
     icon: '🎨'
@@ -1057,7 +1107,7 @@ const mainCategoryCardsData: MainCategoryCard[] = [
     title: 'IZOLAȚII',
     subtitle: 'adezivi, chituri si hidroizolanti',
     description: 'Sisteme complete de izolație termică, fonică și hidroizolație, adezivi și chituri pentru diferite suprafețe și aplicații. Materiale de calitate superioară pentru rezultate durabile.',
-    image: '/images/categories/izolatii-main.jpg',
+    image: '/images/category-placeholder.svg',
     color: '#4A6741',
     gradient: 'from-[#4A6741]/30 to-[#4A6741]/90',
     icon: '🏗️'
@@ -1067,12 +1117,13 @@ const mainCategoryCardsData: MainCategoryCard[] = [
 // Main component that wraps the client component in Suspense
 export default function ProductsPage() {
   return (
-    <main className="min-h-screen relative bg-[#f8f8f6]">
+    <main className="min-h-screen relative bg-transparent">
+      <PageVideoBackground />
       <Navbar />
       <Suspense fallback={
         // Using a full-page layout similar to our header with a loading spinner below
         <>
-          <div className="pt-32 px-4 sm:px-8 lg:px-16 min-h-screen bg-[#f8f8f6]">
+          <div className="pt-32 px-4 sm:px-8 lg:px-16 min-h-screen">
             <div className="container mx-auto">
               <div className="max-w-3xl mb-16">
                 <div className="h-16 w-3/4 bg-gray-200 rounded animate-pulse mb-4"></div>

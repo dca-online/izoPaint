@@ -6,6 +6,7 @@ import ServiceCard from '@/components/ServiceCard';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 import VideoHeader from '@/components/VideoHeader';
 import BackgroundVideo from '@/components/BackgroundVideo';
+import HomeServiceScroller from '@/components/HomeServiceScroller';
 
 // Our showcase of beautiful paint and insulation services
 const paintServices = [
@@ -14,18 +15,21 @@ const paintServices = [
     description: 'Transformă-ți spațiul cu vopsele decorative de înaltă calitate, cu efecte unice și finisaje elegante.',
     icon: '/icons/paint.svg',
     link: '/servicii',
+    imageSrc: '/images/product-placeholder.svg'
   },
   {
     title: 'Vopsele ecologice',
     description: 'Soluții eco-friendly pentru interior, fără compuși organici volatili, ideale pentru dormitoare și camere de copii.',
     icon: '/icons/eco.svg',
     link: '/servicii',
+    imageSrc: '/images/product-placeholder.svg'
   },
   {
     title: 'Finisaje speciale',
     description: 'Efecte decorative premium care adaugă textură, strălucire și personalitate oricărui perete.',
     icon: '/icons/quality.svg',
     link: '/servicii',
+    imageSrc: '/images/product-placeholder.svg'
   }
 ];
 
@@ -35,18 +39,21 @@ const insulationServices = [
     description: 'Sisteme complete de izolație termică pentru fațade, care reduc semnificativ pierderile de căldură.',
     icon: '/icons/thermal.svg',
     link: '/servicii#izolatie',
+    imageSrc: '/images/service-placeholder.svg'
   },
   {
     title: 'Izolație fonică',
     description: 'Soluții profesionale pentru reducerea zgomotului și îmbunătățirea confortului acustic în orice spațiu.',
     icon: '/icons/eco.svg',
     link: '/servicii#izolatie',
+    imageSrc: '/images/service-placeholder.svg'
   },
   {
     title: 'Hidroizolații',
     description: 'Sisteme de impermeabilizare pentru protecția clădirilor împotriva infiltrațiilor și umezelii.',
     icon: '/icons/warranty.svg',
     link: '/servicii#izolatie',
+    imageSrc: '/images/service-placeholder.svg'
   }
 ];
 
@@ -104,56 +111,18 @@ export default function Home() {
             </motion.div>
             
             {/* Our premium paint options - where color meets creativity */}
-            <div className="mb-16">
-              <motion.h3 
-                className="text-2xl font-bold text-[#8a7d65] mb-8"
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                Vopsele Moderne
-              </motion.h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {paintServices.map((service, index) => (
-                  <ServiceCard
-                    key={service.title}
-                    title={service.title}
-                    description={service.description}
-                    imageSrc="/images/product-placeholder.svg"
-                    link={service.link}
-                    index={index}
-                    type="vopsele"
-                  />
-                ))}
-              </div>
-            </div>
+            <HomeServiceScroller 
+              services={paintServices}
+              categoryType="vopsele"
+              title="Vopsele Moderne"
+            />
             
             {/* Our eco-friendly insulation solutions - comfort meets sustainability */}
-            <div>
-              <motion.h3 
-                className="text-2xl font-bold text-[#696969] mb-8"
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                Izolații Eco-Friendly
-              </motion.h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {insulationServices.map((service, index) => (
-                  <ServiceCard
-                    key={service.title}
-                    title={service.title}
-                    description={service.description}
-                    imageSrc="/images/service-placeholder.svg"
-                    link={service.link}
-                    index={index}
-                    type="izolații"
-                  />
-                ))}
-              </div>
-            </div>
+            <HomeServiceScroller 
+              services={insulationServices}
+              categoryType="izolatii"
+              title="Izolații Eco-Friendly"
+            />
           </div>
         </section>
         

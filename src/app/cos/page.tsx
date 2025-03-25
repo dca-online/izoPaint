@@ -12,15 +12,7 @@ import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 // Remove unused fadeIn import
 import BackgroundVideo from '@/components/BackgroundVideo';
 import ErrorFallbackImage from '@/components/ErrorFallbackImage';
-
-// Mock cart items
-type CartItem = {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  quantity: number;
-};
+import { useCart } from '@/lib/context/CartContext';
 
 // Mobile Navigation Pills
 const MobileNavPills = () => {
@@ -134,336 +126,256 @@ const VerticallyFlippedVideoHeader = () => {
 }
 
 const CartPage = () => {
-  // Cart items state - in production would use context/Redux
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: 'vopsea-decorativa-1',
-      name: 'Vopsea decorativă sidefată',
-      price: 189.99,
-      image: '/images/product-1.jpg',
-      quantity: 2
-    },
-    {
-      id: 'izolatie-termica-1',
-      name: 'Sistem izolație termică premium',
-      price: 289.99,
-      image: '/images/product-5.jpg',
-      quantity: 1
-    },
-    {
-      id: 'accesorii-1',
-      name: 'Set pensule premium',
-      price: 89.99,
-      image: '/images/product-8.jpg',
-      quantity: 3
-    }
-  ]);
+  // Use cart context for real cart functionality
+  const { items, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
   
   const [promoCode, setPromoCode] = useState('');
-  const [promoApplied, setPromoApplied] = useState(false);
   const [promoDiscount, setPromoDiscount] = useState(0);
+  const [promoError, setPromoError] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
   
-  // Calculate cart totals
-  const calculateSubtotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
-
-  const subtotal = calculateSubtotal();
-  const shipping = subtotal > 500 ? 0 : 25;
-  const discount = promoApplied ? promoDiscount : 0;
-  const total = subtotal + shipping - discount;
+  // Calculate shipping cost (could be more complex in a real app)
+  const shippingCost = items.length > 0 ? 15 : 0;
   
-  // Update item quantity
-  const updateQuantity = (id: string, newQuantity: number) => {
-    if (newQuantity < 1) return;
-    
-    setCartItems(prev => 
-      prev.map(item => 
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      )
-    );
-  };
-  
-  // Remove item from cart
-  const removeItem = (id: string) => {
-    setCartItems(prev => prev.filter(item => item.id !== id));
-  };
+  // Calculate final amount
+  const finalAmount = totalPrice + shippingCost - promoDiscount;
   
   // Apply promo code
   const applyPromoCode = () => {
-    // Mock promo code validation
-    if (promoCode === 'PROMO20') {
-      setPromoApplied(true);
-      setPromoDiscount(calculateSubtotal() * 0.2);
-      setPromoCode('');
+    // Example promo code logic
+    if (promoCode.toUpperCase() === 'WELCOME10') {
+      const discount = totalPrice * 0.1; // 10% discount
+      setPromoDiscount(discount);
+      setPromoError('');
+    } else {
+      setPromoError('Cod promoțional invalid');
+      setPromoDiscount(0);
     }
   };
   
-  // Clear cart
-  const clearCart = () => {
-    setCartItems([]);
-    setPromoApplied(false);
-    setPromoDiscount(0);
+  // Proceed to checkout
+  const handleCheckout = () => {
+    setIsProcessing(true);
+    // Simulate API call
+    setTimeout(() => {
+      alert('Checkout functionality would be integrated here!');
+      setIsProcessing(false);
+    }, 1500);
   };
-  
-  // Mock related products
-  const relatedProducts = [
-    {
-      id: 'related-1',
-      name: 'Vopsea decorativă metalică',
-      price: 219.99,
-      image: '/images/product-2.jpg'
-    },
-    {
-      id: 'related-2',
-      name: 'Vopsea ecologică mată',
-      price: 159.99,
-      image: '/images/product-3.jpg'
-    },
-    {
-      id: 'related-3',
-      name: 'Panouri izolație fonică',
-      price: 249.99,
-      image: '/images/product-6.jpg'
-    }
-  ];
-  
+
   return (
     <SmoothScrollProvider>
       <main className="min-h-screen bg-[#f8f8f6] overflow-hidden">
         <Navbar />
+        <MobileNavPills />
         
         <VerticallyFlippedVideoHeader />
         
-        {/* Content Background Overlay */}
-        <div className="relative">
-          <div className="absolute inset-0 bg-[#f8f8f6] opacity-90 z-0"></div>
-          
-          {/* Cart Content Section */}
-          <section className="py-16 md:py-24 px-4 relative z-10">
-            <div className="absolute inset-0 z-0">
-              <div className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-[#8a7d65] opacity-5 blur-3xl"></div>
-              <div className="absolute bottom-1/4 left-1/4 w-80 h-80 rounded-full bg-[#c3beb4] opacity-5 blur-3xl"></div>
-            </div>
-            
-            <div className="container mx-auto relative z-10">
-              {cartItems.length > 0 ? (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                  {/* Cart Items */}
-                  <div className="lg:col-span-2">
-                    <GlassCard accent="gold" className="mb-8">
-                      <div className="flex justify-between items-center mb-8">
-                        <h2 className="text-2xl font-bold text-[#404040]">Produse ({cartItems.reduce((sum, item) => sum + item.quantity, 0)})</h2>
-                        <button 
-                          onClick={clearCart}
-                          className="text-[#8a7d65] hover:text-[#8a7d65]/80 text-sm flex items-center transition-colors"
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="mr-1" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3 6H5H21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                          Golește coșul
-                        </button>
-                      </div>
-                      
-                      {/* Cart Item List */}
-                      <div className="space-y-6">
-                        {cartItems.map((item) => (
-                          <div key={item.id} className="flex flex-col sm:flex-row border-b border-[#e6e5e3] pb-6">
-                            {/* Product Image */}
-                            <div className="w-full sm:w-24 h-24 bg-[#f5f5f5] rounded-lg overflow-hidden mb-4 sm:mb-0 sm:mr-4 relative">
-                              <ErrorFallbackImage 
-                                src={item.image} 
-                                alt={item.name}
-                                fill
-                                className="object-cover"
-                                sizes="96px"
-                              />
+        {/* Cart Section */}
+        <section className="py-16 px-4">
+          <div className="container mx-auto">
+            <div className="max-w-6xl mx-auto">
+              <div className="flex flex-col md:flex-row gap-8">
+                {/* Cart Items */}
+                <div className="md:w-2/3">
+                  <h2 className="text-2xl font-bold text-[#404040] mb-6">Produse în coș</h2>
+                  
+                  {items.length === 0 ? (
+                    <GlassCard className="p-8 text-center">
+                      <p className="text-[#696969] mb-6">Coșul tău este gol.</p>
+                      <Link 
+                        href="/produse"
+                        className="inline-block px-6 py-3 bg-[#8a7d65] text-white rounded-full hover:bg-[#8a7d65]/90 transition-colors text-lg"
+                      >
+                        Continuă cumpărăturile
+                      </Link>
+                    </GlassCard>
+                  ) : (
+                    <div className="space-y-4">
+                      {items.map((item) => (
+                        <GlassCard key={`${item.productId}-${item.variant}`} className="p-4 sm:p-6">
+                          <div className="flex flex-col sm:flex-row gap-4">
+                            <div className="w-full sm:w-24 h-24 bg-[#f0efed] rounded-lg overflow-hidden relative flex-shrink-0">
+                              {item.image ? (
+                                <ErrorFallbackImage
+                                  src={item.image}
+                                  alt={item.title}
+                                  fill
+                                  className="object-cover"
+                                />
+                              ) : (
+                                <div className="flex items-center justify-center h-full">
+                                  <svg className="w-8 h-8 text-[#c3beb4]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                                    <circle cx="9" cy="9" r="2" stroke="currentColor" strokeWidth="2"/>
+                                    <path d="M21 15L15 9L3 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                  </svg>
+                                </div>
+                              )}
                             </div>
                             
-                            {/* Product Info */}
-                            <div className="flex-grow flex flex-col sm:flex-row justify-between">
-                              <div>
-                                <h3 className="text-lg font-semibold text-[#404040] mb-1">{item.name}</h3>
-                                <p className="text-[#8a7d65] font-bold mb-2">{item.price.toFixed(2)} RON</p>
+                            <div className="flex-grow">
+                              <div className="flex flex-col sm:flex-row sm:justify-between">
+                                <div>
+                                  <h3 className="text-lg font-bold text-[#404040]">{item.title}</h3>
+                                  <p className="text-[#696969]">Varianta: {item.variant}</p>
+                                </div>
+                                <div className="text-right mt-2 sm:mt-0">
+                                  <p className="font-bold text-[#404040]">{item.price.toFixed(2)} lei</p>
+                                  <p className="text-sm text-[#696969]">({item.price.toFixed(2)} lei/buc)</p>
+                                </div>
                               </div>
                               
-                              <div className="flex items-center justify-between sm:justify-end sm:space-x-6">
-                                {/* Quantity Controls */}
-                                <div className="flex items-center">
+                              <div className="mt-4 flex justify-between items-center">
+                                <div className="flex items-center space-x-2">
                                   <button 
-                                    className="w-8 h-8 rounded-full bg-[#e6e5e3] flex items-center justify-center text-[#404040] hover:bg-[#8a7d65]/20"
-                                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                    onClick={() => updateQuantity(item.productId, item.variant, item.quantity - 1)}
+                                    className="w-8 h-8 rounded-full bg-[#f0efed] flex items-center justify-center text-[#696969]"
                                   >
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                       <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                   </button>
-                                  <span className="w-10 text-center text-[#404040]">{item.quantity}</span>
+                                  <span className="w-8 text-center">{item.quantity}</span>
                                   <button 
-                                    className="w-8 h-8 rounded-full bg-[#e6e5e3] flex items-center justify-center text-[#404040] hover:bg-[#8a7d65]/20"
-                                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                    onClick={() => updateQuantity(item.productId, item.variant, item.quantity + 1)}
+                                    className="w-8 h-8 rounded-full bg-[#f0efed] flex items-center justify-center text-[#696969]"
                                   >
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                      <path d="M12 5V19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                      <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                      <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                   </button>
                                 </div>
-                                
-                                {/* Remove Button */}
                                 <button 
-                                  className="text-[#696969] hover:text-[#8a7d65] transition-colors"
-                                  onClick={() => removeItem(item.id)}
+                                  onClick={() => removeFromCart(item.productId, item.variant)}
+                                  className="text-red-500 hover:text-red-700 transition-colors"
                                 >
-                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                    <path d="M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M19 7L18.1327 19.1425C18.0579 20.1891 17.187 21 16.1378 21H7.86224C6.81296 21 5.94208 20.1891 5.86732 19.1425L5 7M10 11V17M14 11V17M15 7V4C15 3.44772 14.5523 3 14 3H10C9.44772 3 9 3.44772 9 4V7M4 7H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                   </svg>
                                 </button>
                               </div>
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    </GlassCard>
-                    
-                    {/* Related Products */}
-                    <div className="mt-8">
-                      <h2 className="text-2xl font-bold text-[#404040] mb-6">Ai putea fi interesat și de</h2>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                        {relatedProducts.map((product) => (
-                          <GlassCard key={product.id} className="relative group">
-                            <div className="aspect-square w-full relative overflow-hidden rounded-lg mb-3">
-                              <div className="absolute inset-0 w-full h-full bg-[#333]">
-                                <Image 
-                                  src={product.image}
-                                  alt={product.name}
-                                  fill
-                                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                  onError={(e) => {
-                                    // Fallback for missing images
-                                    e.currentTarget.style.opacity = '0';
-                                  }}
-                                />
-                              </div>
-                            </div>
-                            <h3 className="text-[#404040] font-medium text-base mb-1">{product.name}</h3>
-                            <p className="text-[#8a7d65] font-bold">{product.price.toFixed(2)} RON</p>
-                            <button className="absolute top-2 right-2 w-8 h-8 rounded-full bg-[#8a7d65] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 5V19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                              </svg>
-                            </button>
-                          </GlassCard>
-                        ))}
+                        </GlassCard>
+                      ))}
+                      
+                      <div className="flex justify-between mt-4">
+                        <Link 
+                          href="/produse"
+                          className="text-[#8a7d65] hover:underline flex items-center"
+                        >
+                          <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Continuă cumpărăturile
+                        </Link>
+                        
+                        <button 
+                          onClick={() => clearCart()}
+                          className="text-red-500 hover:underline flex items-center"
+                        >
+                          <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 7L18.1327 19.1425C18.0579 20.1891 17.187 21 16.1378 21H7.86224C6.81296 21 5.94208 20.1891 5.86732 19.1425L5 7M10 11V17M14 11V17M15 7V4C15 3.44772 14.5523 3 14 3H10C9.44772 3 9 3.44772 9 4V7M4 7H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Golește coș
+                        </button>
                       </div>
                     </div>
-                  </div>
+                  )}
+                </div>
+                
+                {/* Order Summary */}
+                <div className="md:w-1/3">
+                  <h2 className="text-2xl font-bold text-[#404040] mb-6">Sumarul comenzii</h2>
                   
-                  {/* Order Summary */}
-                  <div className="lg:col-span-1">
-                    <GlassCard accent="light" className="sticky top-24">
-                      <h2 className="text-2xl font-bold text-[#404040] mb-6">Sumar Comandă</h2>
-                      
-                      <div className="space-y-3 mb-6">
-                        <div className="flex justify-between text-[#404040]">
-                          <span>Subtotal</span>
-                          <span>{subtotal.toFixed(2)} RON</span>
-                        </div>
-                        <div className="flex justify-between text-[#404040]">
-                          <span>Livrare</span>
-                          <span>{shipping === 0 ? 'GRATUIT' : `${shipping.toFixed(2)} RON`}</span>
-                        </div>
-                        {promoApplied && (
-                          <div className="flex justify-between text-[#8a7d65]">
-                            <span>Discount ({promoDiscount}%)</span>
-                            <span>-{discount.toFixed(2)} RON</span>
-                          </div>
-                        )}
-                        
-                        <div className="pt-4 border-t border-[#e6e5e3] flex justify-between font-bold">
-                          <span className="text-[#404040]">Total</span>
-                          <span className="text-[#8a7d65] text-xl">{total.toFixed(2)} RON</span>
-                        </div>
+                  <GlassCard className="p-6">
+                    <div className="space-y-4">
+                      <div className="flex justify-between">
+                        <span className="text-[#696969]">Subtotal</span>
+                        <span className="font-medium">{totalPrice.toFixed(2)} lei</span>
                       </div>
                       
-                      {/* Promo Code */}
-                      <div className="mb-6">
-                        <label className="block text-[#404040] text-sm mb-2">Cod promoțional</label>
+                      <div className="flex justify-between">
+                        <span className="text-[#696969]">Transport</span>
+                        <span className="font-medium">{shippingCost.toFixed(2)} lei</span>
+                      </div>
+                      
+                      {promoDiscount > 0 && (
+                        <div className="flex justify-between text-green-600">
+                          <span>Discount promoțional</span>
+                          <span>-{promoDiscount.toFixed(2)} lei</span>
+                        </div>
+                      )}
+                      
+                      <div className="border-t border-[#e6e5e3] pt-4 flex justify-between font-bold text-lg">
+                        <span>Total</span>
+                        <span>{finalAmount.toFixed(2)} lei</span>
+                      </div>
+                      
+                      {/* Promo code input */}
+                      <div className="pt-4">
+                        <label htmlFor="promo-code" className="block text-sm text-[#696969] mb-2">
+                          Cod promoțional
+                        </label>
                         <div className="flex">
                           <input
                             type="text"
+                            id="promo-code"
                             value={promoCode}
                             onChange={(e) => setPromoCode(e.target.value)}
-                            className="flex-grow px-3 py-2 rounded-l-lg bg-[#f5f5f3] border border-[#e6e5e3] text-[#404040] focus:outline-none focus:ring-1 focus:ring-[#8a7d65]"
+                            className="flex-grow px-4 py-2 border border-[#e6e5e3] rounded-l-lg focus:outline-none focus:ring-1 focus:ring-[#8a7d65]"
                             placeholder="Introdu codul"
                           />
                           <button
                             onClick={applyPromoCode}
-                            className="px-4 py-2 bg-[#8a7d65] text-white rounded-r-lg hover:bg-[#8a7d65]/80 transition-colors"
+                            className="px-4 py-2 bg-[#8a7d65] text-white rounded-r-lg hover:bg-[#8a7d65]/90 transition-colors"
                           >
                             Aplică
                           </button>
                         </div>
-                        {promoApplied && (
-                          <div className="mt-2 text-[#8a7d65] text-sm flex items-center">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="mr-1" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                            Cod promoțional aplicat cu succes!
-                          </div>
-                        )}
+                        {promoError && <p className="text-red-500 text-sm mt-1">{promoError}</p>}
+                        {promoDiscount > 0 && <p className="text-green-600 text-sm mt-1">Cod aplicat cu succes!</p>}
                       </div>
                       
-                      {/* Checkout Buttons */}
-                      <div className="space-y-3">
-                        <button className="w-full py-3 bg-[#8a7d65] text-white rounded-full hover:bg-[#8a7d65]/90 transition-colors text-lg font-medium">
-                          Finalizează Comanda
-                        </button>
-                        <Link href="/produse" className="block w-full py-3 text-center border border-[#e6e5e3] text-[#404040] rounded-full hover:bg-[#e6e5e3]/50 transition-colors text-base">
-                          Continuă Cumpărăturile
-                        </Link>
-                      </div>
+                      <button 
+                        onClick={handleCheckout}
+                        disabled={items.length === 0 || isProcessing}
+                        className={`w-full py-3 rounded-full text-white text-lg font-medium transition-colors ${
+                          items.length === 0 
+                            ? 'bg-[#c3beb4] cursor-not-allowed' 
+                            : 'bg-[#8a7d65] hover:bg-[#8a7d65]/90'
+                        }`}
+                      >
+                        {isProcessing ? 'Se procesează...' : 'Finalizează comanda'}
+                      </button>
                       
-                      {/* Secure Checkout */}
-                      <div className="mt-6 flex items-center justify-center text-[#696969] text-sm">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="mr-2" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M19 11H5V21H19V11Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M17 9V8C17 5.23858 14.7614 3 12 3C9.23858 3 7 5.23858 7 8V9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                        Plată securizată garantată
-                      </div>
-                    </GlassCard>
+                      <p className="text-center text-sm text-[#696969] mt-2">
+                        Transport gratuit pentru comenzi peste 500 lei
+                      </p>
+                    </div>
+                  </GlassCard>
+                  
+                  {/* Secure payment info */}
+                  <div className="mt-6 p-4 border border-[#e6e5e3] rounded-lg bg-white/50">
+                    <div className="flex items-center justify-center mb-3">
+                      <svg className="w-5 h-5 text-[#8a7d65] mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M9 12L11 14L15 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      <span className="font-medium text-[#404040]">Plată sigură</span>
+                    </div>
+                    <p className="text-sm text-center text-[#696969]">
+                      Toate tranzacțiile sunt securizate și criptate.
+                    </p>
                   </div>
                 </div>
-              ) : (
-                // Empty Cart State
-                <GlassCard className="max-w-2xl mx-auto text-center py-12">
-                  <div className="mb-6 inline-block p-4 bg-[#f5f5f3] rounded-full">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M9 22C9.55228 22 10 21.5523 10 21C10 20.4477 9.55228 20 9 20C8.44772 20 8 20.4477 8 21C8 21.5523 8.44772 22 9 22Z" stroke="#8a7d65" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M20 22C20.5523 22 21 21.5523 21 21C21 20.4477 20.5523 20 20 20C19.4477 20 19 20.4477 19 21C19 21.5523 19.4477 22 20 22Z" stroke="#8a7d65" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M1 1H5L7.68 14.39C7.77144 14.8504 8.02191 15.264 8.38755 15.5583C8.75318 15.8526 9.2107 16.009 9.68 16H19.4C19.8693 16.009 20.3268 15.8526 20.6925 15.5583C21.0581 15.264 21.3086 14.8504 21.4 14.39L23 6H6" stroke="#8a7d65" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                  <h2 className="text-2xl font-bold text-[#404040] mb-3">Coșul tău este gol</h2>
-                  <p className="text-[#696969] mb-6 max-w-md mx-auto">Se pare că nu ai adăugat încă niciun produs în coș. Descoperă gama noastră de produse premium.</p>
-                  <Link href="/produse" className="inline-block px-8 py-3 bg-[#8a7d65] text-white rounded-full hover:bg-[#8a7d65]/90 transition-colors text-lg font-medium">
-                    Vezi Produse
-                  </Link>
-                </GlassCard>
-              )}
+              </div>
             </div>
-          </section>
-          
-          <Footer />
-        </div>
+          </div>
+        </section>
         
-        {/* Mobile Navigation Pills */}
-        <MobileNavPills />
+        <Footer />
       </main>
     </SmoothScrollProvider>
   );
