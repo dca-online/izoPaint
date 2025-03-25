@@ -529,8 +529,62 @@ export const productsDatabase: Record<string, Product> = {
     subcategorii: ['ELF Decor'],
     foaieTehnica: '/docs/foaie-tehnica-pigment-decotoner.pdf'
   },
-  'isomat-ak-9': { id: '301' },
-  'isomat-ak-14': { id: '302' },
+  'isomat-ak-9': {
+    id: '301',
+    titlu: 'ISOMAT AK-9',
+    linkImagine: '/images/isomat/ak-9.png',
+    descriere: 'ISOMAT AK-9 este o vopsea lavabilă de interior cu acoperire excelentă și rezistență la spălare. Este ideală pentru pereții interiori ai locuințelor și birourilor.',
+    descriereScurta: 'Vopsea lavabilă de interior cu acoperire excelentă și rezistență la spălare.',
+    variante: [
+      {
+        variantaProdus: '15L',
+        pret: {
+          minim: 150,
+          maxim: 180,
+        },
+        cantitatePachet: '15L',
+        disponibil: true,
+      }
+    ],
+    foaieTehnica: '/docs/foaie-tehnica-isomat-ak-9.pdf',
+    specificatii: {
+      'Suprafață acoperită': '14-16 mp/L',
+      'Timp de uscare': '2-4 ore',
+      'Lavabilitate': 'Clasa 2',
+      'Conținut VOC': '<15g/L',
+      'Aplicare': 'Pensulă, trafalet, pistol'
+    },
+    categorii: ['vopsele', 'lavabile', 'interior'],
+    subcategorii: ['Vopsele interior']
+  },
+  'isomat-ak-14': {
+    id: '302',
+    titlu: 'ISOMAT AK-14',
+    linkImagine: '/images/isomat/ak-14.png',
+    descriere: 'ISOMAT AK-14 este o vopsea lavabilă premium pentru interior, cu rezistență superioară la spălare și ștergere uscată. Perfectă pentru zone cu trafic intens.',
+    descriereScurta: 'Vopsea lavabilă premium pentru interior cu rezistență superioară la spălare.',
+    variante: [
+      {
+        variantaProdus: '15L',
+        pret: {
+          minim: 180,
+          maxim: 220,
+        },
+        cantitatePachet: '15L',
+        disponibil: true,
+      }
+    ],
+    foaieTehnica: '/docs/foaie-tehnica-isomat-ak-14.pdf',
+    specificatii: {
+      'Suprafață acoperită': '14-16 mp/L',
+      'Timp de uscare': '2-4 ore',
+      'Lavabilitate': 'Clasa 1',
+      'Conținut VOC': '<15g/L',
+      'Aplicare': 'Pensulă, trafalet, pistol'
+    },
+    categorii: ['vopsele', 'lavabile', 'interior', 'premium'],
+    subcategorii: ['Vopsele interior']
+  },
   'isomat-ak-16': {
     id: 'isomat-ak-16',
     titlu: 'ISOMAT AK-16',
@@ -1383,59 +1437,59 @@ Object.assign(productsDatabase, {
   'vopsea-interior-3': generatePlaceholderProduct('Vopsea Antimucegai', 'Vopsele interior', 10),
   'isomat-ak-9': {
     id: '301',
-    titlu: 'ISOMAT AK-9, Adeziv pe bază de ciment',
-    linkImagine: '/images/product-placeholder.svg',
-    descriere: 'ISOMAT AK-9 este un adeziv pe bază de ciment, recomandat pentru montarea plăcilor ceramice pe suprafețe din beton, tencuială sau șapă. Oferă aderență puternică și durabilă, fiind ideal pentru utilizare casnică.',
-    descriereScurta: 'Adeziv pe bază de ciment pentru montarea plăcilor ceramice pe suprafețe obișnuite.',
+    titlu: 'ISOMAT AK-9',
+    linkImagine: '/images/isomat/ak-9.png',
+    descriere: 'ISOMAT AK-9 este o vopsea lavabilă de interior cu acoperire excelentă și rezistență la spălare. Este ideală pentru pereții interiori ai locuințelor și birourilor.',
+    descriereScurta: 'Vopsea lavabilă de interior cu acoperire excelentă și rezistență la spălare.',
     variante: [
       {
-        variantaProdus: 'Standard',
+        variantaProdus: '15L',
         pret: {
-          minim: 42,
-          maxim: 59,
+          minim: 150,
+          maxim: 180,
         },
-        cantitatePachet: 'kg',
+        cantitatePachet: '15L',
         disponibil: true,
       }
     ],
-    foaieTehnica: '/documente/fisa-tehnica-isomat-ak-9.pdf',
+    foaieTehnica: '/docs/foaie-tehnica-isomat-ak-9.pdf',
     specificatii: {
-      'Culoare': 'Gri, alb',
-      'Consum': '1.5-4.0 kg/m²',
-      'Timp deschis': '20 minute',
-      'Aderență': 'Bună',
-      'Aplicare': 'Interior și exterior',
+      'Suprafață acoperită': '14-16 mp/L',
+      'Timp de uscare': '2-4 ore',
+      'Lavabilitate': 'Clasa 2',
+      'Conținut VOC': '<15g/L',
+      'Aplicare': 'Pensulă, trafalet, pistol'
     },
-    categorii: ['izolatii', 'adezivi', 'ciment'],
-    subcategorii: ['ADEZIVI&CHITURI']
+    categorii: ['vopsele', 'lavabile', 'interior'],
+    subcategorii: ['Vopsele interior']
   },
   'isomat-ak-14': {
     id: '302',
-    titlu: 'ISOMAT AK-14, Adeziv pe bază de ciment, aditivat cu rășini',
-    linkImagine: '/images/product-placeholder.svg',
-    descriere: 'ISOMAT AK-14 este un adeziv pe bază de ciment, aditivat cu rășini, ce oferă o aderență sporită și flexibilitate îmbunătățită. Recomandat pentru montarea plăcilor ceramice pe suprafețe cu cerințe medii de stabilitate.',
-    descriereScurta: 'Adeziv pe bază de ciment, aditivat cu rășini, pentru montarea plăcilor ceramice pe diverse suprafețe.',
+    titlu: 'ISOMAT AK-14',
+    linkImagine: '/images/isomat/ak-14.png',
+    descriere: 'ISOMAT AK-14 este o vopsea lavabilă premium pentru interior, cu rezistență superioară la spălare și ștergere uscată. Perfectă pentru zone cu trafic intens.',
+    descriereScurta: 'Vopsea lavabilă premium pentru interior cu rezistență superioară la spălare.',
     variante: [
       {
-        variantaProdus: 'Standard',
+        variantaProdus: '15L',
         pret: {
-          minim: 57,
-          maxim: 64,
+          minim: 180,
+          maxim: 220,
         },
-        cantitatePachet: 'kg',
+        cantitatePachet: '15L',
         disponibil: true,
       }
     ],
-    foaieTehnica: '/documente/fisa-tehnica-isomat-ak-14.pdf',
+    foaieTehnica: '/docs/foaie-tehnica-isomat-ak-14.pdf',
     specificatii: {
-      'Culoare': 'Gri, alb',
-      'Consum': '1.5-4.0 kg/m²',
-      'Timp deschis': '30 minute',
-      'Aderență': 'Foarte bună',
-      'Aplicare': 'Interior și exterior',
+      'Suprafață acoperită': '14-16 mp/L',
+      'Timp de uscare': '2-4 ore',
+      'Lavabilitate': 'Clasa 1',
+      'Conținut VOC': '<15g/L',
+      'Aplicare': 'Pensulă, trafalet, pistol'
     },
-    categorii: ['izolatii', 'adezivi', 'ciment', 'rasini'],
-    subcategorii: ['ADEZIVI&CHITURI']
+    categorii: ['vopsele', 'lavabile', 'interior', 'premium'],
+    subcategorii: ['Vopsele interior']
   }
 });
 
