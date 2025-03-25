@@ -1,17 +1,1 @@
-{
-  "extends": "next/core-web-vitals",
-  "rules": {
-    "@typescript-eslint/no-unused-vars": "warn",
-    "@typescript-eslint/no-explicit-any": "warn",
-    "@next/next/no-html-link-for-pages": "off"
-  },
-  "ignorePatterns": [
-    ".next/**",
-    "out/**",
-    "dist/**",
-    "node_modules/**",
-    ".cache/**",
-    ".vercel/**",
-    "**/public/mockServiceWorker.js"
-  ]
-} 
+{"extends": "next/core-web-vitals","rules": {"@typescript-eslint/no-unused-vars": "warn","@typescript-eslint/no-explicit-any": "warn"}}

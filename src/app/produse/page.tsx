@@ -817,6 +817,7 @@ function ProductsContent() {
 
       {/* Main content */}
       <div className="pt-32 px-4 sm:px-8 lg:px-16 min-h-screen">
+        <PageVideoBackground />
         <div className="container mx-auto">
           {/* Content sections */}
           {/* ... */}
@@ -1114,34 +1115,27 @@ const mainCategoryCardsData: MainCategoryCard[] = [
   }
 ];
 
-// Main component that wraps the client component in Suspense
+// Create a loading component
+const ProductsLoading = () => (
+  <div className="min-h-screen bg-[#f8f8f6]">
+    <Navbar />
+    <div className="container mx-auto px-4 py-16">
+      <div className="animate-pulse">
+        <div className="h-8 bg-gray-200 rounded w-1/4 mb-8"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="h-64 bg-gray-200 rounded-lg"></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 export default function ProductsPage() {
   return (
-    <main className="min-h-screen relative bg-transparent">
-      <PageVideoBackground />
-      <Navbar />
-      <Suspense fallback={
-        // Using a full-page layout similar to our header with a loading spinner below
-        <>
-          <div className="pt-32 px-4 sm:px-8 lg:px-16 min-h-screen">
-            <div className="container mx-auto">
-              <div className="max-w-3xl mb-16">
-                <div className="h-16 w-3/4 bg-gray-200 rounded animate-pulse mb-4"></div>
-                <div className="h-24 w-full bg-gray-200 rounded animate-pulse"></div>
-              </div>
-              
-              <div className="py-24 flex items-center justify-center">
-                <div className="relative w-16 h-16">
-                  <div className="absolute w-full h-full border-4 border-[#8a7d65]/20 rounded-full animate-ping"></div>
-                  <div className="absolute w-full h-full border-4 border-t-[#8a7d65] rounded-full animate-spin"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      }>
-        <ProductsContent />
-      </Suspense>
-    </main>
+    <Suspense fallback={<ProductsLoading />}>
+      <ProductsContent />
+    </Suspense>
   );
 } 
