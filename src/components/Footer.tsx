@@ -1,15 +1,19 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const Footer = () => {
+  const pathname = usePathname();
+  const isHomepage = pathname === '/';
+  
   return (
     <div className="relative w-full overflow-x-hidden">
       {/* Black background matching last section */}
       <div className="absolute inset-0 bg-[#212121]"></div>
       
-      {/* White footer card with rounded top corners */}
-      <footer className="relative z-10 pt-12 px-4 md:px-8 lg:px-16 pb-12 bg-white rounded-t-[40px] w-full">
+      {/* White footer card with rounded top corners only on homepage */}
+      <footer className={`relative z-10 pt-12 px-4 md:px-8 lg:px-16 pb-12 bg-white ${isHomepage ? 'rounded-t-[40px]' : ''} w-full`}>
         <div className="container mx-auto max-w-full">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">

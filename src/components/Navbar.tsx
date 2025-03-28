@@ -22,6 +22,16 @@ const AccountIcon = () => (
   </svg>
 );
 
+// Product palette icon
+const ProductsIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 6H21L19 16H5L3 6Z" stroke="#8a7d65" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M7 20C7.55228 20 8 19.5523 8 19C8 18.4477 7.55228 18 7 18C6.44772 18 6 18.4477 6 19C6 19.5523 6.44772 20 7 20Z" stroke="#404040" strokeWidth="1.5"/>
+    <path d="M17 20C17.5523 20 18 19.5523 18 19C18 18.4477 17.5523 18 17 18C16.4477 18 16 18.4477 16 19C16 19.5523 16.4477 20 17 20Z" stroke="#404040" strokeWidth="1.5"/>
+    <path d="M3 6L8 1M21 6L16 1" stroke="#404040" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 // Social media icons
 const FacebookIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -357,6 +367,9 @@ const Navbar = () => {
 
   // Handle navigation link click
   const handleNavLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
+    // Close the fullscreen menu when any nav link is clicked
+    setIsMenuOpen(false);
+    
     if (path === '/produse') {
       // Only redirect directly to /produse if already in a produse or produs context
       const isProdusePage = pathname?.startsWith('/produse');
@@ -390,17 +403,17 @@ const Navbar = () => {
           <div className="flex items-center justify-between">
             {/* Our brand logo with that nice pill shape */}
             <motion.div 
-              className="relative"
+              className="relative md:-ml-5 xl:-ml-10"
               animate={{ 
-                background: 'transparent',
-                borderRadius: '0px',
-                padding: '0',
-                boxShadow: 'none',
-                backdropFilter: 'none',
-                WebkitBackdropFilter: 'none',
-                border: 'none',
-                borderTop: 'none',
-                borderLeft: 'none'
+                background: hasScrolled ? 'rgba(248, 248, 246, 0.85)' : 'transparent',
+                borderRadius: hasScrolled ? '9999px' : '0px',
+                padding: hasScrolled ? '0.5rem 1rem' : '0',
+                boxShadow: hasScrolled ? '0 8px 20px rgba(0, 0, 0, 0.08)' : 'none',
+                backdropFilter: hasScrolled ? 'blur(8px)' : 'none',
+                WebkitBackdropFilter: hasScrolled ? 'blur(8px)' : 'none',
+                border: hasScrolled ? '1px solid rgba(255, 255, 255, 0.3)' : 'none',
+                borderTop: hasScrolled ? '1px solid rgba(255, 255, 255, 0.5)' : 'none',
+                borderLeft: hasScrolled ? '1px solid rgba(255, 255, 255, 0.5)' : 'none'
               }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
             >
@@ -502,9 +515,51 @@ const Navbar = () => {
             </motion.div>
             
             {/* Right-side actions container with Menu Button + Action Icons */}
-            <div className="flex items-center">
+            <div className="flex items-center md:-mr-5 xl:-mr-10">
               {/* Action Icons Container (Cart & Account) - now right next to menu button */}
               <div className="flex items-center space-x-2">
+                {/* Products Icon Pill */}
+                <motion.div
+                  className="relative z-[60]"
+                  initial={{ opacity: 0 }}
+                  animate={{ 
+                    opacity: hasScrolled ? 1 : 0,
+                    scale: hasScrolled ? 1 : 0,
+                    x: hasScrolled ? 0 : 20,
+                    background: hasScrolled ? 'rgba(248, 248, 246, 0.85)' : 'transparent',
+                    borderRadius: '9999px',
+                    boxShadow: hasScrolled ? '0 8px 20px rgba(0, 0, 0, 0.08)' : 'none',
+                    backdropFilter: hasScrolled ? 'blur(8px)' : 'none',
+                    WebkitBackdropFilter: hasScrolled ? 'blur(8px)' : 'none',
+                    border: hasScrolled ? '1px solid rgba(255, 255, 255, 0.3)' : 'none',
+                    borderTop: hasScrolled ? '1px solid rgba(255, 255, 255, 0.5)' : 'none',
+                    borderLeft: hasScrolled ? '1px solid rgba(255, 255, 255, 0.5)' : 'none',
+                    pointerEvents: hasScrolled ? 'auto' : 'none'
+                  }}
+                  transition={{ duration: 0.4, ease: 'easeOut' }}
+                >
+                  <Link 
+                    href="/produse" 
+                    className="w-10 h-10 flex items-center justify-center relative"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      
+                      // Only redirect directly to /produse if already in a produse or produs context
+                      const isProdusePage = pathname?.startsWith('/produse');
+                      const isProductPage = pathname?.startsWith('/produs');
+                      
+                      if (isProdusePage || isProductPage) {
+                        router.push('/produse');
+                      } else {
+                        // Otherwise show the category overlay
+                        setShowCategoryOverlay(true);
+                      }
+                    }}
+                  >
+                    <ProductsIcon />
+                  </Link>
+                </motion.div>
+                
                 {/* Cart Icon Pill */}
                 <motion.div
                   className="relative z-[60]"
@@ -515,12 +570,12 @@ const Navbar = () => {
                     x: hasScrolled ? 0 : 20,
                     background: hasScrolled ? 'rgba(248, 248, 246, 0.85)' : 'transparent',
                     borderRadius: '9999px',
-                    boxShadow: hasScrolled ? '0 4px 20px rgba(0, 0, 0, 0.05)' : 'none',
-                    backdropFilter: hasScrolled ? 'blur(16px)' : 'none',
-                    WebkitBackdropFilter: hasScrolled ? 'blur(16px)' : 'none',
-                    border: hasScrolled ? '1px solid rgba(64, 64, 64, 0.08)' : 'none',
-                    borderTop: hasScrolled ? '1px solid rgba(255, 255, 255, 0.8)' : 'none',
-                    borderLeft: hasScrolled ? '1px solid rgba(255, 255, 255, 0.6)' : 'none',
+                    boxShadow: hasScrolled ? '0 8px 20px rgba(0, 0, 0, 0.08)' : 'none',
+                    backdropFilter: hasScrolled ? 'blur(8px)' : 'none',
+                    WebkitBackdropFilter: hasScrolled ? 'blur(8px)' : 'none',
+                    border: hasScrolled ? '1px solid rgba(255, 255, 255, 0.3)' : 'none',
+                    borderTop: hasScrolled ? '1px solid rgba(255, 255, 255, 0.5)' : 'none',
+                    borderLeft: hasScrolled ? '1px solid rgba(255, 255, 255, 0.5)' : 'none',
                     pointerEvents: hasScrolled ? 'auto' : 'none'
                   }}
                   transition={{ duration: 0.4, ease: 'easeOut' }}
@@ -545,12 +600,12 @@ const Navbar = () => {
                     x: hasScrolled ? 0 : 20,
                     background: hasScrolled ? 'rgba(248, 248, 246, 0.85)' : 'transparent',
                     borderRadius: '9999px',
-                    boxShadow: hasScrolled ? '0 4px 20px rgba(0, 0, 0, 0.05)' : 'none',
-                    backdropFilter: hasScrolled ? 'blur(16px)' : 'none',
-                    WebkitBackdropFilter: hasScrolled ? 'blur(16px)' : 'none',
-                    border: hasScrolled ? '1px solid rgba(64, 64, 64, 0.08)' : 'none',
-                    borderTop: hasScrolled ? '1px solid rgba(255, 255, 255, 0.8)' : 'none',
-                    borderLeft: hasScrolled ? '1px solid rgba(255, 255, 255, 0.6)' : 'none',
+                    boxShadow: hasScrolled ? '0 8px 20px rgba(0, 0, 0, 0.08)' : 'none',
+                    backdropFilter: hasScrolled ? 'blur(8px)' : 'none',
+                    WebkitBackdropFilter: hasScrolled ? 'blur(8px)' : 'none',
+                    border: hasScrolled ? '1px solid rgba(255, 255, 255, 0.3)' : 'none',
+                    borderTop: hasScrolled ? '1px solid rgba(255, 255, 255, 0.5)' : 'none',
+                    borderLeft: hasScrolled ? '1px solid rgba(255, 255, 255, 0.5)' : 'none',
                     pointerEvents: hasScrolled ? 'auto' : 'none'
                   }}
                   transition={{ duration: 0.4, ease: 'easeOut' }}
@@ -573,12 +628,12 @@ const Navbar = () => {
                     padding: isMobile ? 0 : (hasScrolled ? '0.5rem 1rem' : '0.5rem'),
                     width: isMobile ? '40px' : 'auto',
                     height: isMobile ? '40px' : 'auto',
-                    boxShadow: hasScrolled ? '0 4px 20px rgba(0, 0, 0, 0.05)' : 'none',
-                    backdropFilter: hasScrolled ? 'blur(16px)' : 'none',
-                    WebkitBackdropFilter: hasScrolled ? 'blur(16px)' : 'none',
-                    border: hasScrolled ? '1px solid rgba(64, 64, 64, 0.08)' : 'none',
-                    borderTop: hasScrolled ? '1px solid rgba(255, 255, 255, 0.8)' : 'none',
-                    borderLeft: hasScrolled ? '1px solid rgba(255, 255, 255, 0.6)' : 'none',
+                    boxShadow: hasScrolled ? '0 8px 20px rgba(0, 0, 0, 0.08)' : 'none',
+                    backdropFilter: hasScrolled ? 'blur(8px)' : 'none',
+                    WebkitBackdropFilter: hasScrolled ? 'blur(8px)' : 'none',
+                    border: hasScrolled ? '1px solid rgba(255, 255, 255, 0.3)' : 'none',
+                    borderTop: hasScrolled ? '1px solid rgba(255, 255, 255, 0.5)' : 'none',
+                    borderLeft: hasScrolled ? '1px solid rgba(255, 255, 255, 0.5)' : 'none',
                     pointerEvents: hasScrolled || (isMobile && isPastHero) ? 'auto' : (isMobile ? 'none' : 'auto')
                   }}
                   transition={{ duration: 0.4, ease: 'easeOut' }}
@@ -586,7 +641,9 @@ const Navbar = () => {
                   {/* Use a wrapper div to ensure consistent structure between server and client */}
                   <div className="flex items-center">
                     {typeof window !== 'undefined' && hasScrolled && !isMobile && (
-                      <span className="mr-3 text-[#696969] hidden md:block">Menu</span>
+                      <span className="mr-3 text-[#696969] hidden md:block font-['Bebas_Neue'] tracking-wide text-lg">
+                        {isMenuOpen ? "INCHIDE" : "MENIU"}
+                      </span>
                     )}
                     <div className={`flex flex-col items-center justify-center space-y-1 ${isMobile ? 'h-full w-full' : 'w-6'}`}>
                       <span className={`block ${isMobile ? 'w-5' : 'w-full'} h-0.5 rounded-full bg-[#404040] transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
