@@ -63,7 +63,7 @@ const FullPageSections: React.FC<FullPageSectionsProps> = ({
   // Handle clicking on indicator dots
   const scrollToSection = (index: number) => {
     if (panoramaRef.current) {
-      // @ts-ignore
+      // @ts-expect-error Panorama's type definition is incomplete, but scrollTo exists
       panoramaRef.current.scrollTo(index);
       setActiveIndex(index);
     }
@@ -96,9 +96,9 @@ const FullPageSections: React.FC<FullPageSectionsProps> = ({
           animation={animationDuration} // Animation duration in ms
           throttle={wheelDebounce} // Throttle scroll events
           easing={customEasing}
-          onScroll={(data: any) => {
+          onScroll={(data: { index: number }) => {
             // Extract the index from the data object
-            const index = typeof data === 'object' ? data.index : data;
+            const index = typeof data === 'object' ? data.index : 0;
             setActiveIndex(index);
           }}
         >
