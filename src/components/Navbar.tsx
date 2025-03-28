@@ -377,12 +377,12 @@ const Navbar = () => {
     <>
       <motion.nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500`}
-        initial={{ y: -100 }}
+        initial={{ y: 0 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
         style={{
-          paddingTop: hasScrolled ? '1rem' : '0.75rem',
-          paddingBottom: hasScrolled ? '1rem' : '0.75rem',
+          paddingTop: '0.75rem',
+          paddingBottom: '0.75rem',
           background: 'transparent',
         }}
       >
@@ -392,15 +392,15 @@ const Navbar = () => {
             <motion.div 
               className="relative"
               animate={{ 
-                background: hasScrolled ? 'rgba(248, 248, 246, 0.85)' : 'transparent',
-                borderRadius: hasScrolled ? '9999px' : '0px',
-                padding: hasScrolled ? '0.5rem 1rem' : '0',
-                boxShadow: hasScrolled ? '0 4px 20px rgba(0, 0, 0, 0.05)' : 'none',
-                backdropFilter: hasScrolled ? 'blur(16px)' : 'none',
-                WebkitBackdropFilter: hasScrolled ? 'blur(16px)' : 'none',
-                border: hasScrolled ? '1px solid rgba(64, 64, 64, 0.08)' : 'none',
-                borderTop: hasScrolled ? '1px solid rgba(255, 255, 255, 0.8)' : 'none',
-                borderLeft: hasScrolled ? '1px solid rgba(255, 255, 255, 0.6)' : 'none'
+                background: 'transparent',
+                borderRadius: '0px',
+                padding: '0',
+                boxShadow: 'none',
+                backdropFilter: 'none',
+                WebkitBackdropFilter: 'none',
+                border: 'none',
+                borderTop: 'none',
+                borderLeft: 'none'
               }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
             >
@@ -413,7 +413,12 @@ const Navbar = () => {
             </motion.div>
 
             {/* Desktop Navigation - centered absolutely */}
-            <div className="hidden md:flex items-center justify-center absolute left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2">
+            <motion.div 
+              className="hidden md:flex items-center justify-center absolute left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2"
+              initial={{ y: 0 }}
+              animate={{ y: hasScrolled ? -100 : 0 }}
+              transition={{ duration: 0.5 }}
+            >
               {/* Glassmorphic pill container for all navigation items */}
               <motion.div 
                 className="absolute inset-0 rounded-full z-0"
@@ -425,7 +430,7 @@ const Navbar = () => {
                   border: '1px solid rgba(255, 255, 255, 0.18)',
                   borderTop: '1px solid rgba(255, 255, 255, 0.5)',
                   borderLeft: '1px solid rgba(255, 255, 255, 0.3)',
-                  opacity: hasScrolled ? 0 : 1,
+                  opacity: 1,
                   width: '100%',
                   height: '40px',
                   padding: '0 1.5rem',
@@ -461,22 +466,23 @@ const Navbar = () => {
                       navItemRefs.current[index] = el;
                     }}
                     animate={{
-                      x: hasScrolled ? 50 * (navLinks.length - index) : 0,
-                      opacity: hasScrolled ? 0 : 1,
-                      scale: hasScrolled ? 0.8 : 1,
+                      opacity: 1,
+                      scale: 1,
                     }}
                     transition={{
                       duration: 0.3, 
                       ease: 'easeOut',
-                      delay: hasScrolled ? 0.05 * index : 0.05 * (navLinks.length - index - 1)
+                      delay: 0.05 * (navLinks.length - index - 1)
                     }}
                   >
                     <Link 
                       href={link.path}
                       className={`transition-colors px-4 h-10 flex items-center justify-center ${
-                        link.path === currentPath && !isHovering 
+                        (link.path === currentPath && !isHovering) 
                           ? 'text-[#8a7d65]' 
-                          : 'text-[#404040] hover:text-[#8a7d65]'
+                          : (isHovering && activeIndex === index)
+                            ? 'text-white'
+                            : 'text-[#404040] hover:text-[#8a7d65]'
                       }`}
                       onClick={(e) => handleNavLinkClick(e, link.path)}
                       onMouseEnter={() => {
@@ -493,7 +499,7 @@ const Navbar = () => {
                   </motion.div>
                 ))}
               </div>
-            </div>
+            </motion.div>
             
             {/* Right-side actions container with Menu Button + Action Icons */}
             <div className="flex items-center">
@@ -502,9 +508,10 @@ const Navbar = () => {
                 {/* Cart Icon Pill */}
                 <motion.div
                   className="relative z-[60]"
+                  initial={{ opacity: 0 }}
                   animate={{ 
-                    opacity: hasScrolled || (isMobile && isPastHero) ? 1 : 0,
-                    scale: hasScrolled || (isMobile && isPastHero) ? 1 : 0.8,
+                    opacity: hasScrolled ? 1 : 0,
+                    scale: hasScrolled ? 1 : 0,
                     x: hasScrolled ? 0 : 20,
                     background: hasScrolled ? 'rgba(248, 248, 246, 0.85)' : 'transparent',
                     borderRadius: '9999px',
@@ -514,7 +521,7 @@ const Navbar = () => {
                     border: hasScrolled ? '1px solid rgba(64, 64, 64, 0.08)' : 'none',
                     borderTop: hasScrolled ? '1px solid rgba(255, 255, 255, 0.8)' : 'none',
                     borderLeft: hasScrolled ? '1px solid rgba(255, 255, 255, 0.6)' : 'none',
-                    pointerEvents: hasScrolled || (isMobile && isPastHero) ? 'auto' : 'none'
+                    pointerEvents: hasScrolled ? 'auto' : 'none'
                   }}
                   transition={{ duration: 0.4, ease: 'easeOut' }}
                 >
@@ -531,9 +538,10 @@ const Navbar = () => {
                 {/* Account Icon Pill */}
                 <motion.div
                   className="relative z-[60]"
+                  initial={{ opacity: 0 }}
                   animate={{ 
-                    opacity: hasScrolled || (isMobile && isPastHero) ? 1 : 0,
-                    scale: hasScrolled || (isMobile && isPastHero) ? 1 : 0.8,
+                    opacity: hasScrolled ? 1 : 0,
+                    scale: hasScrolled ? 1 : 0,
                     x: hasScrolled ? 0 : 20,
                     background: hasScrolled ? 'rgba(248, 248, 246, 0.85)' : 'transparent',
                     borderRadius: '9999px',
@@ -543,7 +551,7 @@ const Navbar = () => {
                     border: hasScrolled ? '1px solid rgba(64, 64, 64, 0.08)' : 'none',
                     borderTop: hasScrolled ? '1px solid rgba(255, 255, 255, 0.8)' : 'none',
                     borderLeft: hasScrolled ? '1px solid rgba(255, 255, 255, 0.6)' : 'none',
-                    pointerEvents: hasScrolled || (isMobile && isPastHero) ? 'auto' : 'none'
+                    pointerEvents: hasScrolled ? 'auto' : 'none'
                   }}
                   transition={{ duration: 0.4, ease: 'easeOut' }}
                 >

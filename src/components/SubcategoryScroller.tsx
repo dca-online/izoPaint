@@ -207,7 +207,7 @@ function Card({
           </div>
           
           <motion.button 
-            className={`px-6 py-3 ${activeCategory === 'vopsele' ? 'bg-[#8a7d65]' : 'bg-[#4A6741]'} hover:bg-opacity-90 text-white rounded-full inline-flex items-center space-x-2 font-medium`}
+            className={`px-6 py-3 ${activeCategory === 'vopsele' ? 'bg-[#8a7d65]' : 'bg-[#4A6741]'} hover:bg-opacity-90 text-white rounded-full inline-flex items-center space-x-2 font-medium w-auto self-center sm:self-start`}
             onClick={() => onClick(subcategory.id)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
@@ -226,8 +226,8 @@ function Card({
         </div>
         
         {/* Card number indicator */}
-        <div className="absolute bottom-8 right-10 z-10">
-          <span className={`${bebasNeue.className} text-8xl font-bold text-white/20`}>
+        <div className="absolute top-8 right-10 z-10">
+          <span className={`${bebasNeue.className} text-9xl font-bold text-white/10 leading-none`}>
             {(index + 1).toString().padStart(2, '0')}
           </span>
         </div>
@@ -445,8 +445,8 @@ const SubcategoryScroller: React.FC<SubcategoryScrollerProps> = ({
 
   return (
     <div 
-      className="relative w-screen overflow-hidden" 
-      style={{ marginLeft: 'calc(-50vw + 50%)', width: '100vw' }}
+      className="relative w-full overflow-hidden" 
+      style={{ width: '100%' }}
       ref={containerRef}
     >
       {/* Section title with progress indicator */}
@@ -550,14 +550,18 @@ const SubcategoryScroller: React.FC<SubcategoryScrollerProps> = ({
           -ms-overflow-style: none;
         }
         .hide-scrollbar::-webkit-scrollbar {
-          display: none;
+          width: 0 !important;
+          height: 0 !important;
+          background: transparent !important;
         }
         .react-horizontal-scrolling-menu--scroll-container {
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
         .react-horizontal-scrolling-menu--scroll-container::-webkit-scrollbar {
-          display: none;
+          width: 0 !important;
+          height: 0 !important;
+          background: transparent !important;
         }
         .react-horizontal-scrolling-menu--inner-wrapper {
           display: flex;

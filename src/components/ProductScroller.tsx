@@ -230,13 +230,6 @@ function Card({
             </div>
           </div>
         </div>
-        
-        {/* Product index indicator */}
-        <div className="absolute bottom-3 right-3 z-10">
-          <span className={`text-lg font-bold ${activeCategory === 'vopsele' ? 'text-[#6d6046]' : 'text-[#2c4023]'}`}>
-            {(index + 1).toString().padStart(2, '0')}
-          </span>
-        </div>
       </motion.div>
     </div>
   );
@@ -451,8 +444,8 @@ const ProductScroller: React.FC<ProductScrollerProps> = ({
 
   return (
     <div 
-      className="relative w-screen overflow-hidden" 
-      style={{ marginLeft: 'calc(-50vw + 50%)', width: '100vw' }}
+      className="relative w-full overflow-hidden" 
+      style={{ width: '100%' }}
       ref={containerRef}
     >
       {/* Section title with progress indicator */}
@@ -556,14 +549,18 @@ const ProductScroller: React.FC<ProductScrollerProps> = ({
           -ms-overflow-style: none;
         }
         .hide-scrollbar::-webkit-scrollbar {
-          display: none;
+          width: 0 !important;
+          height: 0 !important;
+          background: transparent !important;
         }
         .react-horizontal-scrolling-menu--scroll-container {
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
         .react-horizontal-scrolling-menu--scroll-container::-webkit-scrollbar {
-          display: none;
+          width: 0 !important;
+          height: 0 !important;
+          background: transparent !important;
         }
         .react-horizontal-scrolling-menu--inner-wrapper {
           display: flex;

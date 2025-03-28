@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Space_Grotesk } from 'next/font/google';
@@ -22,8 +22,9 @@ const VideoHeader = () => {
   const leftDoorRef = useRef<HTMLDivElement>(null);
   const rightDoorRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
-  const [animationCompleted, setAnimationCompleted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  // Add a state to control initial door positioning
+  const [doorsReady, setDoorsReady] = useState(false);
   
   // We need to know if we're on a phone to make adjustments
   useEffect(() => {
@@ -35,6 +36,41 @@ const VideoHeader = () => {
     
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
+  // Client-side only initializer that runs before React rendering
+  // This completely avoids the hydration mismatch
+  useLayoutEffect(() => {
+    // Position doors before any React rendering happens
+    if (leftDoorRef.current && rightDoorRef.current) {
+      leftDoorRef.current.style.transform = 'translateX(0)';
+      leftDoorRef.current.style.width = 'calc(50% + 1px)';
+      rightDoorRef.current.style.transform = 'translateX(0)';
+    }
+    
+    // Proper way to set CSS variables on client only
+    if (typeof document !== 'undefined') {
+      // This won't cause hydration mismatch since useLayoutEffect only runs client-side
+      document.documentElement.style.setProperty('--door-fix', 'applied');
+    }
+    
+    // Enable door positioning state
+    setDoorsReady(true);
+  }, []);
+  
+  // Handle visibility changes (tab switching, etc.)
+  useEffect(() => {
+    // Reset on visibility change
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && leftDoorRef.current && rightDoorRef.current) {
+        leftDoorRef.current.style.transform = 'translateX(0)';
+        leftDoorRef.current.style.width = 'calc(50% + 1px)';
+        rightDoorRef.current.style.transform = 'translateX(0)';
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
   
   useEffect(() => {
@@ -49,8 +85,24 @@ const VideoHeader = () => {
     
     if (!header || !heading || !subtitle || !cta || !tagline || !leftDoor || !rightDoor) return;
 
+    // Immediate reset of door positions to ensure they're completely closed
+    // We use a 1px overlap to ensure no gap is visible
+    gsap.set(leftDoor, { 
+      x: '0%', 
+      width: 'calc(50% + 1px)', // Add 1px overlap
+      clearProps: 'none' 
+    });
+    
+    gsap.set(rightDoor, { 
+      x: '0%', 
+      clearProps: 'none' 
+    });
+    
+    // Force initial header opacity
+    gsap.set(header, { opacity: 1, clearProps: 'none' });
+
     // Let's fade in all those beautiful text elements first
-    gsap.fromTo(
+    const initialAnimation = gsap.fromTo(
       [heading, subtitle, tagline, cta],
       { opacity: 0, y: 30 },
       { opacity: 1, y: 0, stagger: 0.1, duration: 1, delay: 0.5 }
@@ -59,73 +111,126 @@ const VideoHeader = () => {
     // Here comes the cool part - the doors splitting apart as you scroll
     const isMobileDevice = window.innerWidth < 768;
     
-    const doorTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: 'body',
-        start: 'top top',
-        end: isMobileDevice ? '15% top' : '30% top', // Shorter scroll distance on mobile
-        scrub: isMobileDevice ? 0.5 : 2, // Reduced resistance for smoother/faster scrolling on mobile
-        onUpdate: (self) => {
-          // Once we're mostly done with the animation, let's hide some elements
-          if (self.progress > 0.8) {
-            setAnimationCompleted(true);
-          } else {
-            setAnimationCompleted(false);
-          }
+    // The doors need to move differently depending on your device
+    const doorDuration = isMobileDevice ? 1.2 : 1.5;
+    
+    // Create a more precise control for door positioning
+    const updateDoorPositions = (progress: number) => {
+      // When progress is 0, doors are fully closed
+      // When progress is 1, doors are fully open
+      
+      // Ensure doors are perfectly closed at progress 0
+      if (progress <= 0.001) {
+        gsap.set(leftDoor, { 
+          x: '0%', 
+          width: 'calc(50% + 1px)',
+          clearProps: 'opacity'
+        });
+        gsap.set(rightDoor, { 
+          x: '0%',
+          clearProps: 'opacity'
+        });
+        gsap.set(header, { 
+          opacity: 1,
+          clearProps: 'opacity'
+        });
+        return;
+      }
+      
+      // Calculate positions based on progress
+      const leftPos = -100 * progress;
+      const rightPos = 100 * progress;
+      
+      // Set left door position and width with smoother transition
+      gsap.set(leftDoor, { 
+        x: `${leftPos}%`,
+        width: progress < 0.05 ? 'calc(50% + 1px)' : '50%',
+      });
+      
+      // Set right door position
+      gsap.set(rightDoor, { x: `${rightPos}%` });
+      
+      // Ensure header stays fully opaque
+      gsap.set(header, { 
+        opacity: 1,
+        clearProps: 'opacity'
+      });
+    };
+    
+    // Create a simpler timeline approach
+    ScrollTrigger.create({
+      trigger: header,
+      start: 'top top', // Remove the offset to prevent initial scroll issues
+      end: isMobileDevice ? '100% top' : '100% top',
+      scrub: 0.2, // Smaller value for even smoother animation
+      preventOverlaps: true,
+      fastScrollEnd: true,
+      onUpdate: (self) => {
+        // Use the ScrollTrigger progress to directly update door positions
+        const progress = self.progress;
+        updateDoorPositions(progress);
+      },
+      onLeave: () => {
+        // When scrolling past the header, keep it fully split
+        updateDoorPositions(1);
+      },
+      onEnterBack: () => {
+        // When scrolling back into view, start closing animation
+        const scrollProgress = window.scrollY / window.innerHeight;
+        const progress = Math.min(1, scrollProgress);
+        
+        // Always update positions when entering back, but maintain split state if scrolled
+        updateDoorPositions(progress);
+      },
+      onLeaveBack: () => {
+        // Only force-close if actually at the top
+        if (window.scrollY === 0) {
+          updateDoorPositions(0);
         }
       }
     });
 
-    // The doors need to move differently depending on your device
-    const easingType = isMobileDevice ? 'power2.out' : 'power1.out'; // Faster easing for mobile
-    const doorDelay = isMobileDevice ? 0 : 0.05; // Immediate start on mobile
-    const doorDuration = isMobileDevice ? 0.8 : 1.5; // Much quicker animation on phones
+    // Force initial positions without blocking animation
+    const forceInitialPosition = () => {
+      // Always set initial position on load, regardless of scroll position
+      updateDoorPositions(0);
+    };
     
-    // Mobile users scroll differently, so we adjust the timing
-    // Desktop gets a slightly different treatment
-    const headerTiming = isMobileDevice ? 0 : 0;  // Everything happens at once on mobile
-    const headerDelay = isMobileDevice ? 0 : 0.2; // Desktop gets that slight pause
-
-    doorTl
-      .to(leftDoor, { 
-        x: '-100%', 
-        ease: easingType,
-        duration: doorDuration,
-        opacity: 1 // We want to keep it visible while it moves
-      }, doorDelay)
-      .to(rightDoor, { 
-        x: '100%', 
-        ease: easingType,
-        duration: doorDuration,
-        opacity: 1 // Same for the right door - stay visible
-      }, doorDelay)
-      .to(header, { 
-        opacity: 0,
-        y: '-50%',
-        duration: isMobileDevice ? 0.5 : 1, // Text fades even faster on mobile
-        ease: isMobileDevice ? 'power3.in' : 'power2.inOut', // Stronger easing for mobile
-        delay: headerDelay
-      }, headerTiming);
+    // Apply on load to ensure correct initial state
+    forceInitialPosition();
+    window.addEventListener('load', forceInitialPosition);
 
     // When we're done with the page, we clean up our GSAP magic
     return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      initialAnimation.kill();
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      window.removeEventListener('load', forceInitialPosition);
     };
   }, []);
 
   return (
-    <>
+    <div className="relative w-full h-screen overflow-hidden" id="header-section">
       {/* The full-screen canvas for our header spectacle */}
       <div 
         ref={headerRef}
-        className={`fixed top-0 left-0 w-full h-screen z-20 ${animationCompleted ? 'pointer-events-none' : ''}`}
+        className="relative w-full h-screen z-20 transition-opacity duration-500 overflow-hidden"
       >
-        <div className="absolute top-0 left-0 w-full h-full flex items-stretch">
+        <div className="absolute top-0 left-0 w-full h-full relative overflow-hidden">
           {/* The left-side door that slides away */}
           <div 
             ref={leftDoorRef}
-            className="w-1/2 h-full relative overflow-hidden"
-            style={{ transformOrigin: 'left center' }}
+            className="w-1/2 h-full relative overflow-hidden door-reset left-door-fix"
+            style={{ 
+              transformOrigin: 'left center',
+              // Add 1px extra width to ensure no gap is visible
+              width: 'calc(50% + 1px)',
+              // Ensure transform is set at the JSX level
+              transform: 'translateX(0)',
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              bottom: 0
+            }}
           >
             {/* This half gets the texture that matches perfectly with the right side */}
             <div className="absolute inset-0 overflow-hidden">
@@ -150,8 +255,16 @@ const VideoHeader = () => {
           {/* The right-side door that slides away */}
           <div 
             ref={rightDoorRef}
-            className="w-1/2 h-full relative overflow-hidden"
-            style={{ transformOrigin: 'right center' }}
+            className="w-1/2 h-full relative overflow-hidden door-reset right-door-fix"
+            style={{ 
+              transformOrigin: 'right center', 
+              // Ensure transform is set at the JSX level
+              transform: 'translateX(0)',
+              position: 'absolute',
+              right: 0,
+              top: 0,
+              bottom: 0
+            }}
           >
             {/* The right side texture that creates our seamless background */}
             <div className="absolute inset-0 overflow-hidden">
@@ -337,20 +450,34 @@ const VideoHeader = () => {
           {/* Tagline on a single line */}
           <div 
             ref={taglineRef}
-            className="mb-6 text-lg sm:text-xl md:text-2xl tracking-wider font-medium pointer-events-auto flex justify-center items-center w-full"
+            className="mb-8 text-lg sm:text-xl md:text-2xl tracking-wider font-medium pointer-events-auto flex justify-center items-center w-full py-4"
             style={{
               transform: 'translateY(0)',
-              transition: 'transform 0.5s ease-in-out'
+              transition: 'transform 0.5s ease-in-out',
+              minHeight: '4rem',
+              height: 'auto'
             }}
           >
-            <div className="flex items-center justify-center w-full px-6">
-              <div className="flex flex-wrap sm:flex-nowrap justify-center items-center max-w-full">
-                <span className={`text-[#8a7d65] text-sm xs:text-base sm:text-lg md:text-xl whitespace-nowrap ${spaceGrotesk.className}`} style={{ display: 'inline-block', position: 'relative' }}>
+            <div className="flex items-center justify-center w-full px-6 py-2">
+              <div className="flex flex-wrap sm:flex-nowrap justify-center items-center max-w-full gap-3 sm:gap-6">
+                <span className={`text-[#8a7d65] text-sm xs:text-base sm:text-lg md:text-xl whitespace-nowrap ${spaceGrotesk.className}`} 
+                  style={{ 
+                    display: 'inline-block', 
+                    position: 'relative',
+                    padding: '0.5rem 0'
+                  }}
+                >
                   Vopsele moderne
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#8a7d65] opacity-60" style={{ animation: 'expandWidth 3s ease-in-out infinite' }}></span>
                 </span>
-                <span className="mx-2 sm:mx-4 text-gray-300">|</span>
-                <span className={`text-[#696969] text-sm xs:text-base sm:text-lg md:text-xl whitespace-nowrap ${spaceGrotesk.className}`} style={{ display: 'inline-block', position: 'relative' }}>
+                <span className="mx-3 sm:mx-6 text-gray-300">|</span>
+                <span className={`text-[#696969] text-sm xs:text-base sm:text-lg md:text-xl whitespace-nowrap ${spaceGrotesk.className}`} 
+                  style={{ 
+                    display: 'inline-block', 
+                    position: 'relative',
+                    padding: '0.5rem 0'
+                  }}
+                >
                   izolații eco-friendly
                   <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-[#696969] opacity-60" style={{ animation: 'expandWidth 3s ease-in-out infinite 1.5s' }}></span>
                 </span>
@@ -440,22 +567,17 @@ const VideoHeader = () => {
           </div>
         </div>
 
-        {/* Scroll Indicator - Only show if animation not completed */}
-        {!animationCompleted && (
-          <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-20" style={{marginBottom: '30px !important' }}>
-            <div className="w-6 h-10 border border-[#404040] rounded-full flex justify-center">
-              <div className="w-1.5 h-1.5 bg-[#404040] rounded-full animate-bounce mt-2" />
-            </div>
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-20" style={{marginBottom: '30px !important' }}>
+          <div className="w-6 h-10 border border-[#404040] rounded-full flex justify-center">
+            <div className="w-1.5 h-1.5 bg-[#404040] rounded-full animate-bounce mt-2" />
           </div>
-        )}
+        </div>
         
         {/* Decorative Elements */}
         <div className="absolute top-24 right-[10%] w-20 h-20 border border-[#8a7d65]/20 rounded-full opacity-50 z-20"></div>
         <div className="absolute bottom-24 left-[10%] w-16 h-16 border border-[#696969]/20 rounded-full opacity-50 z-20"></div>
       </div>
-
-      {/* Invisible content spacer - creates room for scrolling */}
-      <div style={{ height: isMobile ? '120vh' : '200vh' }}></div>
       
       {/* Add keyframes for the underline animation */}
       <style jsx global>{`
@@ -465,8 +587,25 @@ const VideoHeader = () => {
           51% { width: 100%; right: 0; left: auto; }
           100% { width: 0; right: 0; left: auto; }
         }
+        
+        /* Initial state class - removed !important flags to allow animation */
+        .door-reset {
+          transform: translateX(0);
+          transition: none;
+        }
+        
+        /* Set initial position but allow GSAP to override */
+        .left-door-fix {
+          width: calc(50% + 1px);
+          left: 0;
+        }
+        
+        /* Set initial position but allow GSAP to override */
+        .right-door-fix {
+          right: 0;
+        }
       `}</style>
-    </>
+    </div>
   );
 };
 

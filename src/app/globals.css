@@ -45,6 +45,8 @@ body {
     color: var(--foreground);
     font-family: var(--font-body);
     overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
 }
 /* Styles for when the category overlay is open */
 body.overlay-open {
@@ -65,12 +67,52 @@ html.lenis {
 .lenis.lenis-smooth {
     scroll-behavior: auto;
 }
-.lenis.lenis-smooth [data-lenis-prevent] {
-    overscroll-behavior: contain;
-}
 .lenis.lenis-stopped {
     overflow: hidden;
 }
 .lenis.lenis-scrolling iframe {
     pointer-events: none;
+}
+
+/* Global styles for full-width sections */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  overscroll-behavior-y: auto;
+  opacity: 1 !important;
+}
+
+/* Hide scrollbar without leaving empty space */
+body::-webkit-scrollbar,
+html::-webkit-scrollbar,
+div::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* Firefox */
+body, html, div {
+  scrollbar-width: none;
+  opacity: 1 !important;
+}
+
+/* Ensure all sections maintain full opacity */
+section {
+  opacity: 1 !important;
+}
+
+/* Mobile address bar handling */
+@media only screen and (max-width: 768px) {
+  .paint-colors-container {
+    height: 100vh; /* Fallback */
+    height: calc(var(--vh, 1vh) * 100);
+    -webkit-overflow-scrolling: touch;
+    opacity: 1 !important;
+    overscroll-behavior-y: auto;
+  }
 }
